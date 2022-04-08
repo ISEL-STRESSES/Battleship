@@ -1,7 +1,25 @@
-fun main(args: Array<String>) {
-    println("Hello World!")
+import model.Game
+import storage.MongoStorage
+import ui.getCommands
+import ui.readCommand
 
-    // Try adding program arguments via Run/Debug configuration.
-    // Learn more about running applications: https://www.jetbrains.com/help/idea/running-applications.html.
-    println("Program arguments: ${args.joinToString()}")
+fun main() {
+    MongoDriver().use { drv ->
+        var game: Game? = null
+        val cmds = getCommands(MongoStorage(drv))
+        while (true) {
+            val (name, args) = readCommand()
+            val cmd = cmds[name]
+            if (cmd == null) println("Invalid Command $name")
+            else try {
+                game = cmd.action(game, args) ?: break
+                cmd.show(game)
+            } catch (ex: Exception) {
+                println(ex.message)
+                if (ex is IllegalArgumentException)
+                    println("Use: $name ${cmd.argsSyntax}")
+            }
+        }
+    }
+    println("BYE.")
 }

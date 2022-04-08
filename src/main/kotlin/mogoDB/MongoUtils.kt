@@ -1,0 +1,3 @@
+package mogoDB
+
+class MongoUtils
