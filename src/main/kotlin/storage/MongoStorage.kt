@@ -2,8 +2,9 @@ package storage
 
 import model.Game
 import model.Player
+import mogoDB.*
 
-class MongoStorage(val driver: MongoDriver) : Storage {
+class MongoStorage(driver: MongoDriver) : Storage {
     data class Doc(val _id: String, val moves: List<Int>)
 
     private val collection = driver.getCollection<Doc>("games")

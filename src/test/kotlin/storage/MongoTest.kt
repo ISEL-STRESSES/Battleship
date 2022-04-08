@@ -1,5 +1,8 @@
 package storage
 
+import mogoDB.MongoDriver
+import mogoDB.getDocument
+import mogoDB.insertDocument
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -10,7 +13,7 @@ class MongoTest {
     @Test
     fun `test insert Document`() {
         val drv = MongoDriver()
-        val collection = dvr.getCollection<Doc>("test")
+        val collection = drv.getCollection<Doc>("test")
         collection.insertDocument(Doc("test_id", 10))
         val doc = collection.getDocument("test_id")
         assertNotNull(doc)
