@@ -1,6 +1,9 @@
 package model
 
 import model.position.Position
+import model.position.indexToColumn
+import model.position.indexToRow
+import model.*
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -16,7 +19,7 @@ class BoardTest {
 
     @Test
     fun `Position normal usage`() {
-        val sut = Position(1, 2)
+        val sut = Position(1.indexToColumn(), 2.indexToRow())
         assertEquals(BOARD_DIM + 2, sut.index)
         assertEquals(1, sut.column)
         assertEquals(2, sut.row)

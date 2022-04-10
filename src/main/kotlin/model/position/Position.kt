@@ -7,7 +7,7 @@ package model.position
  */
 class Position(val column: Column, val row: Row) {
     companion object {
-        private val values = List(COLUMN_DIM * ROW_DIM) {
+        val values = List(COLUMN_DIM * ROW_DIM) {
             Position((it / COLUMN_DIM).indexToColumn(), (it % ROW_DIM).indexToRow())
         }
 

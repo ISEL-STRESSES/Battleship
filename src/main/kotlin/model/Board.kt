@@ -2,6 +2,9 @@ package model
 
 import model.position.Position
 
+const val BOARD_DIM = 10
+
+
 data class Move(val pos: Position, val player: Player)
 
 class Board(val moves: List<Move> = emptyList(), val turn: Player = Player.A, val winner: Player? = null)
