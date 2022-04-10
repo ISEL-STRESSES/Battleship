@@ -1,9 +1,6 @@
 package ui
 
-import model.BOARD_DIM
-import model.Board
-import model.Player
-import model.get
+import model.*
 import model.position.Column
 import model.position.Position
 
@@ -21,11 +18,20 @@ val horizontalBorders = repeatChar(HORIZONTAL_IDENT) + "+" + repeatChar(BOARD_CH
 
 fun Player?.toChar() = this?.symbol ?: ' '
 
+//Não testada + se quisermos escrever uma mensagem sem defenir um barco n dá
+fun printLineOfBoard(id: String, fleetMsg: Boolean, ship: ShipType, amountOfShips: Int = 0){
+    if(fleetMsg)
+        print(id.padStart(2).padEnd(3) + regLine + " $amountOfShips x ${"#".repeat(ship.squares)} of ${ship.fleetQuantity}\n")
+    else
+        print(id.padStart(2).padEnd(3) + regLine + "\n" )
+}
+
 fun printBoard(board: Board) {
     print(repeatChar(LETTERS_IDENT))
     Column.values.forEach { print("${it.letter} ") }
     println()
     println(horizontalBorders)
+
     Position.values.forEachIndexed { _, pos ->
         if (pos.column.ordinal == BOARD_DIM - 1) {
             print(pos.row.number.toString().padStart(2).padEnd(3) + regLine)
