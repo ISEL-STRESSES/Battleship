@@ -1,5 +1,3 @@
-package ui
-
 import model.Game
 import storage.Storage
 import kotlin.system.exitProcess

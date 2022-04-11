@@ -26,6 +26,8 @@ class Position(val column: Column, val row: Row, /*val ordinal: Int*/) {
          * @return Position.
          */
         operator fun get(column: Column, row: Row): Position = values[column.ordinal * COLUMN_DIM + row.ordinal]
+
+        val id = Position.toString()
     }
 
     /**

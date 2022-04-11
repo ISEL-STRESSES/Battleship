@@ -1,0 +1,14 @@
+class Game(val name: String, val board: Board, val enemyBoard: Board)
+
+@startuml
+hide empty members
+
+class Game{
+{static} +board:Board
+{static} +name
+{static} +enemyBoard:Board
+
+
+}
+'https://plantuml.com/class-diagram
+@enduml
