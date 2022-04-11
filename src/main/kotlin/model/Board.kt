@@ -4,7 +4,7 @@ import model.position.Position
 
 const val BOARD_DIM = 10
 
-data class Move(val player: Player, val shot: Shot, val status: Boolean = false)
+data class Move(val player: Player, val shot: Shot, val status: ShotTarget)
 
 class Board(val moves: List<Move> = emptyList(), val turn: Player = Player.A, val fleet: Fleet? = null, val winner: Player? = null)
 

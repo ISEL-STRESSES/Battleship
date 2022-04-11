@@ -1,4 +1,4 @@
-package mogoDB
+package mongoDB
 
 import com.mongodb.ConnectionString
 import com.mongodb.client.MongoClient

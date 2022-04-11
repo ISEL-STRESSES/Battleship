@@ -1,8 +1,8 @@
 package storage
 
-import mogoDB.MongoDriver
-import mogoDB.getDocument
-import mogoDB.insertDocument
+import mongoDB.MongoDriver
+import mongoDB.getDocument
+import mongoDB.insertDocument
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull

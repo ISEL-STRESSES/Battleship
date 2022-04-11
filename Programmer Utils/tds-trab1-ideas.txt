@@ -1,0 +1,22 @@
+Porque na fleet interessa ter um positions que é uma lista de posições se já temos o navy que mostra o par posição e navio na posição? 
+
+Porque o Status no Move?
+
+start dá save document, 
+refresh dá load document caso haja alteração, se não retorna o game atual
+shot dá load ao document, verifica se o caracter na posição é nulo e dá save? 
+
+só após colocares a frota toda e deres start é que ele dá save ao jogo e guarda assim:
+
+A:
+ # ##     
+ #    # # 
+ #  # # # 
+    # #   
+##  # # # 
+    #   # 
+ #        
+ # #####  
+ #        
+     ###  
+

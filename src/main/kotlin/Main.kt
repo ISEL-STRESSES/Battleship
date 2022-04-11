@@ -1,7 +1,7 @@
 import model.Game
-import mogoDB.MongoDriver
+import mongoDB.MongoDriver
 import storage.MongoStorage
-import ui.getCommands
+import model.getCommands
 import ui.readCommand
 
 fun main() {
@@ -13,7 +13,10 @@ fun main() {
             val (name, args) = readCommand()
             val cmd = cmds[name]
             if (cmd == null) println("Invalid Command $name")
-            // else if (!started && (name != "START")) println("Invalid Command $name")
+            else if (!started ) //If game hasn't been inicialized
+
+                    if(name=="START")
+                        println("Invalid Command $name")
             else try {
                 game = game?.let { cmd.action(it, args) } ?: break
                 cmd.show(game)
