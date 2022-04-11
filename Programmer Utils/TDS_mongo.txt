@@ -1,0 +1,14 @@
+Organização
+|
+Projeto
+|
+Coleção de base de dados
+|
+Bases de dados
+|
+Coleções
+|
+Documentos
+
+Conection string - realiza a conecção a uma base de dados
+
