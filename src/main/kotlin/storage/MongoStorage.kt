@@ -5,13 +5,13 @@ import model.Player
 import mogoDB.*
 
 class MongoStorage(driver: MongoDriver) : Storage {
-    data class Doc(val _id: String, val moves: List<Int>)
+    data class Doc(val _id: String, val moves: List<String>)
 
     private val collection = driver.getCollection<Doc>("games")
 
     override fun start(name: String): Player {
         val doc = collection.getDocument(name)
-        if (doc != null) {
+        if (doc != null){
             if (doc.moves.size <= 1) {
                 return Player.B
             } else {
@@ -23,7 +23,7 @@ class MongoStorage(driver: MongoDriver) : Storage {
     }
 
     override fun store(game: Game) {
-        collection.replaceDocument(Doc(game.name, game.board.moves.map { it.pos.index }))
+        collection.replaceDocument(Doc(game.name, game.board.moves.map { it. }))
     }
 
     override fun load(game: Game): Game {

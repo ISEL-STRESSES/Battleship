@@ -13,6 +13,16 @@ class ShipType private constructor(val name: String, val squares: Int, val fleet
             ShipType("Cruiser", 3, 3), ShipType("Submarine", 2, 4)
         )
     }
+
+    override fun toString(): String {
+        return when (name) {
+            "Carrier" -> "A"
+            "Cruiser" -> "C"
+            "Battleship" -> "B"
+            "Submarine" -> "S"
+            else -> name
+        }
+    }
 }
 
 /**

@@ -2,6 +2,7 @@ package ui
 
 import model.Game
 import storage.Storage
+import kotlin.system.exitProcess
 
 /**
  * Represents a command.
@@ -61,5 +62,8 @@ fun getCommands(storage: Storage) = mapOf(
     },
     "EXIT" to object : Command() {
         override fun action(game: Game, args: List<String>): Game? = null
+        override fun show(game: Game) {
+            exitProcess(100)
+        }
     },
 )

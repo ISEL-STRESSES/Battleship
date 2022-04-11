@@ -5,7 +5,7 @@ package model.position
  * @property column X position.
  * @property row Y position.
  */
-class Position(val column: Column, val row: Row) {
+class Position(val column: Column, val row: Row, /*val ordinal: Int*/) {
     companion object {
         val values = List(COLUMN_DIM * ROW_DIM) {
             Position((it / COLUMN_DIM).indexToColumn(), (it % ROW_DIM).indexToRow())

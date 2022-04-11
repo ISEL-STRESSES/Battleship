@@ -18,12 +18,12 @@ val horizontalBorders = repeatChar(HORIZONTAL_IDENT) + "+" + repeatChar(BOARD_CH
 
 fun Player?.toChar() = this?.symbol ?: ' '
 
-//Não testada + se quisermos escrever uma mensagem sem defenir um barco n dá
-fun printLineOfBoard(id: String, fleetMsg: Boolean, ship: ShipType, amountOfShips: Int = 0){
-    if(fleetMsg)
+// Não testada + se quisermos escrever uma mensagem sem defenir um barco n dá
+fun printLineOfBoard(id: String, fleetMsg: Boolean, ship: ShipType, amountOfShips: Int = 0) {
+    if (fleetMsg)
         print(id.padStart(2).padEnd(3) + regLine + " $amountOfShips x ${"#".repeat(ship.squares)} of ${ship.fleetQuantity}\n")
     else
-        print(id.padStart(2).padEnd(3) + regLine + "\n" )
+        print(id.padStart(2).padEnd(3) + regLine + "\n")
 }
 
 fun printBoard(board: Board) {

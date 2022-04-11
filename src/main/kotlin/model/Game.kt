@@ -2,8 +2,10 @@ package model
 
 import model.position.Position
 
-data class Fleet(val army: List<Position>, val player: Player)
+data class Doc(val _id: String, val content: List<String>)
 
-class Game(val name: String, val boardA: Fleet, val boardB: Fleet)
+data class Fleet(val positions: List<Position> = emptyList(), val player: Player = Player.A, val navy: List<Pair<Position, ShipType>> = emptyList())
 
-val initialGame = Game("", Fleet(emptyList(), Player.A), Fleet(emptyList(), Player.B))
+class Game(val name: String, val board: Board, val enemy: Board)
+
+val initialGame = Game("test",)
