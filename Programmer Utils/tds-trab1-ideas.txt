@@ -9,14 +9,14 @@ shot dá load ao document, verifica se o caracter na posição é nulo e dá sav
 só após colocares a frota toda e deres start é que ele dá save ao jogo e guarda assim:
 
 A:
- # ##     
- #    # # 
- #  # # # 
-    # #   
-##  # # # 
-    #   # 
- #        
- # #####  
- #        
-     ###  
+ # ##
+ #    # #
+ #  # # #
+    # #
+##  # # #
+    #   #
+ #
+ # #####
+ #
+     ###
 
