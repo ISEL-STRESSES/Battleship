@@ -2,7 +2,7 @@ package model
 
 import model.position.Position
 
-class ShotTarget private constructor(val sunk: Boolean = false, val hit: Boolean = false) {
+class ShotTarget(val sunk: Boolean = false, val hit: Boolean = false) {
     override fun toString(): String {
         return if (!hit) "O"
         else if (!sunk) "*"
