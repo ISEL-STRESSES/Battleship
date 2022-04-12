@@ -17,7 +17,7 @@ class MongoStorage(driver: MongoDriver) : Storage {
 
     override fun start(name: String): Player {
         val doc = collection.getDocument(name)
-        if (doc != null){
+        if (doc != null) {
             if (doc.moves.size <= 1) {
                 return Player.B
             } else {

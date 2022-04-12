@@ -18,5 +18,18 @@ class Game{
 {static} +name
 {static} +enemyBoard:Board
 }
+
+class Cell{
+
+}
+
+class Ship{
++type: ShipType
+-pos: Position
+
+}
+
+Ship <|-- Cell
+
 'https://plantuml.com/class-diagram
 @enduml

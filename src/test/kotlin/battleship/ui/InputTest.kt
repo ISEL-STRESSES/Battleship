@@ -1,8 +1,6 @@
 package battleship.ui
 
 import org.junit.jupiter.api.Test
-import battleship.ui.parseCommand
-import battleship.ui.readCommand
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream

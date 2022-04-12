@@ -1,8 +1,5 @@
 package battleship.model
 
-import battleship.model.ShipType
-import battleship.model.toShipType
-import battleship.model.toShipTypeOrNull
 import kotlin.test.*
 
 /**

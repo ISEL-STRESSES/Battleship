@@ -1,9 +1,9 @@
-//import battleship.model.Game.Game
-//import mongoDB.MongoDriver
-//import battleship.storage.MongoStorage
-//import battleship.ui.readCommand
+// import battleship.model.Game.Game
+// import mongoDB.MongoDriver
+// import battleship.storage.MongoStorage
+// import battleship.ui.readCommand
 //
-//fun main() {
+// fun main() {
 //    MongoDriver().use { drv ->
 //        var game: Game? = null
 //        val cmds = getCommands(MongoStorage(drv))
@@ -27,4 +27,4 @@
 //        }
 //    }
 //    println("BYE.")
-//}
+// }

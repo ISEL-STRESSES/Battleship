@@ -1,10 +1,10 @@
 package battleship.ui
 
+import Column
 import battleship.model.*
 import battleship.model.Game.Player
-import model.*
-import battleship.model.Position.Column
 import battleship.model.Position.Position
+import model.*
 
 const val BOARD_CHAR_DIM = BOARD_DIM * 2 + 1
 const val LETTERS_IDENT = 5
@@ -23,7 +23,10 @@ fun Player?.toChar() = this?.symbol ?: ' '
 // Não testada + se quisermos escrever uma mensagem sem defenir um barco n dá
 fun printLineOfBoard(id: String, fleetMsg: Boolean, ship: ShipType, amountOfShips: Int = 0) {
     if (fleetMsg)
-        print(id.padStart(2).padEnd(3) + regLine + " $amountOfShips x ${"#".repeat(ship.squares)} of ${ship.fleetQuantity}\n")
+        print(
+            id.padStart(2)
+                .padEnd(3) + regLine + " $amountOfShips x ${"#".repeat(ship.squares)} of ${ship.fleetQuantity}\n"
+        )
     else
         print(id.padStart(2).padEnd(3) + regLine + "\n")
 }
