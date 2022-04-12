@@ -1,7 +1,7 @@
-import model.Game
+import battleship.model.Game
 import mongoDB.MongoDriver
-import storage.MongoStorage
-import ui.readCommand
+import battleship.storage.MongoStorage
+import battleship.ui.readCommand
 
 fun main() {
     MongoDriver().use { drv ->
