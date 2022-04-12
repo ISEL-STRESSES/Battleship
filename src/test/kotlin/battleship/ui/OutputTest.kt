@@ -2,11 +2,10 @@ package battleship.ui
 
 import battleship.model.Board
 import battleship.model.addMove
-import battleship.model.position.Position
-import battleship.model.position.indexToColumn
-import battleship.model.position.indexToRow
+import battleship.model.Position.Position
+import battleship.model.Position.indexToColumn
+import battleship.model.Position.indexToRow
 import org.junit.jupiter.api.Test
-import battleship.ui.printBoard
 
 class OutputTest {
     @Test

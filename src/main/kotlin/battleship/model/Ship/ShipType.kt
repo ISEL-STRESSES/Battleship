@@ -1,8 +1,8 @@
-package domain.model
+package battleship.model.Ship
 
 /**
  * All ship types allowed in the game.
- * @property name Ship type name.
+ * @property name battleship.model.Ship.Ship type name.
  * @property squares Number of squares occupied vertically or horizontally.
  * @property fleetQuantity Number of ships of this type in the starting fleet.
  */

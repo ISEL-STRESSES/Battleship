@@ -1,9 +1,10 @@
 package battleship.ui
 
 import battleship.model.*
+import battleship.model.Game.Player
 import model.*
-import battleship.model.position.Column
-import battleship.model.position.Position
+import battleship.model.Position.Column
+import battleship.model.Position.Position
 
 const val BOARD_CHAR_DIM = BOARD_DIM * 2 + 1
 const val LETTERS_IDENT = 5

@@ -1,8 +1,9 @@
 package battleship.model
 
-import battleship.model.position.Position
-import battleship.model.position.indexToColumn
-import battleship.model.position.indexToRow
+import battleship.model.Game.Player
+import battleship.model.Position.Position
+import battleship.model.Position.indexToColumn
+import battleship.model.Position.indexToRow
 import model.*
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals

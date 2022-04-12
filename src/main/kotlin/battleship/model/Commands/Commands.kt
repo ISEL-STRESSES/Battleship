@@ -1,4 +1,6 @@
-import battleship.model.Game
+package battleship.model.Commands
+
+import battleship.model.Game.Game
 import battleship.storage.Storage
 import kotlin.system.exitProcess
 

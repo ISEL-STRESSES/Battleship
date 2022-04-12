@@ -1,4 +1,4 @@
-package battleship.model
+package battleship.model.Game
 
 enum class Player(val symbol: Char) {
     A('X'), B('O');

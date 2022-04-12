@@ -1,4 +1,4 @@
-package battleship.model.position
+package battleship.model.Position
 
 const val COLUMN_DIM = 10;
 const val COLUMN_FIRST_LETTER = 'A'
@@ -8,8 +8,7 @@ const val COLUMN_FIRST_LETTER = 'A'
  * @property letter Character associated with the position, starting from COLUMN_FIRST_LETTER
  * @property ordinal Columns's index in the board
  */
-class Column private constructor(idx : Int)
-{
+class Column private constructor(idx : Int) {
     val letter = COLUMN_FIRST_LETTER + idx;
     val ordinal = idx;
     companion object {
