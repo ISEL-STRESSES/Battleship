@@ -1,56 +1,50 @@
 package battleship.model.position
 
 /**
- * Class that represents a position on the battleship board.
- * @property column X position.
- * @property row Y position.
+ * All positions that make up the game
+ * @property column describes position's column
+ * @property row describes position's row
  */
-class Position(val column: Column, val row: Row, /*val ordinal: Int*/) {
+class Position private constructor(val column : Column, val row : Row)
+{
+    override fun toString() ="${column.letter}${row.number}"
+
     companion object {
-        val values = List(COLUMN_DIM * ROW_DIM) {
-            Position((it / COLUMN_DIM).indexToColumn(), (it % ROW_DIM).indexToRow())
+        // private as to only get Positions from the .get() methods
+        private val values = List(COLUMN_DIM)
+        {
+            x -> List(ROW_DIM) { y -> Position(x.indexToColumn(), y.indexToRow()) }
         }
-
-        /**
-         * Getter function for getting a position.
-         * @param indexColumn ordinal of the column.
-         * @param indexRow ordinal of the row.
-         * @return Position.
-         */
-        operator fun get(indexColumn: Int, indexRow: Int): Position = values[indexColumn * COLUMN_DIM + indexRow]
-
-        /**
-         * Getter function for getting a position.
-         * @param column key for the column.
-         * @param row key for the row.
-         * @return Position.
-         */
-        operator fun get(column: Column, row: Row): Position = values[column.ordinal * COLUMN_DIM + row.ordinal]
+        //get all possible positions
+        operator fun get(indexColumn : Int, indexRow : Int) = values[indexColumn][indexRow]
+        operator fun get(column : Column, row : Row) = get(column.ordinal, row.ordinal)
     }
-
-    /**
-     * Override of toString function for correct format.
-     * @return String representation of a Position.
-     */
-    override fun toString(): String = "${column.letter}${row.number}"
 }
 
 /**
- * Function that converts a String into a [Position] or null if not possible.
- * @receiver String to convert.
- * @return Position or null.
+ * @brief Converts String into a Position. null if such position does not exist
  */
-fun String.toPositionOrNull(): Position? {
-    val column = first().toColumnOrNull() ?: return null
-    val row = drop(1).toInt().toRowOrNull() ?: return null
-    return Position[column, row]
-}
+fun String.toPositionOrNull() : Position?
+{
+    if(this.isBlank()) return null;
+
+    val left = this[0];
+    if(!left.isLetter()) return null;
+    val right = this.drop(1).toIntOrNull() ?: return null;
+    val column = left.toColumnOrNull();
+    val row = right.toRowOrNull();
+    if(column == null || row == null) return null;
+    return Position[column, row];
+}/
 
 /**
- * Function that converts a String into a [Position].
- *
- * @receiver String to convert.
- * @return Position.
- * @throws IllegalStateException thrown if position dose not exist
+ * @brief Converts string to a Position
  */
-fun String.toPosition(): Position = toPositionOrNull() ?: throw IllegalStateException()
+fun String.toPosition() : Position
+{
+    val result = this.toPositionOrNull()
+    checkNotNull(result) { "Invalid String to convert into position!" }
+    return result;
+}
+
+

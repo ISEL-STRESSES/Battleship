@@ -1,37 +1,32 @@
 package battleship.model.position
 
-// Max number of columns.
-const val COLUMN_DIM = 10
+const val COLUMN_DIM = 10;
+const val COLUMN_FIRST_LETTER = 'A'
 
 /**
- * Class that represent a column in the BattleShip game.
- * @param letter identifier of the column.
- * @param ordinal position of a [letter] in all available columns.
+ * All Rows that make up the game.
+ * @property letter Character associated with the position, starting from COLUMN_FIRST_LETTER
+ * @property ordinal Columns's index in the board
  */
-class Column(val letter: Char, val ordinal: Int) {
+class Column private constructor(idx : Int)
+{
+    val letter = COLUMN_FIRST_LETTER + idx;
+    val ordinal = idx;
     companion object {
-        val values = List(COLUMN_DIM) { Column('A' + it, it) }
+        val values = List(COLUMN_DIM){ Column(it) }
     }
 }
 
 /**
- * Returns the first element matching the given Char with [Column.letter], or null if element was not found.
- * @receiver Char to convert to column.
- * @return Column or null.
+ * @brief return a column according to its letter position, null if it does not exist
  */
-fun Char.toColumnOrNull(): Column? = Column.values.firstOrNull { it.letter == this.uppercaseChar() }
-
+fun Char.toColumnOrNull() = Column.values.elementAtOrNull(this.uppercaseChar() - COLUMN_FIRST_LETTER)
 /**
- * Function that converts an ordinal to Column or null if not possible.
- * @receiver Integer.
- * @return Column or null.
+ * @brief return a column according to its index, null if it does not exit
  */
-fun Int.indexToColumnOrNull(): Column? = Column.values.firstOrNull { it.ordinal == this }
-
+fun Int.indexToColumnOrNull() = Column.values.elementAtOrNull(this);
 /**
- * Function that converts an ordinal to Column.
- * Throws IndexOutOfBoundsException if not possible.
- * @receiver Integer.
- * @return Column or throws an exception.
+ * @brief return a column object according to its index
+ * @throws IndexOutOfBoundsException
  */
-fun Int.indexToColumn(): Column = indexToColumnOrNull() ?: throw IndexOutOfBoundsException()
+fun Int.indexToColumn() = Column.values[this];

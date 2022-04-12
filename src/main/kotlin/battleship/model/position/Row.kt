@@ -1,37 +1,32 @@
 package battleship.model.position
 
-// Max number of rows.
-const val ROW_DIM = 10
+const val ROW_DIM = 10;
+const val ROW_FIRST_NUMBER = 1;
 
 /**
- * Class that represent a column in the BattleShip game.
- * @param number identifier of the row.
- * @param ordinal position of a [number] in all available columns.
+ * All Rows that make up the game.
+ * @property number Digit associated with the position, starting from ROW_FIRST_NUMBER
+ * @property ordinal Row's index in the board
  */
-class Row(val number: Int, val ordinal: Int) {
+class Row private constructor(idx : Int)
+{
+    val number = ROW_FIRST_NUMBER + idx;
+    val ordinal = idx;
     companion object {
-        val values = List(ROW_DIM) { Row(it + 1, it) }
+        val values = List(ROW_DIM){ Row(it)}
     }
 }
 
 /**
- * Returns the first element matching the given Integer with [Row.number], or null if element was not found.
- * @receiver Integer to Convert to Row.
- * @return Row or null
+ * @brief return a object according to its digit position, null if it does not exist
  */
-fun Int.toRowOrNull(): Row? = Row.values.firstOrNull { it.number == this }
-
+fun Int.toRowOrNull() =  Row.values.elementAtOrNull(this - ROW_FIRST_NUMBER);
 /**
- * Function that converts an ordinal to Row or null if not possible.
- * @receiver Integer.
- * @return Row or null.
+ * @brief return a object according to its index, null if it does not exit
  */
-fun Int.indexToRowOrNull(): Row? = Row.values.firstOrNull { it.ordinal == this }
-
+fun Int.indexToRowOrNull() = Row.values.elementAtOrNull(this);
 /**
- * Function that converts an ordinal to row.
- * Throws IndexOutOfBoundsException if not possible.
- * @receiver Integer.
- * @return row or throws an exception.
+ * @brief return a row object according to its index
+ * @throws IndexOutOfBoundsException
  */
-fun Int.indexToRow() = indexToRowOrNull() ?: throw IndexOutOfBoundsException()
+fun Int.indexToRow() = Row.values[this];

@@ -1,4 +1,4 @@
-package battleship.model
+package domain.model
 
 /**
  * All ship types allowed in the game.
@@ -6,49 +6,46 @@ package battleship.model
  * @property squares Number of squares occupied vertically or horizontally.
  * @property fleetQuantity Number of ships of this type in the starting fleet.
  */
-class ShipType private constructor(val name: String, val squares: Int, val fleetQuantity: Int) {
+class ShipType private constructor(val name: String, val squares : Int, val fleetQuantity : Int) {
     companion object {
         val values = listOf(
-            ShipType("Carrier", 5, 1), ShipType("Battleship", 4, 2),
-            ShipType("Cruiser", 3, 3), ShipType("Submarine", 2, 4)
+                ShipType("Carrier",5,1),
+                ShipType("Battleship",4,2),
+                ShipType("Cruiser",3,3),
+                ShipType("Submarine",2,4)
         )
     }
+}
 
-    override fun toString(): String {
-        return when (name) {
-            "Carrier" -> "A"
-            "Cruiser" -> "C"
-            "Battleship" -> "B"
-            "Submarine" -> "S"
-            else -> name
-        }
+//TODO: averiguar se podemso reduzir linhas no toShipTypeOrNull() e toShipType()
+/**
+ * @brief   Returns a Shiptype according to the string, if string is an integer, return a ship by number of squares
+ *          else if it is a string, return the only shiptype that starts with the string as prefix, else return null
+ */
+fun String.toShipTypeOrNull() : ShipType?
+{
+    val num = this.toIntOrNull();
+    if(num == null)
+    {
+        val possibilities = ShipType.values.filter { it.name.startsWith(this) }
+        if(possibilities.size > 1)
+            throw NoSuchElementException();
+        return possibilities.first();
+    }
+    else
+    {
+        return ShipType.values.firstOrNull{ it.squares == num }
     }
 }
 
 /**
- * Function that converts a string into a ShipType if the given string has a prefix of the ship or
- * number of squares matches any ShipType.
- * @receiver prefix or number of squares of a Ship.
- * @return ShipType of null.
+ * @brief   Returns a Shiptype according to the string, if string is an integer, return a ship by number of squares
+ *          else if it is a string, return the only shiptype that starts with the string as prefix
+ * @throws  NoSuchElementException
  */
-fun String.toShipTypeOrNull(): ShipType? {
-    val int = this.toIntOrNull()
-    if (int == null) {
-        val first = ShipType.values.firstOrNull { this in it.name } ?: return null
-        val last = ShipType.values.lastOrNull { this in it.name }
-        return if (last !== first) null else first
-    }
-    val first = ShipType.values.firstOrNull { int == it.squares } ?: return null
-    val last = ShipType.values.lastOrNull { int == it.squares }
-    return if (last !== first) null else first
+fun String.toShipType() : ShipType
+{
+    val result = this.toShipTypeOrNull()
+    checkNotNull(result)
+    return result
 }
-
-/**
- * Function that converts a string into a ShipType if the given string has a prefix of the ship or
- * number of squares matches any ShipType.
- * Throws NoSuchElementException if not possible.
- * @receiver prefix or number of squares of a Ship.
- * @return ShipType.
- * @throws NoSuchElementException thrown if ship does not exist according to strng
- */
-fun String.toShipType(): ShipType = toShipTypeOrNull() ?: throw NoSuchElementException()
