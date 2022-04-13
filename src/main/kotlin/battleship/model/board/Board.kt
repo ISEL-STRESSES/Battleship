@@ -9,8 +9,9 @@ import org.graalvm.compiler.lir.aarch64.AArch64Move
 const val BOARD_DIM = COLUMN_DIM * ROW_DIM
 
 data class Board(
-    val moves: List<Move> = emptyList(),
-    val turn: Player = Player.CROSS,
+    val cells : List<Cell>, // = List(BOARD_DIM){Cell(Position(it))},
+    val moves: List<AArch64Move.Move> = emptyList(),
+    val turn: Player = Player.A,
     val winner: Player? = null
 
 )

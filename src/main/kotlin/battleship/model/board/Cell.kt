@@ -13,6 +13,8 @@ open class Cell(val pos : Position) {
 
 }
 
+class ShipCell(pos: Position, val ship : Ship) : Cell(pos)
+
 enum class CellContent {
     WATER, SHIP, HIT, SUNK;
 

@@ -25,7 +25,6 @@ class Position private constructor(val column: Column, val row: Row) {
  */
 fun String.toPositionOrNull(): Position? {
     if (this.isBlank()) return null
-
     val left = this[0]
     if (!left.isLetter()) return null
     val right = this.drop(1).toIntOrNull() ?: return null
