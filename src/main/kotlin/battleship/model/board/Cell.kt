@@ -3,6 +3,7 @@ package battleship.model.board
 import battleship.model.Position.Position
 import battleship.model.Position.indexToColumn
 import battleship.model.Position.indexToRow
+import battleship.model.Ship.Ship
 import battleship.model.Ship.ShipType
 
 /**

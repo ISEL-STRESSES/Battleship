@@ -11,7 +11,5 @@ const val BOARD_DIM = COLUMN_DIM * ROW_DIM
 data class Board(
     val cells : List<Cell>, // = List(BOARD_DIM){Cell(Position(it))},
     val moves: List<AArch64Move.Move> = emptyList(),
-    val turn: Player = Player.A,
-    val winner: Player? = null
 
 )
