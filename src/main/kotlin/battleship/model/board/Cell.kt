@@ -28,8 +28,7 @@ enum class CellContent {
     }
 }
 
-class ShipCell(val pos: Position, val ship: ShipType) : Cell()
-
+/*
 enum class Direction(val dir: Char) {
     HORIZONTAL('H'), VERTICAL('V');
 
@@ -37,5 +36,4 @@ enum class Direction(val dir: Char) {
         return this.dir.toString()
     }
 }
-
-class Ship(val pos: Position, val type: ShipType, val dir: Direction) : ShipCell(pos, type)
+ */
