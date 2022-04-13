@@ -1,10 +1,5 @@
 package battleship.model.Position
 
-import COLUMN_DIM
-import Column
-import indexToColumn
-import toColumnOrNull
-
 /**
  * All positions that make up the game
  * @property column describes position's column

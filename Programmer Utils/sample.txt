@@ -1,0 +1,46 @@
+|
+
+ #####
+        ###
+ #    #
+ #    #
+ #
+      #####
+|
+pcarrier C1 h
+psubmarine B2 v
+pcarrier C1 h
+psubmarine B2 v
+pcarrier C1 h
+psubmarine B2 v
+,
+sb3
+sb5
+s13
+sa3
+|
+pcarrier C1 h
+psubmarine B2 v
+pcarrier C1 h
+psubmarine B2 v
+pcarrier C1 h
+psubmarine B2 v
+,
+sb3
+sb5
+s13
+sa3
+|
+Turn: A
+
+
+
+
+FILE = readFile(file....) : Game
+val game = Board()
+while (str.also {str = it} != null)
+if(str.first()
+
+gam
+
+return game

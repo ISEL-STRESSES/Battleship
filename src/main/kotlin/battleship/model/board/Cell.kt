@@ -1,25 +1,28 @@
 package battleship.model.board
 
 import battleship.model.Position.Position
+import battleship.model.Position.indexToColumn
 import battleship.model.Position.indexToRow
 import battleship.model.Ship.ShipType
-import indexToColumn
 
-open class Cell {
-    open val pos: Position = Position((-1).indexToColumn(), (-1).indexToRow()) // in this case class showed be open // throw Illegal POS
-    open val content: CellContent = CellContent.WATER
+/**
+ * Represents an empty square
+ * @property pos cell's position in the board
+ */
+open class Cell(val pos : Position) {
 
-    open fun toChar(): Char = content.toChar()
 }
 
-enum class CellContent(private val id: Char) {
-    WATER(' '),
-    SHIP('#'),
-    HIT('*'),
-    SUNK('X');
+enum class CellContent {
+    WATER, SHIP, HIT, SUNK;
 
-     fun toChar(): Char {
-        return this.id
+    fun toChar(): Char {
+        return when(this) {
+            WATER -> ' '
+            SHIP -> '#'
+            HIT -> '*'
+            SUNK -> 'X'
+        }
     }
 }
 
