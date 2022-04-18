@@ -1,18 +1,18 @@
 package battleship.model.board
 
-import battleship.model.Position.Position
-import battleship.model.Ship.ShipType
+import battleship.model.position.Position
+import battleship.model.ship.ShipType
 
 /**
  * Represents an empty square
  * @property pos cell's position in the board
  */
-data class Cell(val pos: Position)
+data class Cell(val pos: Position, val content: CellContent)
 
 data class ShipCell(val cell: Cell, val shipType: ShipType)
 
 enum class CellContent {
-    WATER, SHIP, HIT, SUNK, MISS;
+    WATER, SHIP, HIT, SUNK, MISS, BORDER;
 
     fun toChar(): Char {
         return when (this) {
@@ -21,6 +21,7 @@ enum class CellContent {
             HIT -> '*'
             SUNK -> 'X'
             MISS -> 'O'
+            BORDER -> 'B' // hide this shit
         }
     }
 }

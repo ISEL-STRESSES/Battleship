@@ -1,4 +1,4 @@
-package battleship.model.Position
+package battleship.model.position
 
 const val ROW_DIM = 10
 const val ROW_FIRST_NUMBER = 1

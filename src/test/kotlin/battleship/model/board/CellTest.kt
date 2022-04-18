@@ -6,8 +6,10 @@ class CellTest {
 
     @Test
     fun `emptyCell`() {
-        val sut = Cell()
+        // val sut = Cell()
     }
 
     @Test
-    fun `Stardard Cell`
+    fun `Stardard Cell`() {
+    }
+}

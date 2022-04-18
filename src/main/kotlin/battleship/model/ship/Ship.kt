@@ -1,4 +1,4 @@
-package battleship.model.Ship
+package battleship.model.ship
 
 import battleship.model.board.Cell
 

@@ -1,4 +1,4 @@
-package battleship.model.Position
+package battleship.model.position
 
 /**
  * All positions that make up the game

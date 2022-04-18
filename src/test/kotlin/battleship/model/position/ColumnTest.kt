@@ -1,4 +1,4 @@
-package battleship.model.Position
+package battleship.model.position
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

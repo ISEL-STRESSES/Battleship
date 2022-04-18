@@ -1,10 +1,11 @@
 package battleship.ui
 
-import Column
-import battleship.model.*
-import battleship.model.Game.Player
-import battleship.model.Position.Position
-import model.*
+import battleship.model.board.BOARD_DIM
+import battleship.model.board.Board
+import battleship.model.game.Player
+import battleship.model.position.Column
+import battleship.model.position.Position
+import battleship.model.ship.ShipType
 
 const val BOARD_CHAR_DIM = BOARD_DIM * 2 + 1
 const val LETTERS_IDENT = 5
@@ -50,5 +51,5 @@ fun printBoard(board: Board) {
 
 fun main() {
     println("                                                                                           ".length)
-    printBoard(Board())
+    // printBoard(Board())
 }

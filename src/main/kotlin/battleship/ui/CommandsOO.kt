@@ -1,10 +1,10 @@
 package battleship.ui
 
-import battleship.model.Game.Game
-import battleship.model.Game.put
-import battleship.model.Position.toPosition
-import battleship.model.Ship.toShipTypeOrNull
 import battleship.model.board.Direction.Companion.toDirection
+import battleship.model.game.Game
+import battleship.model.game.put
+import battleship.model.position.toPosition
+import battleship.model.ship.toShipTypeOrNull
 import battleship.storage.Storage
 import kotlin.system.exitProcess
 

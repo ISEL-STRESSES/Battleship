@@ -1,4 +1,4 @@
-package battleship.model.Ship
+package battleship.model.ship
 
 /**
  * All ship types allowed in the game.
