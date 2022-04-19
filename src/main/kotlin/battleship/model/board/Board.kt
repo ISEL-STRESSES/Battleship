@@ -19,18 +19,14 @@ fun Board.addShip(shipType: ShipType, pos: Position): Board {
     else this // meter alguma flag para o user saber que o ship nao foi adicionado
 }
 
-fun ShipType.makeBox(pos: Position, dir: Direction): List<Cell> {
+fun ShipType.makeBox(pos: Position): List<Cell> {
     TODO("Not yet implemented")
 }
 
-fun Board.doesCollide(ship: ShipType, pos: Position, dir: Direction): Boolean {
+fun Board.doesCollide(ship: ShipType, pos: Position): Boolean {
     val shipLine = cells.any { it.pos == pos } // only checks the ship line
-    val box = ship.checkBox(pos, dir)
+    val box = ship.checkBox(pos)
     return shipLine || box
-}
-
-fun ShipType.checkBox(pos: Position, dir: Direction): Boolean {
-    TODO("Not yet implemented")
 }
 
  */

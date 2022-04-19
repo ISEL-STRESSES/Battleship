@@ -5,7 +5,7 @@ import battleship.model.board.*
 import battleship.model.board.position.*
 import battleship.model.ship.ShipType
 
-const val BOARD_CHAR_DIM = BOARD_DIM * 2 + 1
+const val BOARD_CHAR_DIM = COLUMN_DIM * 2 + 1
 const val LETTERS_IDENT = 5
 const val HORIZONTAL_IDENT = 3
 
@@ -75,7 +75,7 @@ fun Game.print() {
 val regLine = sep + " ".repeat(BOARD_CHAR_DIM) + sep
 
 
-fun Player?.toChar() = this?.symbol ?: ' '
+fun Player?.toChar() = this?.id ?: ' '
 
 // Não testada + se quisermos escrever uma mensagem sem defenir um barco n dá
 fun printLineOfBoard(id: String, fleetMsg: Boolean, ship: ShipType, amountOfShips: Int = 0) {
@@ -102,8 +102,4 @@ fun printBoard(board: Board) {
     println(horizontalBorders)
     board.winner?.apply { println("Player $symbol wins.") }
 }
-
-fun main() {
-    println("                                                                                           ".length)
-    // printBoard(Board())
-}
+*/

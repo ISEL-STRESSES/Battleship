@@ -10,12 +10,25 @@ class Position private constructor(val column: Column, val row: Row) {
 
     companion object {
         // private as to only get Positions from the .get() methods
-        private val values = List(COLUMN_DIM) { x ->
-            List(ROW_DIM) { y -> Position(x.indexToColumn(), y.indexToRow()) }
+        val values = List(COLUMN_DIM * ROW_DIM) {
+            Position((it / COLUMN_DIM).indexToColumn(), (it % ROW_DIM).indexToRow())
         }
 
         // get all possible positions
-        operator fun get(indexColumn: Int, indexRow: Int) = values[indexColumn][indexRow]
+        /**
+         * Getter function for getting a position.
+         * @param indexColumn ordinal of the column.
+         * @param indexRow ordinal of the row.
+         * @return Position.
+         */
+        operator fun get(indexColumn: Int, indexRow: Int) = values[indexColumn * COLUMN_DIM + indexRow]
+
+        /**
+         * Getter function for getting a position.
+         * @param column key for the column.
+         * @param row key for the row.
+         * @return Position.
+         */
         operator fun get(column: Column, row: Row) = get(column.ordinal, row.ordinal)
     }
 }
