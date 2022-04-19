@@ -1,8 +1,8 @@
 package battleship.storage
 
+import battleship.model.Game
+import battleship.model.Player
 import battleship.model.board.Board
-import battleship.model.game.Game
-import battleship.model.game.Player
 
 interface Storage {
     fun start(name: String, board: Board): Player

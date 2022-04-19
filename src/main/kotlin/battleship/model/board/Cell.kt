@@ -1,31 +1,27 @@
 package battleship.model.board
 
-import battleship.model.position.Position
-import battleship.model.ship.ShipType
+import battleship.model.board.position.Position
+
+enum class HitStatus {
+    LIGMA, HIT, SUNK
+}
 
 /**
  * Represents an empty square
  * @property pos cell's position in the board
  */
-data class Cell(val pos: Position, val content: CellContent)
+abstract class Cell(val pos: Position)
 
-data class ShipCell(val cell: Cell, val shipType: ShipType)
+class MissCell(pos: Position) : Cell(pos)
 
-enum class CellContent {
-    WATER, SHIP, HIT, SUNK, MISS, BORDER;
+/*
+class ShipCell(pos: Position, hitStatus: HitStatus) : Cell(pos)
 
-    fun toChar(): Char {
-        return when (this) {
-            WATER -> ' '
-            SHIP -> '#'
-            HIT -> '*'
-            SUNK -> 'X'
-            MISS -> 'O'
-            BORDER -> 'B' // hide this shit
-        }
-    }
-}
+enum class HitStatus{meninas}
 
+ */
+
+/*
 enum class Direction(val dir: Char) {
     HORIZONTAL('H'), VERTICAL('V');
 
@@ -37,3 +33,7 @@ enum class Direction(val dir: Char) {
         return this.dir.toString()
     }
 }
+ */
+
+
+

@@ -1,10 +1,8 @@
 package battleship.ui
 
-import battleship.model.board.BOARD_DIM
-import battleship.model.board.Board
-import battleship.model.game.Player
-import battleship.model.position.Column
-import battleship.model.position.Position
+import battleship.model.*
+import battleship.model.board.*
+import battleship.model.board.position.*
 import battleship.model.ship.ShipType
 
 const val BOARD_CHAR_DIM = BOARD_DIM * 2 + 1
@@ -17,7 +15,6 @@ val sep = '|'
 
 val regLine = sep + " ".repeat(BOARD_CHAR_DIM) + sep
 
-val horizontalBorders = repeatChar(HORIZONTAL_IDENT) + "+" + repeatChar(BOARD_CHAR_DIM, '-') + "+"
 
 fun Player?.toChar() = this?.symbol ?: ' '
 
@@ -33,8 +30,6 @@ fun printLineOfBoard(id: String, fleetMsg: Boolean, ship: ShipType, amountOfShip
 }
 
 fun printBoard(board: Board) {
-    print(repeatChar(LETTERS_IDENT))
-    Column.values.forEach { print("${it.letter} ") }
     println()
     println(horizontalBorders)
 

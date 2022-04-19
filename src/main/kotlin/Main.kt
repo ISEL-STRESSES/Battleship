@@ -1,7 +1,8 @@
-import battleship.model.game.Game
-import battleship.storage.MongoStorage
+import battleship.model.Game
+import battleship.model.createGame
+import battleship.ui.getCommandsOO
 import battleship.ui.readCommand
-import mongoDB.MongoDriver
+import kotlin.system.exitProcess
 
 fun main() {
     MongoDriver().use { drv ->

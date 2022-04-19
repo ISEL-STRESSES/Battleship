@@ -1,5 +1,6 @@
 package battleship.model.position
 
+import battleship.model.board.position.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
