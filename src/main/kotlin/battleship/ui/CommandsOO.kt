@@ -29,7 +29,7 @@ abstract class CommandOO {
 /**
  * Creates the associative map of game commands that associates the name of the command to its representation.
  */
-fun getCommandsOO(storage: Storage) = mapOf(
+fun getCommandsOO() = mapOf(
 
     /*
 "START" to object : CommandOO() {
@@ -55,7 +55,7 @@ println("REFRESH")
 }
 },
 
-*/
+
     "PUT" to object : CommandOO() {
         override fun action(game: Game, args: List<String>): Game {
             require(args.isNotEmpty()) { " Use: $argsSyntax" }
@@ -79,16 +79,15 @@ println("REFRESH")
             println("REMOVE LOL")
         }
     },
+
+     */
     "GRID" to object : CommandOO() {
         override fun action(game: Game, args: List<String>) = game
         override fun show(game: Game) {
-            println("Grid")
+            game.print()
         }
     },
     "EXIT" to object : CommandOO() {
         override fun action(game: Game, args: List<String>): Game? = null
-        override fun show(game: Game) {
-            exitProcess(100)
-        }
     },
 )

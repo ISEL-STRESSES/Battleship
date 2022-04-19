@@ -5,7 +5,6 @@ import battleship.model.board.position.COLUMN_DIM
 import battleship.model.board.position.Position
 import battleship.model.board.position.ROW_DIM
 import battleship.model.ship.Ship
-import battleship.model.ship.ShipType
 
 const val BOARD_DIM = COLUMN_DIM * ROW_DIM
 
@@ -24,10 +23,6 @@ fun ShipType.makeBox(pos: Position, dir: Direction): List<Cell> {
     TODO("Not yet implemented")
 }
 
-fun Ship.toCells(): List<Cell> {
-    TODO()
-}
-
 fun Board.doesCollide(ship: ShipType, pos: Position, dir: Direction): Boolean {
     val shipLine = cells.any { it.pos == pos } // only checks the ship line
     val box = ship.checkBox(pos, dir)
@@ -37,3 +32,5 @@ fun Board.doesCollide(ship: ShipType, pos: Position, dir: Direction): Boolean {
 fun ShipType.checkBox(pos: Position, dir: Direction): Boolean {
     TODO("Not yet implemented")
 }
+
+ */

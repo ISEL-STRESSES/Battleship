@@ -17,6 +17,7 @@ data class Game(
     val name: String,
     val boardA: Board,
     val boardB: Board,
+    val state: GameState = GameState.SETUP,
     val player: Player = Player.A,
     val turn: Player = Player.A
 )

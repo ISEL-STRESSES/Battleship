@@ -1,4 +1,4 @@
-package battleship.model.board
+package battleship.model
 
 import battleship.model.board.position.Position
 

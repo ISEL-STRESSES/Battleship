@@ -9,10 +9,69 @@ const val BOARD_CHAR_DIM = BOARD_DIM * 2 + 1
 const val LETTERS_IDENT = 5
 const val HORIZONTAL_IDENT = 3
 
-fun repeatChar(size: Int, char: Char = ' ') = "$char".repeat(size)
+const val horSep = '-'
+const val verSep = '|'
+const val cross = '+'
 
-val sep = '|'
+fun Char.repeat(size: Int) = "$this".repeat(size)
 
+val horizontalBorders = ' '.repeat(HORIZONTAL_IDENT) + "+" + '-'.repeat(BOARD_CHAR_DIM) + "+"
+
+fun Cell.toChar() : Char {
+    if(this is MissCell)
+        return '*'
+
+    return ' '
+}
+
+fun printShipData(idx : Int = -1, board : Board) {
+    if(idx !in 0 until ShipType.values.size)
+        return
+
+    val type = ShipType.values[idx]
+    val placedCount = board.ships.count {it.type === type }
+
+    print(" $placedCount x " + "#".repeat(type.squares) + " of ${type.fleetQuantity} (${type.name})")
+}
+
+/**
+ * Prints a single row of the board to the standard output
+ * @param rowIdx index of the row to print
+ */
+fun Board.printRow(rowIdx : Int)
+{
+    print(' '.repeat(HORIZONTAL_IDENT))
+    print(verSep)
+    repeat(COLUMN_DIM) {
+        val cellChar = " "
+        print(" $cellChar")
+    }
+    print(" ") // print final char
+    print(verSep)
+}
+
+fun printColumnsIDX(){
+    print(' '.repeat(LETTERS_IDENT))
+    Column.values.forEach {
+        print(it.letter.toString().padEnd(2))
+    }
+    println()
+}
+
+
+fun Game.print() {
+    printColumnsIDX()
+    println(horizontalBorders) //Print top separator
+    repeat(ROW_DIM) {
+        boardA.printRow(it)
+        printShipData(it, boardA)
+        println()
+    }
+    println(horizontalBorders) //Print bottom separator
+
+}
+
+/*
 val regLine = sep + " ".repeat(BOARD_CHAR_DIM) + sep
 
 
