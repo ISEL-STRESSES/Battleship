@@ -6,7 +6,8 @@ import battleship.model.board.position.Position
 import battleship.model.board.position.ROW_DIM
 import battleship.model.ship.Ship
 
-const val BOARD_DIM = COLUMN_DIM * ROW_DIM
+typealias Fleet = List<Ship>
+typealias Grid = List<MissCell>
 
 data class Board(val fleet: Fleet = emptyList(), val grid: Grid = emptyList())
 
