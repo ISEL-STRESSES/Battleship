@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 class CellTest {
 
     @Test
-    fun `emptyCell`() {
+    fun `empty Cell`() {
         // val sut = Cell()
     }
 

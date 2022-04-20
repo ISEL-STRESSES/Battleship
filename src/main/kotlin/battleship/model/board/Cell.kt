@@ -34,6 +34,3 @@ enum class Direction(val dir: Char) {
     }
 }
  */
-
-
-

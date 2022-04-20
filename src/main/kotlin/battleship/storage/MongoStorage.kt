@@ -1,11 +1,11 @@
-//package battleship.storage
+// package battleship.storage
 //
-//import battleship.model.Player
-//import battleship.model.board.Board
-//import battleship.model.board.position.toPositionOrNull
-//import mongoDB.*
+// import battleship.model.Player
+// import battleship.model.board.Board
+// import battleship.model.board.position.toPositionOrNull
+// import mongoDB.*
 //
-//class MongoStorage(driver: MongoDriver) : Storage {
+// class MongoStorage(driver: MongoDriver) : Storage {
 //
 //    data class Doc(val _id: String, val movesA: List<String>, val movesB: List<String>)
 //
@@ -44,4 +44,4 @@
 //        val pos = doc.movesA.last().toPositionOrNull() ?: error("Invalid Position in Load")
 //        return game.copy(boardA = game.boardA.addMove(pos))
 //    }
-//}
+// }

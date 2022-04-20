@@ -1,3 +1,3 @@
 package battleship.model.ship
 
-data class Ship(val type : ShipType)
+data class Ship(val type: ShipType)

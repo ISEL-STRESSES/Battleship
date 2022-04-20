@@ -6,7 +6,7 @@ import kotlin.system.exitProcess
 
 fun main() {
     try {
-        //MongoDriver().use { drv ->
+        // MongoDriver("PVV").use { drv ->
         var game: Game = createGame()
         val cmds = getCommandsOO()
         while (true) {
@@ -25,7 +25,6 @@ fun main() {
         println("An exception has ocurred")
         println(ex.stackTrace)
         println(ex.message)
-
     } finally {
         println("1st phase done!")
     }

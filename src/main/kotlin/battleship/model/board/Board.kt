@@ -8,7 +8,7 @@ import battleship.model.ship.Ship
 
 const val BOARD_DIM = COLUMN_DIM * ROW_DIM
 
-data class Board(val ships : List<Ship> = emptyList(), val missCells: List<MissCell> = listOf(MissCell(Position[2,3])))
+data class Board(val fleet: Fleet = emptyList(), val grid: Grid = emptyList())
 
 /*
 fun Board.addShip(shipType: ShipType, pos: Position): Board {

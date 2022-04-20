@@ -31,60 +31,48 @@ abstract class CommandOO {
  */
 fun getCommandsOO() = mapOf(
 
-    /*
-"START" to object : CommandOO() {
-override fun action(game: Game, args: List<String>): Game {
-require(args.isNotEmpty()) { "Missing game name" }
-return game
-}
+//    "PUT" to object : CommandOO() {
+//        override fun action(game: Game, args: List<String>): Game {
+//
+//            require(args > 0) { "Invalid arguments\nUse: $argsSyntax "}
+//
+//            if(args.size == 1) {
+//                if(args[0] == "all"){
+//                    //place all randomly
+//                } else {
+//                    // place specifying by carrier number
+//                    val num = args[0].toInt()
+//                    val type = ShipType.values[num]
+//
+//                }
+//
+//            } else if() {
+//
+//            }
+//
+//            return game.copy()
+//        }
+//
+//        override fun show(game: Game) {
+//            game.print()
+//        }
+//
+//        // TODO: averiguar se podemos por os argsSyntax do put melhor
+//        override val argsSyntax: String
+//            get() = "PUT (<shipType> [<position> <align>] | all)"
+//    },
 
-override val argsSyntax = "<gameName>"
-},
-"PUT" to object : CommandOO() {
-override fun action(game: Game, args: List<String>) = game
-override fun show(game: Game) {
-println("PUT")
-}
-
-override val argsSyntax = "<ShipType> <position> <h/v>"
-},
-"REFRESH" to object : CommandOO() {
-override fun action(game: Game, args: List<String>) = game
-override fun show(game: Game) {
-println("REFRESH")
-}
-},
-
-
-    "PUT" to object : CommandOO() {
-        override fun action(game: Game, args: List<String>): Game {
-            require(args.isNotEmpty()) { " Use: $argsSyntax" }
-            val shipType = args[0].toShipTypeOrNull() ?: throw error("Invalid Ship")
-            val pos = args[1].toPosition()
-            val dir = toDirection(args.last().first())
-            return game.put(shipType, pos, dir)
-        }
-
-        override fun show(game: Game) {
-            println(" puts in the houses ")
-        }
-
-        // TODO: averiguar se podemos por os argsSyntax do put melhor
-        override val argsSyntax: String
-            get() = "PUT <shipType> <position> <align> ou <shipType> ou all"
-    },
-    "REMOVE" to object : CommandOO() {
-        override fun action(game: Game, args: List<String>) = game
-        override fun show(game: Game) {
-            println("REMOVE LOL")
-        }
-    },
-
-     */
     "GRID" to object : CommandOO() {
         override fun action(game: Game, args: List<String>) = game
         override fun show(game: Game) {
             game.print()
+        }
+    },
+    "HELP" to object : CommandOO() {
+        override fun action(game: Game, args: List<String>) = game
+        override fun show(game: Game) {
+            // TODO: desculpa-me jesus pelo hardcodedness
+            printHelp()
         }
     },
     "EXIT" to object : CommandOO() {
