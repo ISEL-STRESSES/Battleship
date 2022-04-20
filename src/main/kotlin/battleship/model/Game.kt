@@ -25,6 +25,45 @@ data class Game(
     val turn: Player = Player.A
 )
 
+fun Board.getPossiblePositions(size : Int) : List<Position>
+{
+    val possiblePositions = mutableListOf<Position>()
+
+    for()
+
+    return possiblePositions;
+}
+
+fun Game.putShip(type : ShipType, pos : Position) : Game {
+    check(this.state == SETUP) { "Cant change fleet after game started" }
+
+    if(boardA.fleet.count{ type == it.type } >= type.fleetQuantity)
+        throw java.lang.Exception("No more ${type.name} to put")
+
+    //calculate possible positions
+    val possiblePositions = boardA.getPossiblePositions(type.squares);
+
+    //create ship
+    val newShipCells = List<Cell>(type.squares) { ShipCell(Position.get(pos.column.ordinal + it, pos.row.ordinal)) }
+    val newShip = Ship(type)
+
+
+
+    return this.copy(boardA = boardA.copy(fleet = boardA.fleet + newShip))
+}
+
+
+fun Game.putAllShips() {
+    //TODO
+//    while(true){
+//        val pos = Position.values.random()
+//        val currShip = ShipType.values.forEach {
+//            super.hiputS
+//        }
+//
+//        this.putShip(currShip, pos)
+//    }
+}
 fun createGame(): Game {
     return Game("", Board(), Board())
 }

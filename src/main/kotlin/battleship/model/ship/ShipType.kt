@@ -28,7 +28,7 @@ fun String.toShipTypeOrNull(): ShipType? {
         val possibilities = ShipType.values.filter { it.name.startsWith(this, true) }
         if (possibilities.size > 1)
             throw NoSuchElementException()
-        return possibilities.first()
+        return possibilities.firstOrNull()
     } else {
         return ShipType.values.firstOrNull { it.squares == num }
     }
@@ -40,7 +40,7 @@ fun String.toShipTypeOrNull(): ShipType? {
  * @throws NoSuchElementException
  */
 fun String.toShipType(): ShipType {
-    val result = this.toShipTypeOrNull()
-    checkNotNull(result)
+    val result = toShipTypeOrNull()
+    checkNotNull(result) { "Invalid ship type $this" }
     return result
 }

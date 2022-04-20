@@ -14,9 +14,10 @@ abstract class Cell(val pos: Position)
 
 class MissCell(pos: Position) : Cell(pos)
 
-/*
-class ShipCell(pos: Position, hitStatus: HitStatus) : Cell(pos)
 
+class ShipCell(pos: Position) : Cell(pos)
+
+/*
 enum class HitStatus{meninas}
 
  */

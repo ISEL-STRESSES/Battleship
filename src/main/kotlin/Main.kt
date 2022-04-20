@@ -18,8 +18,11 @@ fun main() {
                 try {
                     game = cmd.action(game, args) ?: exitProcess(0)
                     cmd.show(game)
+                } catch (ex: IllegalStateException) {
+                    println(ex.message)
                 } catch (ex: IllegalArgumentException) {
-                    println("")
+                    println(ex.message)
+                    println("Use: ${cmd.argsSyntax}")
                 }
             }
         }
