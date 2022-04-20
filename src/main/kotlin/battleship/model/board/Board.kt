@@ -1,9 +1,6 @@
 package battleship.model.board
 
 import battleship.model.MissCell
-import battleship.model.board.position.COLUMN_DIM
-import battleship.model.board.position.Position
-import battleship.model.board.position.ROW_DIM
 import battleship.model.ship.Ship
 
 typealias Fleet = List<Ship>
