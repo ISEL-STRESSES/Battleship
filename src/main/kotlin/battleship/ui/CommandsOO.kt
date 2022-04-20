@@ -92,7 +92,38 @@ fun getCommandsOO() = mapOf(
             printHelp()
         }
     },
+    "SHOT" to object : CommandOO() {
+        override fun action(game: Game, args: List<String>): Game? {
+            TODO("Not yet implemented")
+        }
+
+        override fun show(game: Game) {
+            TODO("Not yet implemented")
+        }
+
+        override val argsSyntax: String
+            get() = "<position>"
+    },
+    "REMOVE" to object : CommandOO() {
+        override fun action(game: Game, args: List<String>): Game? {
+            TODO("Not yet implemented")
+        }
+
+        override fun show(game: Game) {
+            TODO("Not yet implemented")
+        }
+    },
+    "REFRESH" to object : CommandOO() {
+        override fun action(game: Game, args: List<String>): Game? {
+            TODO("Not yet implemented")
+        }
+
+        override fun show(game: Game) {
+            TODO("Not yet implemented")
+        }
+    },
     "EXIT" to object : CommandOO() {
         override fun action(game: Game, args: List<String>): Game? = null
     },
+
 )

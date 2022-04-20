@@ -106,19 +106,9 @@ fun printBoard(board: Board) {
 }
 */
 
-private fun printCommand(cmd: String, args: String = "") {
-    println("\t$cmd \t\t $args")
-}
-
 fun printHelp() {
     println("Available Commands:")
-    printCommand("grid")
-    printCommand("exit")
-    println("\nSetup Phase:")
-    printCommand("put", "(<shipType> [<position> <align>] | all)")
-    printCommand("remove", "<position>")
-    printCommand("start", "<gameId>")
-    println("\nBattle Phase:")
-    printCommand("shot", "<position>")
-    printCommand("refresh")
+    getCommandsOO().forEach {
+        println("\t${it.key}\t\t${it.value.argsSyntax}")
+    }
 }
