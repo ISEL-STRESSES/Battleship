@@ -26,10 +26,9 @@ fun main() {
     }
     // TODO: Specify for mongoDB specific exceptions
     catch (ex: Exception) {
-        println("An exception has ocurred")
-        println(ex.stackTrace)
-        println(ex.message)
+        println("An exception has occurred")
+        println("Exception message: ${ex.message}")
     } finally {
-        println("1st phase done!")
+        println("OS 4 F's do grupo 1:\n Força\n Foco\n Fé\n FODA-SE")
     }
 }

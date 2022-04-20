@@ -25,7 +25,7 @@ class ShipType private constructor(val name: String, val squares: Int, val fleet
 fun String.toShipTypeOrNull(): ShipType? {
     val num = this.toIntOrNull()
     if (num == null) {
-        val possibilities = ShipType.values.filter { it.name.startsWith(this) }
+        val possibilities = ShipType.values.filter { it.name.startsWith(this, true) }
         if (possibilities.size > 1)
             throw NoSuchElementException()
         return possibilities.first()

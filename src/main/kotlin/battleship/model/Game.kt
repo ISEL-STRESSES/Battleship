@@ -2,6 +2,9 @@ package battleship.model
 
 import battleship.model.GameState.*
 import battleship.model.board.Board
+import battleship.model.ship.Ship
+import battleship.model.ship.ShipType
+import battleship.model.board.position.Position
 
 /**
  * Keep the current state of the game.

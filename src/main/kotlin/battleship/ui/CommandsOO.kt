@@ -1,6 +1,11 @@
 package battleship.ui
 
 import battleship.model.Game
+import battleship.model.board.position.toPosition
+import battleship.model.board.position.toPositionOrNull
+import battleship.model.putShip
+import battleship.model.ship.toShipType
+import battleship.model.ship.toShipTypeOrNull
 
 /**
  * Represents a command.
@@ -31,36 +36,48 @@ abstract class CommandOO {
  */
 fun getCommandsOO() = mapOf(
 
-//    "PUT" to object : CommandOO() {
-//        override fun action(game: Game, args: List<String>): Game {
-//
-//            require(args > 0) { "Invalid arguments\nUse: $argsSyntax "}
-//
-//            if(args.size == 1) {
-//                if(args[0] == "all"){
-//                    //place all randomly
-//                } else {
-//                    // place specifying by carrier number
-//                    val num = args[0].toInt()
-//                    val type = ShipType.values[num]
-//
-//                }
-//
-//            } else if() {
-//
-//            }
-//
-//            return game.copy()
-//        }
-//
-//        override fun show(game: Game) {
-//            game.print()
-//        }
-//
-//        // TODO: averiguar se podemos por os argsSyntax do put melhor
-//        override val argsSyntax: String
-//            get() = "PUT (<shipType> [<position> <align>] | all)"
-//    },
+    "PUT" to object : CommandOO() {
+        override fun action(game: Game, args: List<String>): Game {
+            require(args.size == 1 || args.size == 3) { "Invalid Arguments\n Use: $argsSyntax" }
+
+            /*
+            if(args.size == 1 && args[0] == "all") {
+                //game.putAllShips()
+            } else {
+                val type = args[0].toShipTypeOrNull() ?: error( "Invalid shiptype ${args[0]}")
+
+                if(args.size == 3) {
+                    val position = args[1].toPositionOrNull() ?: error( "Invalid position ${args[1]}");
+                    val result = game.putShip(type, position)
+                    return game
+                } else {
+                    val result = game.putShip(type, )
+                    return game
+
+                }
+
+            }
+             */
+
+
+            val type = args[0].toShipTypeOrNull() ?: error("")
+            val position = args[1].toPosition()
+
+            // ?: error( "Invalid shiptype ${args[0]}")
+            val result = game.putShip(type, position/*head*/)
+
+            //return result
+            return result
+        }
+
+        override fun show(game: Game) {
+            game.print()
+        }
+
+        // TODO: averiguar se podemos por os argsSyntax do put melhor
+        override val argsSyntax: String
+            get() = "(<shipType> [<position> <align>] | all)"
+    },
 
     "GRID" to object : CommandOO() {
         override fun action(game: Game, args: List<String>) = game
@@ -71,7 +88,7 @@ fun getCommandsOO() = mapOf(
     "HELP" to object : CommandOO() {
         override fun action(game: Game, args: List<String>) = game
         override fun show(game: Game) {
-            // TODO: desculpa-me jesus pelo hardcodedness
+            //NOT TODO CALOR DID THE HARDCORE
             printHelp()
         }
     },
