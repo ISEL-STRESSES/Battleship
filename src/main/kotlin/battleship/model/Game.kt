@@ -25,7 +25,7 @@ data class Game(
     val turn: Player = Player.A
 )
 
-fun Board.getPossiblePositions(size : Int) : List<Position>
+fun Board.getPossiblePositions(squares: Int) : List<Position>//TODO List<Pair<Position, Direction>> cause no direction
 {
     val possiblePositions = mutableListOf<Position>()
 
