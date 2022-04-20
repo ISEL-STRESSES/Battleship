@@ -100,7 +100,8 @@ fun printBoard(board: Board) {
         }
         print("${board.get(pos).toChar()}")
     }
-    println(horizontalBorders)
+    println(horizontalBorders)help
+
     board.winner?.apply { println("Player $symbol wins.") }
 }
 */

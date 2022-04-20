@@ -15,8 +15,12 @@ fun main() {
             if (cmd == null) {
                 println("Invalid Command!")
             } else {
-                game = cmd.action(game, args) ?: exitProcess(0)
-                cmd.show(game)
+                try {
+                    game = cmd.action(game, args) ?: exitProcess(0)
+                    cmd.show(game)
+                } catch (ex: IllegalArgumentException) {
+                    println("")
+                }
             }
         }
     }

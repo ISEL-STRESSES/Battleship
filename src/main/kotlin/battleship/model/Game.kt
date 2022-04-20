@@ -26,6 +26,14 @@ fun createGame(): Game {
     return Game("", Board(), Board())
 }
 
+/*
+fun Game.placeShip(type: ShipType, position: Position): Game
+{
+
+}
+
+ */
+
 // fun Game.put(shipType: ShipType, pos: Position): Game {
 //    val newBoard = boardA.addShip(shipType, pos)
 //    val game = Game(name, newBoard, boardB, turn)
