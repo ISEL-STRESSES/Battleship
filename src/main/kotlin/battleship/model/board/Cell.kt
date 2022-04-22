@@ -16,7 +16,11 @@ abstract class Cell(val pos: Position)
 
 class MissCell(pos: Position) : Cell(pos)
 
-class ShipCell(pos: Position) : Cell(pos)
+open class ShipCell(pos: Position, val ship : Ship) : Cell(pos)
+
+open class ShipHit(pos : Position, ship : Ship): ShipCell(pos, ship);
+
+class ShipSunk(pos : Position, ship : Ship): ShipHit(pos, ship);
 
 /*
 enum class HitStatus{meninas}

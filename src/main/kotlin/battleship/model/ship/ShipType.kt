@@ -24,13 +24,14 @@ class ShipType private constructor(val name: String, val squares: Int, val fleet
  */
 fun String.toShipTypeOrNull(): ShipType? {
     val num = this.toIntOrNull()
-    if (num == null) {
-        val possibilities = ShipType.values.filter { it.name.startsWith(this, true) }
-        if (possibilities.size > 1)
-            throw NoSuchElementException()
-        return possibilities.firstOrNull()
+    return if (num == null) {
+        val head = ShipType.values.firstOrNull { it.name.startsWith(this, true) }
+        val tail = ShipType.values.lastOrNull { it.name.startsWith(this, true) }
+        if(tail === head) tail else null
     } else {
-        return ShipType.values.firstOrNull { it.squares == num }
+        val head = ShipType.values.firstOrNull { it.squares == num || it.name.startsWith(this, true) }
+        val tail = ShipType.values.lastOrNull { it.squares == num || it.name.startsWith(this, true) }
+        if (tail === head) tail else null
     }
 }
 
@@ -39,8 +40,4 @@ fun String.toShipTypeOrNull(): ShipType? {
  *          else if it is a string, return the only shiptype that starts with the string as prefix
  * @throws NoSuchElementException
  */
-fun String.toShipType(): ShipType {
-    val result = toShipTypeOrNull()
-    checkNotNull(result) { "Invalid ship type $this" }
-    return result
-}
+fun String.toShipType(): ShipType = toShipTypeOrNull() ?: throw NoSuchElementException()
