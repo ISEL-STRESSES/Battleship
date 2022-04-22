@@ -53,7 +53,6 @@ fun getCommandsOO() = mapOf(
             game.print()
         }
 
-        // TODO: averiguar se podemos por os argsSyntax do put melhor
         override val argsSyntax: String
             get() = "(<shipType> [<position> <align>] | all)"
     },

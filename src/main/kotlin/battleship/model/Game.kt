@@ -17,6 +17,14 @@ enum class GameState {
     SETUP, FIGHT, OVER
 }
 
+enum class PutError{ NONE, INVALID_POSITION, INVALID_ARGUMENTS}
+
+
+enum class PlayError{ NONE, INVALID_TURN, GAME_OVER }
+
+data class PlayResult(val game: Game, val error: PutError)
+
+
 data class Game(
     val name: String,
     val boardA: Board,
@@ -59,9 +67,3 @@ fun Game.placeShip(type: ShipType, position: Position): Game
 }
 
  */
-
-// fun Game.put(shipType: ShipType, pos: Position): Game {
-//    val newBoard = boardA.addShip(shipType, pos)
-//    val game = Game(name, newBoard, boardB, turn)
-//    return game
-// }
