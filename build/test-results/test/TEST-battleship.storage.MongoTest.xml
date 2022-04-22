@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="battleship.storage.MongoTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2022-04-22T17:05:58" hostname="navi" time="2.588">
+  <properties/>
+  <testcase name="test insert Document()" classname="battleship.storage.MongoTest" time="2.588"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
