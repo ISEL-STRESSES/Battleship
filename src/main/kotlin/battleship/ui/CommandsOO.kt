@@ -1,10 +1,9 @@
 package battleship.ui
 
 import battleship.model.Game
-import battleship.model.board.position.toPosition
-import battleship.model.board.position.toPositionOrNull
+import battleship.model.board.toDirectionOrNull
+import battleship.model.board.toPosition
 import battleship.model.putShip
-import battleship.model.ship.toShipType
 import battleship.model.ship.toShipTypeOrNull
 
 /**
@@ -38,33 +37,13 @@ fun getCommandsOO() = mapOf(
 
     "PUT" to object : CommandOO() {
         override fun action(game: Game, args: List<String>): Game {
-            require(args.size == 1 || args.size == 3) { "Invalid Arguments\n Use: $argsSyntax" }
+            require( args.size == 3) { "Invalid Arguments\n Use: $argsSyntax" }
 
-            /*
-            if(args.size == 1 && args[0] == "all") {
-                //game.putAllShips()
-            } else {
-                val type = args[0].toShipTypeOrNull() ?: error( "Invalid shiptype ${args[0]}")
-
-                if(args.size == 3) {
-                    val position = args[1].toPositionOrNull() ?: error( "Invalid position ${args[1]}");
-                    val result = game.putShip(type, position)
-                    return game
-                } else {
-                    val result = game.putShip(type, )
-                    return game
-
-                }
-
-            }
-             */
-
-
-            val type = args[0].toShipTypeOrNull() ?: error("")
+            val type = args[0].toShipTypeOrNull() ?: error("MUDAR ISTO MAIS TARDE TARDE TARDE - ordem do adolfo")
             val position = args[1].toPosition()
+            val direction = args[2].toDirectionOrNull()?: error("Invalid Position") // meter em enum class como o stor fez
 
-            // ?: error( "Invalid shiptype ${args[0]}")
-            val result = game.putShip(type, position/*head*/)
+            val result = game.putShip(type, position, direction);
 
             //return result
             return result

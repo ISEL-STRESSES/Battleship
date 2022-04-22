@@ -2,9 +2,10 @@ package battleship.model
 
 import battleship.model.GameState.*
 import battleship.model.board.Board
-import battleship.model.ship.Ship
+import battleship.model.board.Direction
 import battleship.model.ship.ShipType
-import battleship.model.board.position.Position
+import battleship.model.board.Position
+import battleship.model.board.putShip
 
 /**
  * Keep the current state of the game.
@@ -25,31 +26,14 @@ data class Game(
     val turn: Player = Player.A
 )
 
-fun Board.getPossiblePositions(squares: Int) : List<Position>//TODO List<Pair<Position, Direction>> cause no direction
-{
-    val possiblePositions = mutableListOf<Position>()
 
-    for()
 
-    return possiblePositions;
-}
-
-fun Game.putShip(type : ShipType, pos : Position) : Game {
+fun Game.putShip(type : ShipType, pos : Position, direction : Direction) : Game {
     check(this.state == SETUP) { "Cant change fleet after game started" }
 
-    if(boardA.fleet.count{ type == it.type } >= type.fleetQuantity)
-        throw java.lang.Exception("No more ${type.name} to put")
+    val newBoard = boardA.putShip(type, pos, direction)
 
-    //calculate possible positions
-    val possiblePositions = boardA.getPossiblePositions(type.squares);
-
-    //create ship
-    val newShipCells = List<Cell>(type.squares) { ShipCell(Position.get(pos.column.ordinal + it, pos.row.ordinal)) }
-    val newShip = Ship(type)
-
-
-
-    return this.copy(boardA = boardA.copy(fleet = boardA.fleet + newShip))
+    return this.copy(boardA = newBoard)
 }
 
 

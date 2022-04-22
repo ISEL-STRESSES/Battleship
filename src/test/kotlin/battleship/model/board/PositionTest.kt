@@ -1,6 +1,6 @@
-package battleship.model.position
+package battleship.model.board
 
-import battleship.model.board.position.*
+import battleship.model.board.*
 import kotlin.test.*
 
 /**

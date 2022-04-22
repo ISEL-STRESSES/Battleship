@@ -1,30 +1,28 @@
 package battleship.model.board
 
+import battleship.model.Cell
 import battleship.model.MissCell
+import battleship.model.ShipCell
 import battleship.model.ship.Ship
+import battleship.model.ship.ShipType
 
 typealias Fleet = List<Ship>
-typealias Grid = List<MissCell>
+typealias Grid = Map<Position, Cell>
 
-data class Board(val fleet: Fleet = emptyList(), val grid: Grid = emptyList())
+data class Board(val fleet: Fleet = emptyList(), val grid: Grid = mapOf())
 
-/*
-fun Board.addShip(shipType: ShipType, pos: Position): Board {
-    return if (!doesCollide(shipType, pos))
-        copy(
-            cells = cells + Ship(shipType, shipType.makeBox(pos)).toCells()
-        )
-    else this // meter alguma flag para o user saber que o ship nao foi adicionado
+fun Board.putShip(type : ShipType, pos : Position, direction : Direction) : Board
+{
+    // TODO: change exception to put result
+    if(fleet.count{ type == it.type } >= type.fleetQuantity)
+        throw Exception("No more ${type.name} to put")
+
+    
+
+    val newShip = Ship(type)
+    val cells = List(type.squares) { ShipCell(pos.movePosition(direction, it), newShip) }
+
+    val newFleet = fleet + newShip
+    val newGrid = grid + cells.associateBy { it.pos }
+    return copy(fleet = newFleet, newGrid);
 }
-
-fun ShipType.makeBox(pos: Position): List<Cell> {
-    TODO("Not yet implemented")
-}
-
-fun Board.doesCollide(ship: ShipType, pos: Position): Boolean {
-    val shipLine = cells.any { it.pos == pos } // only checks the ship line
-    val box = ship.checkBox(pos)
-    return shipLine || box
-}
-
- */

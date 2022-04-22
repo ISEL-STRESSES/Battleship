@@ -1,12 +1,7 @@
 package battleship.ui
 
-import battleship.model.Cell
-import battleship.model.Game
-import battleship.model.MissCell
-import battleship.model.board.Board
-import battleship.model.board.position.COLUMN_DIM
-import battleship.model.board.position.Column
-import battleship.model.board.position.ROW_DIM
+import battleship.model.*
+import battleship.model.board.*
 import battleship.model.ship.ShipType
 
 const val BOARD_CHAR_DIM = COLUMN_DIM * 2 + 1
@@ -17,16 +12,15 @@ const val horSep = '-'
 const val verSep = '|'
 const val cross = '+'
 
+const val CHAR_MISS = 'O'
+const val CHAR_SHIP = '#'
+const val CHAR_HIT = '*'
+const val CHAR_SUNK = 'X'
+const val CHAR_WATER = ' '
+
 fun Char.repeat(size: Int) = "$this".repeat(size)
 
 val horizontalBorders = ' '.repeat(HORIZONTAL_IDENT) + "+" + '-'.repeat(BOARD_CHAR_DIM) + "+"
-
-fun Cell.toChar(): Char {
-    if (this is MissCell)
-        return '*'
-
-    return ' '
-}
 
 fun printShipData(idx: Int = -1, board: Board) {
     if (idx !in 0 until ShipType.values.size)
@@ -38,18 +32,30 @@ fun printShipData(idx: Int = -1, board: Board) {
     print(" $placedCount x " + "#".repeat(type.squares) + " of ${type.fleetQuantity} (${type.name})")
 }
 
+fun Cell.toChar(): Char {
+    //ADOLF HITLER COM O NO FINAL, DE APELIDO MORGADO, QUEM SERÁ?
+    return when (this) {
+        is ShipSunk -> CHAR_SUNK
+        is ShipHit -> CHAR_HIT
+        is ShipCell -> CHAR_SHIP
+        is MissCell -> CHAR_MISS
+        else -> CHAR_WATER
+    }
+}
+
 /**
  * Prints a single row of the board to the standard output
  * @param rowIdx index of the row to print
  */
-fun Board.printRow(rowIdx: Int) {
+fun Board.printRow(y: Int) {
     print(' '.repeat(HORIZONTAL_IDENT))
     print(verSep)
-    repeat(COLUMN_DIM) {
-        val cellChar = " "
+    repeat(COLUMN_DIM) { x ->
+        val cell = grid[Position[x, y]]
+        val cellChar = cell?.toChar() ?: CHAR_WATER
         print(" $cellChar")
     }
-    print(" ") // print final char
+    print(" ") // print final space
     print(verSep)
 }
 

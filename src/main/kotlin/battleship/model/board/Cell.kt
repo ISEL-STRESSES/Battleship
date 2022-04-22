@@ -1,6 +1,8 @@
 package battleship.model
 
-import battleship.model.board.position.Position
+import battleship.model.board.Position
+import battleship.model.ship.Ship
+import battleship.model.ship.ShipType
 
 enum class HitStatus {
     LIGMA, HIT, SUNK
@@ -13,7 +15,6 @@ enum class HitStatus {
 abstract class Cell(val pos: Position)
 
 class MissCell(pos: Position) : Cell(pos)
-
 
 class ShipCell(pos: Position) : Cell(pos)
 

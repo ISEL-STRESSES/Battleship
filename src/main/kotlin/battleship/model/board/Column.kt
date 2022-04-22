@@ -1,4 +1,4 @@
-package battleship.model.board.position
+package battleship.model.board
 
 const val COLUMN_DIM = 10
 const val COLUMN_FIRST_LETTER = 'A'

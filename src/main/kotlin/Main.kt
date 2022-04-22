@@ -6,7 +6,6 @@ import kotlin.system.exitProcess
 
 fun main() {
     try {
-        // MongoDriver("PVV").use { drv ->
         var game: Game = createGame()
         val cmds = getCommandsOO()
         while (true) {

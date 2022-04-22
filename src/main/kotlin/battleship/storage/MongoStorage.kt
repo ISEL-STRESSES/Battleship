@@ -2,7 +2,7 @@
 //
 // import battleship.model.Player
 // import battleship.model.board.Board
-// import battleship.model.board.position.toPositionOrNull
+// import battleship.model.board.toPositionOrNull
 // import mongoDB.*
 //
 // class MongoStorage(driver: MongoDriver) : Storage {
