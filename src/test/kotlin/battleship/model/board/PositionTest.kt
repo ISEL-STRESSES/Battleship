@@ -1,6 +1,5 @@
 package battleship.model.board
 
-import battleship.model.board.*
 import kotlin.test.*
 
 /**

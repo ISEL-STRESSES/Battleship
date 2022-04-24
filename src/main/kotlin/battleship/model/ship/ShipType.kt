@@ -19,15 +19,16 @@ class ShipType private constructor(val name: String, val squares: Int, val fleet
 
 // TODO: averiguar se podemso reduzir linhas no toShipTypeOrNull() e toShipType()
 /**
- * @brief Returns a Shiptype according to the string, if string is an integer, return a ship by number of squares
- *          else if it is a string, return the only shiptype that starts with the string as prefix, else return null
+ * Returns a [ShipType] according to the string, if string is an integer, return a ship by number of squares
+ *          else if it is a string, return the only [ShipType] that starts with the string as prefix
+ *          else return null
  */
 fun String.toShipTypeOrNull(): ShipType? {
     val num = this.toIntOrNull()
     return if (num == null) {
         val head = ShipType.values.firstOrNull { it.name.startsWith(this, true) }
         val tail = ShipType.values.lastOrNull { it.name.startsWith(this, true) }
-        if(tail === head) tail else null
+        if (tail === head) tail else null
     } else {
         val head = ShipType.values.firstOrNull { it.squares == num || it.name.startsWith(this, true) }
         val tail = ShipType.values.lastOrNull { it.squares == num || it.name.startsWith(this, true) }
@@ -36,8 +37,8 @@ fun String.toShipTypeOrNull(): ShipType? {
 }
 
 /**
- * @brief Returns a Shiptype according to the string, if string is an integer, return a ship by number of squares
- *          else if it is a string, return the only shiptype that starts with the string as prefix
+ * Returns a [ShipType] according to the string, if string is an integer, return a ship by number of squares
+ *          else if it is a string, return the only [ShipType] that starts with the string as prefix
  * @throws NoSuchElementException
  */
 fun String.toShipType(): ShipType = toShipTypeOrNull() ?: throw NoSuchElementException()

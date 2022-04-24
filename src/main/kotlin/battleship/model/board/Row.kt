@@ -18,17 +18,17 @@ class Row private constructor(idx: Int) {
 }
 
 /**
- * @brief return a object according to its digit position, null if it does not exist
+ * Return an object according to its digit position, null if it does not exist
  */
 fun Int.toRowOrNull() = Row.values.elementAtOrNull(this - ROW_FIRST_NUMBER)
 
 /**
- * @brief return a object according to its index, null if it does not exit
+ * Return an object according to its index, null if it does not exit
  */
 fun Int.indexToRowOrNull() = Row.values.elementAtOrNull(this)
 
 /**
- * @brief return a row object according to its index
+ * Return a row object according to its index
  * @throws IndexOutOfBoundsException
  */
 fun Int.indexToRow() = Row.values[this]

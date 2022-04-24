@@ -1,11 +1,14 @@
- package battleship.model
+package battleship.model
 
- import kotlin.test.*
-import battleship.model.ship.*
- /**
+import battleship.model.ship.ShipType
+import battleship.model.ship.toShipType
+import battleship.model.ship.toShipTypeOrNull
+import kotlin.test.*
+
+/**
  * The f1.ShipType type identifies types of ships allowed in game.
  */
- class ShipTypeTest {
+class ShipTypeTest {
     @Test
     fun `Each ship type has a different name and number of squares`() {
         val numberOfTypes = ShipType.values.size
@@ -40,4 +43,4 @@ import battleship.model.ship.*
         // More than 1 ship with "C" prefix
         assertFailsWith<NoSuchElementException> { "C".toShipType() }
     }
- }
+}

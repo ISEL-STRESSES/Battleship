@@ -3,9 +3,9 @@ package battleship.model
 import battleship.model.GameState.*
 import battleship.model.board.Board
 import battleship.model.board.Direction
-import battleship.model.ship.ShipType
 import battleship.model.board.Position
 import battleship.model.board.putShip
+import battleship.model.ship.ShipType
 
 /**
  * Keep the current state of the game.
@@ -17,10 +17,10 @@ enum class GameState {
     SETUP, FIGHT, OVER
 }
 
-enum class PutError{ NONE, INVALID_POSITION, INVALID_ARGUMENTS}
+enum class PutError { NONE, INVALID_POSITION, INVALID_ARGUMENTS }
 
 
-enum class PlayError{ NONE, INVALID_TURN, GAME_OVER }
+enum class PlayError { NONE, INVALID_TURN, GAME_OVER }
 
 data class PlayResult(val game: Game, val error: PutError)
 
@@ -35,8 +35,7 @@ data class Game(
 )
 
 
-
-fun Game.putShip(type : ShipType, pos : Position, direction : Direction) : Game {
+fun Game.putShip(type: ShipType, pos: Position, direction: Direction): Game {
     check(this.state == SETUP) { "Cant change fleet after game started" }
 
     val newBoard = boardA.putShip(type, pos, direction)
@@ -56,6 +55,7 @@ fun Game.putAllShips() {
 //        this.putShip(currShip, pos)
 //    }
 }
+
 fun createGame(): Game {
     return Game("", Board(), Board())
 }

@@ -9,7 +9,7 @@ import battleship.model.ship.toShipTypeOrNull
 /**
  * Represents a command.
  */
-abstract class CommandOO {
+abstract class CommandsOO {
     /**
      * Operation to be performed in the game with the indicated arguments.
      * @param game Actual game state.
@@ -35,15 +35,16 @@ abstract class CommandOO {
  */
 fun getCommandsOO() = mapOf(
 
-    "PUT" to object : CommandOO() {
+    "PUT" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game {
-            require( args.size == 3) { "Invalid Arguments\n Use: $argsSyntax" }
+            require(args.size == 3) { "Invalid Arguments\n Use: $argsSyntax" }
 
             val type = args[0].toShipTypeOrNull() ?: error("MUDAR ISTO MAIS TARDE TARDE TARDE - ordem do adolfo")
             val position = args[1].toPosition()
-            val direction = args[2].toDirectionOrNull()?: error("Invalid Position") // meter em enum class como o stor fez
+            val direction =
+                args[2].toDirectionOrNull() ?: error("Invalid Position") // meter em enum class como o stor fez
 
-            val result = game.putShip(type, position, direction);
+            val result = game.putShip(type, position, direction)
 
             //return result
             return result
@@ -57,20 +58,29 @@ fun getCommandsOO() = mapOf(
             get() = "(<shipType> [<position> <align>] | all)"
     },
 
-    "GRID" to object : CommandOO() {
+    "GRID" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>) = game
         override fun show(game: Game) {
             game.print()
         }
     },
-    "HELP" to object : CommandOO() {
+    "HELP" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>) = game
         override fun show(game: Game) {
             //NOT TODO CALOR DID THE HARDCORE
             printHelp()
         }
     },
-    "SHOT" to object : CommandOO() {
+    "START" to object : CommandsOO() {
+        override fun action(game: Game, args: List<String>): Game? {
+            TODO("Not yet implemented")
+        }
+
+        override fun show(game: Game) {
+            TODO("Not yet implemented")
+        }
+    },
+    "SHOT" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game? {
             TODO("Not yet implemented")
         }
@@ -82,7 +92,7 @@ fun getCommandsOO() = mapOf(
         override val argsSyntax: String
             get() = "<position>"
     },
-    "REMOVE" to object : CommandOO() {
+    "REMOVE" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game? {
             TODO("Not yet implemented")
         }
@@ -91,7 +101,7 @@ fun getCommandsOO() = mapOf(
             TODO("Not yet implemented")
         }
     },
-    "REFRESH" to object : CommandOO() {
+    "REFRESH" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game? {
             TODO("Not yet implemented")
         }
@@ -100,8 +110,8 @@ fun getCommandsOO() = mapOf(
             TODO("Not yet implemented")
         }
     },
-    "EXIT" to object : CommandOO() {
+    "EXIT" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game? = null
     },
 
-)
+    )

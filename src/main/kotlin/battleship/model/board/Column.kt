@@ -18,17 +18,17 @@ class Column private constructor(idx: Int) {
 }
 
 /**
- * @brief return a column according to its letter position, null if it does not exist
+ * Return a column according to its letter position, null if it does not exist
  */
 fun Char.toColumnOrNull() = Column.values.elementAtOrNull(this.uppercaseChar() - COLUMN_FIRST_LETTER)
 
 /**
- * @brief return a column according to its index, null if it does not exit
+ * Return a column according to its index, null if it does not exit
  */
 fun Int.indexToColumnOrNull() = Column.values.elementAtOrNull(this)
 
 /**
- * @brief return a column object according to its index
+ * Return a column object according to its index
  * @throws IndexOutOfBoundsException
  */
 fun Int.indexToColumn() = Column.values[this]

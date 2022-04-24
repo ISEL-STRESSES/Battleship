@@ -13,6 +13,7 @@ fun main() {
             val cmd = cmds[name]
             if (cmd == null) {
                 println("Invalid Command!")
+                println("Use the Command HELP for the available commands list")
             } else {
                 try {
                     game = cmd.action(game, args) ?: exitProcess(0)

@@ -34,7 +34,7 @@ class Position private constructor(val column: Column, val row: Row) {
 }
 
 /**
- * @brief Converts String into a Position. null if such position does not exist
+ * Converts String into a Position, null if such position does not exist
  */
 fun String.toPositionOrNull(): Position? {
     if (this.isBlank()) return null
@@ -48,10 +48,14 @@ fun String.toPositionOrNull(): Position? {
 }
 
 /**
- * @brief Converts string to a Position
+ * Converts string to a Position
  */
 fun String.toPosition(): Position {
-    val result = this.toPositionOrNull()
-    checkNotNull(result) { "Invalid String to convert into position!" }
-    return result
+    return toPositionOrNull() ?: error("Invalid String to convert into position!")
+}
+
+fun Position.movePosition(dir: Direction, length: Int): Position {
+    val x = this.column.ordinal + if (dir === Direction.HORIZONTAL) length else 0
+    val y = this.row.ordinal + if (dir === Direction.VERTICAL) length else 0
+    return Position[x, y]
 }

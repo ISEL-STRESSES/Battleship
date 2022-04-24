@@ -1,4 +1,4 @@
-/*
+package battleship.storage/*
 class FileStorage : Storage
 {
     fun start(name : String, board: Board): Player

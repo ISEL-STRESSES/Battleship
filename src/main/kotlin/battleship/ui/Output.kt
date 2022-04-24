@@ -18,22 +18,19 @@ const val CHAR_HIT = '*'
 const val CHAR_SUNK = 'X'
 const val CHAR_WATER = ' '
 
-fun Char.repeat(size: Int) = "$this".repeat(size)
+//Horizontal separator condensed
+val horizontalSeparators = CHAR_WATER.repeat(HORIZONTAL_IDENT) + cross + horSep.repeat(BOARD_CHAR_DIM) + cross
 
-val horizontalBorders = ' '.repeat(HORIZONTAL_IDENT) + "+" + '-'.repeat(BOARD_CHAR_DIM) + "+"
+/**
+ * Repeat the char [amount] times
+ * @param amount amount of times to repeat the char
+ */
+fun Char.repeat(amount: Int) = "$this".repeat(amount)
 
-fun printShipData(idx: Int = -1, board: Board) {
-    if (idx !in 0 until ShipType.values.size)
-        return
-
-    val type = ShipType.values[idx]
-    val placedCount = board.fleet.count { it.type === type }
-
-    print(" $placedCount x " + "#".repeat(type.squares) + " of ${type.fleetQuantity} (${type.name})")
-}
-
+/**
+ * Returns the according char from the [Cell], blank space if it is none of the defined cells, meaning it is a "water" cell
+ */
 fun Cell.toChar(): Char {
-    //ADOLF HITLER COM O NO FINAL, DE APELIDO MORGADO, QUEM SERÁ?
     return when (this) {
         is ShipSunk -> CHAR_SUNK
         is ShipHit -> CHAR_HIT
@@ -44,8 +41,43 @@ fun Cell.toChar(): Char {
 }
 
 /**
+ * Function to print the HELP command
+ */
+fun printHelp() {
+    println("Available Commands:")
+    getCommandsOO().forEach {
+        println("\t${it.key}\t\t${it.value.argsSyntax}")
+    }
+}
+
+/**
+ * Function to print the [Game]
+ */
+fun Game.print() {
+    printColumnsIDX() // Prints column indexes
+    println(horizontalSeparators) // Print top separator
+    repeat(ROW_DIM) {
+        boardA.printRow(it)
+        printShipData(it, boardA)
+        println()
+    }
+    println(horizontalSeparators) // Print bottom separator
+}
+
+/**
+ * Prints the Column indexes of the board
+ */
+fun printColumnsIDX() {
+    print(' '.repeat(LETTERS_IDENT))
+    Column.values.forEach {
+        print(it.letter.toString().padEnd(2))
+    }
+    println()
+}
+
+/**
  * Prints a single row of the board to the standard output
- * @param rowIdx index of the row to print
+ * @param y index of the row to print
  */
 fun Board.printRow(y: Int) {
     print(' '.repeat(HORIZONTAL_IDENT))
@@ -59,62 +91,18 @@ fun Board.printRow(y: Int) {
     print(verSep)
 }
 
-fun printColumnsIDX() {
-    print(' '.repeat(LETTERS_IDENT))
-    Column.values.forEach {
-        print(it.letter.toString().padEnd(2))
-    }
-    println()
-}
 
-fun Game.print() {
-    printColumnsIDX()
-    println(horizontalBorders) // Print top separator
-    repeat(ROW_DIM) {
-        boardA.printRow(it)
-        printShipData(it, boardA)
-        println()
-    }
-    println(horizontalBorders) // Print bottom separator
-}
+/**
+ * Prints the Ship information on the right of the [board]
+ * @param idx index of the ship
+ * @param board board to print the data with
+ */
+fun printShipData(idx: Int = -1, board: Board) {
+    if (idx !in 0 until ShipType.values.size)
+        return
 
-/*
-val regLine = sep + " ".repeat(BOARD_CHAR_DIM) + sep
+    val type = ShipType.values[idx]
+    val placedCount = board.fleet.count { it.type === type }
 
-
-fun Player?.toChar() = this?.id ?: ' '
-
-// Não testada + se quisermos escrever uma mensagem sem defenir um barco n dá
-fun printLineOfBoard(id: String, fleetMsg: Boolean, ship: ShipType, amountOfShips: Int = 0) {
-    if (fleetMsg)
-        print(
-            id.padStart(2)
-                .padEnd(3) + regLine + " $amountOfShips x ${"#".repeat(ship.squares)} of ${ship.fleetQuantity}\n"
-        )
-    else
-        print(id.padStart(2).padEnd(3) + regLine + "\n")
-}
-
-fun printBoard(board: Board) {
-    println()
-    println(horizontalBorders)
-
-    Position.values.forEachIndexed { _, pos ->
-        if (pos.column.ordinal == BOARD_DIM - 1) {
-            print(pos.row.number.toString().padStart(2).padEnd(3) + regLine)
-            println()
-        }
-        print("${board.get(pos).toChar()}")
-    }
-    println(horizontalBorders)help
-
-    board.winner?.apply { println("Player $symbol wins.") }
-}
-*/
-
-fun printHelp() {
-    println("Available Commands:")
-    getCommandsOO().forEach {
-        println("\t${it.key}\t\t${it.value.argsSyntax}")
-    }
+    print(" $placedCount x " + CHAR_SHIP.repeat(type.squares) + " of ${type.fleetQuantity} (${type.name})")
 }

@@ -4,14 +4,15 @@ hide empty members
 
 abstract class Command {
   argsSyntax: String
-  action(something: Game, args: List<String>): Game?
-
+  action(:Game, args: List<String>): Game?
   show(game: Game)
 }
 
 class put << (o,cyan) >> extends Command
 
 class grid << (o,cyan) >> extends Command
+
+class help << (o,cyan) >> extends Command
 
 class start << (o,cyan) >> extends Command
 
