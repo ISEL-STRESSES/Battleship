@@ -1,7 +1,13 @@
 package battleship.model
 
-import battleship.model.GameState.*
-import battleship.model.board.*
+import battleship.model.board.Board
+import battleship.model.board.Direction
+import battleship.model.board.Position
+import battleship.model.board.ShotConsequence
+import battleship.model.board.makeShot
+import battleship.model.board.putShip
+import battleship.model.board.removeShip
+import battleship.model.board.win
 import battleship.model.ship.ShipType
 import battleship.storage.Storage
 
@@ -35,7 +41,7 @@ data class Game(
     val name: String,
     val boardA: Board,
     val boardB: Board? = null,
-    val state: GameState = SETUP,
+    val state: GameState = GameState.SETUP,
     val player: Player = Player.A,
     val turn: Player = Player.A
 )
@@ -52,9 +58,9 @@ fun Game.startGame(gameName: String, st: Storage): Game {
  */
 fun GameState.checkState(wantedState: GameState) {
     when (wantedState) {
-        SETUP -> check(wantedState != this) { "Can't change fleet after game started" }
-        FIGHT -> check(wantedState != this) { "Can't make a shot before start" }
-        OVER -> check(wantedState != this) { "Game Over, FATALITY" }
+        GameState.SETUP -> check(wantedState != this) { "Can't change fleet after game started" }
+        GameState.FIGHT -> check(wantedState != this) { "Can't make a shot before start" }
+        GameState.OVER -> check(wantedState != this) { "Game Over, FATALITY" }
     }
 }
 
@@ -66,7 +72,7 @@ fun GameState.checkState(wantedState: GameState) {
  * @return updated [Game]
  */
 fun Game.putShip(type: ShipType, pos: Position, dir: Direction): Game {
-    state.checkState(SETUP) // Verify you're in the right state for put command
+    state.checkState(GameState.SETUP) // Verify you're in the right state for put command
 
     val newBoard = boardA.putShip(type, pos, dir)
     return this.copy(boardA = newBoard)
@@ -100,7 +106,7 @@ fun Game.removeAll(): Game {
 // }
 
 fun Game.putAllShips() {
-     TODO()
+    TODO()
 //    while(true){
 //        val pos = Position.values.random()
 //        val currShip = ShipType.values.forEach {
@@ -164,4 +170,6 @@ fun Game.makeShot(pos: Position): PlayResult {
     ) // if not your turn don't change the game
 }
 
-fun Game.checkWin(): GameState = if (boardA.win() || boardB?.win() ?: throw IllegalStateException()) OVER else FIGHT
+fun Game.checkWin(): GameState =
+    if (boardA.win() || boardB?.win() ?: throw IllegalStateException()) GameState.OVER
+    else GameState.FIGHT

@@ -1,10 +1,13 @@
 package battleship.ui
 
-import battleship.model.*
+import battleship.model.Game
 import battleship.model.board.toDirection
 import battleship.model.board.toPosition
-import battleship.model.board.toPositionOrNull
+import battleship.model.putShip
+import battleship.model.removeAll
+import battleship.model.removeShip
 import battleship.model.ship.toShipTypeOrNull
+import battleship.model.startGame
 import battleship.storage.Storage
 
 /**
@@ -45,8 +48,6 @@ fun getCommandsOO(st: Storage) = mapOf(
     "PUT" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game {
             require(args.size == 3) { "Invalid Arguments" }
-            game.state.checkState(GameState.SETUP) // Verify you're in the right state for put command
-
 
             val type = args[0].toShipTypeOrNull() ?: error("MUDAR ISTO MAIS TARDE TARDE TARDE - ordem do adolfo")
             val position = args[1].toPosition()
@@ -67,8 +68,6 @@ fun getCommandsOO(st: Storage) = mapOf(
     "REMOVE" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game {
             require(args.size == 1) { "Invalid Arguments" }
-            game.state.checkState(GameState.SETUP) // Verify you're in the right state for put command
-
 
             return if (args[0] == "all") {
                 game.removeAll()
@@ -93,8 +92,7 @@ fun getCommandsOO(st: Storage) = mapOf(
     },
     "START" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game? {
-            require(args.size == 1) { "Invalid Arguments" }
-            require(args[0].isNotBlank()) { }
+            require(args.size == 1 && args[0].isNotBlank()) { "Invalid Arguments" }
             val gameName = args[0]
             val res = game.startGame(gameName, st)
             return game
@@ -103,25 +101,32 @@ fun getCommandsOO(st: Storage) = mapOf(
         override fun show(game: Game) {
             game.print()
         }
+
+        override val argsSyntax: String
+            get() = "<name>"
     },
 
     "SHOT" to object : CommandsOO() {
-        override fun action(game: Game, args: List<String>): Game {
 
+        override fun action(game: Game, args: List<String>): Game {
+            TODO("ola :D")
+            /*
             require(args.size == 1) { "Invalid Arguments\nUse: $argsSyntax" }
-            game.state.checkState(GameState.FIGHT)
+
             val pos = args.first().toPositionOrNull() ?: error("Invalid $argsSyntax")
             val result = game.makeShot(pos)
-            //TODO FAZER O TRATAMENTO DOS ERROS E CONSEQUENCIAS DO SHOT
+            // TODO FAZER O TRATAMENTO DOS ERROS E CONSEQUENCIAS DO SHOT
 
-            val getGameStatus = result.game.checkWin()
+            val getGameStatus = result.game.checkWin() // TODO(!)
             /* not good board still giving me a Headache (my board?) */
             return result.game.copy(state = getGameStatus, turn = game.player.other()) // TODO("Not yet implemented")
+
+             */
         }
 
         override fun show(game: Game) {
-            game.print()
-            TODO("Not yet implemented")
+            TODO("dfgdfg")
+            // game.print()
         }
 
         override val argsSyntax by lazy { "<position>" }

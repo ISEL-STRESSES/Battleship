@@ -4,7 +4,6 @@ import battleship.model.PlayError
 import battleship.model.ShotConsequence
 import battleship.model.ship.Ship
 import battleship.model.ship.ShipType
-import battleship.model.ship.positions
 import kotlin.math.max
 import kotlin.math.min
 
@@ -78,7 +77,7 @@ fun Board.removeShip(pos: Position): Board {
     return if (cell is ShipCell) {
         val ship = cell.ship
         val newFleet = fleet - ship
-        val newGrid = grid - ship.positions()
+        val newGrid = grid - ship.positions
 
         Board(newFleet, newGrid)
     } else {
@@ -88,29 +87,28 @@ fun Board.removeShip(pos: Position): Board {
 
 data class BoardResult(val board: Board, val consequence: ShotConsequence, val error: PlayError = PlayError.NONE)
 
-fun Board.makeShot(pos: Position): BoardResult {
-    val elemToFind = grid[pos]
-    val newGrid: Grid
-    if (elemToFind != null) {
-        //Check if elem is ShipCell, if yes make ShipHit, else "Position Already Shot"
-        val cell = grid.entries.first { it.key == pos } //it.positions().any{ shipCell -> shipCell == pos}}.positions()
-        return if (cell.value is ShipCell) { //TODO (apenas a ShipCell Class e nao derivados (ShipHit e ShipSunk)"))
-            var consequence = ShotConsequence.HIT
-            val ship = (cell.value as ShipCell).ship // ship with position that was shot
-            newGrid = grid + Pair(pos, ShipHit(pos, ship))
-            val correspondentPos = newGrid.entries.filter { it.key in ship.positions() }
-            if (correspondentPos.all { it.value is ShipHit }) { // if after hitting the ship all Cells are ShipHit, make them ShipSunk
-                consequence = ShotConsequence.SUNK
-                newGrid.entries.mapIndexed { idx, currElem ->
-                    if (currElem == correspondentPos[idx])
-                        Pair(currElem.key, ShipSunk(currElem.key, ship))
-                }
+fun Board.makeShot(pos: Position): ShotResult {
+    when (val cell = grid[pos]) { // THE FUCK IS THIS
+        is MissCell, is ShipHit -> {
+            // Ship sunk is infered as an invalid shot because of its inherited from ShipHit
+            return ShotResult(this, ShotConsequence.INVALID, PlayError.INVALID_SHOT)
+        }
+        is ShipCell -> {
+            val ship = cell.ship
+            val gridAfterShot = grid + (pos to ShipHit(pos, ship))
+            // check if ship is sunk
+            val hasSunk = ship.positions.all { grid[it] is ShipHit }
+            return if (hasSunk) {
+                val gridAfterSunk = grid + ship.positions.map { it to ShipSunk(it, ship) }
+                ShotResult(copy(grid = gridAfterSunk), ShotConsequence.SUNK)
+            } else {
+                ShotResult(copy(grid = gridAfterShot), ShotConsequence.HIT)
             }
-            BoardResult(copy(grid = newGrid), consequence)
-        } else BoardResult(this, ShotConsequence.INVALID, PlayError.INVALID_SHOT)
-
-    } else {
-        newGrid = grid + Pair(pos, MissCell(pos))
-        return BoardResult(copy(grid = newGrid), ShotConsequence.MISS)
+        }
+        null -> {
+            // Add cell to the grid with MissCell
+            return ShotResult(copy(grid = grid + (pos to MissCell(pos))), ShotConsequence.MISS)
+        }
     }
+    return ShotResult(this, ShotConsequence.INVALID, PlayError.INVALID_SHOT)
 }
