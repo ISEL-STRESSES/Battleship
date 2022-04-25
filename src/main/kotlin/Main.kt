@@ -3,6 +3,7 @@ import battleship.model.createGame
 import battleship.storage.FileStorage
 import battleship.ui.getCommandsOO
 import battleship.ui.readCommand
+import mongoDB.MongoDriver
 import kotlin.system.exitProcess
 
 fun main() {
@@ -34,6 +35,6 @@ fun main() {
         println("An exception has occurred")
         println("Exception message: ${ex.message}")
     } finally {
-        println("OS 4 F's do grupo 1:\n Força\n Foco\n Fé\n FODA-SE")
+        println("OS 4 F's do Grupo 1:\nForça\nFoco\nFé\nF***-**")
     }
 }
