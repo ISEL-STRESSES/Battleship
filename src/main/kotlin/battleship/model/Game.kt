@@ -14,9 +14,9 @@ data class PlayResult(val game: Game, val errors: Pair<ShotConsequence, PlayErro
 
 /**
  * Keep the current state of the game.
- * @property SETUP  setup stage where only PUT commands will be allowed;
- * @property FIGHT  fight stage where you can do all the commands except the ones in the [SETUP] phase;
- * @property OVER   game over stage meaning you can't do any commands.
+ * @property SETUP setup stage where only PUT commands will be allowed;
+ * @property FIGHT fight stage where you can do all the commands except the ones in the [SETUP] phase;
+ * @property OVER game over stage meaning you can't do any commands.
  */
 enum class GameState {
     SETUP, FIGHT, OVER
@@ -40,6 +40,16 @@ data class Game(
     val turn: Player = Player.A
 )
 
+/**
+ *
+ */
+fun Game.startGame(gameName: String, st: Storage): Game {
+    TODO("Not yet implemented")
+}
+
+/**
+ *
+ */
 fun GameState.checkState(wantedState: GameState) {
     when (wantedState) {
         SETUP -> check(wantedState != this) { "Can't change fleet after game started" }
@@ -49,7 +59,7 @@ fun GameState.checkState(wantedState: GameState) {
 }
 
 /**
- *[Game] Function that will put a ship if it's a valid command and ship
+ * [Game] Function that will put a ship if it's a valid command and ship
  * @param type [ShipType] of the ship to put
  * @param pos head [Position] of the ship
  * @param dir [Direction] of the ship
@@ -90,7 +100,7 @@ fun Game.removeAll(): Game {
 // }
 
 fun Game.putAllShips() {
-    // TODO
+     TODO()
 //    while(true){
 //        val pos = Position.values.random()
 //        val currShip = ShipType.values.forEach {
@@ -129,19 +139,29 @@ fun Game.getPlayerBoard(target: Player) = if (target == Player.A) boardA else bo
 // TODO() FAZER A MESMA COISA PARA O PUT
 
 fun Game.makeShot(pos: Position): PlayResult {
-    return if (player == turn) {
-        state.checkState(FIGHT)
+    if (player == turn) {
         val enemyBoard = getPlayerBoard(player.other())
         checkNotNull(enemyBoard) // TODO ("gambiarra") //não deveria ser preciso pois já verificámos que estamos no "FIGHT_STATE" logo boardB!=null
 
         val boardResult = enemyBoard.makeShot(pos)
 
-        // Check what board changed
-        if (enemyBoard == boardA)
-            PlayResult(copy(boardA = boardResult.board), boardResult.error) // TODO ("bota mais gambiarra")
-        else
-            PlayResult(copy(boardB = boardResult.board), boardResult.error)
-    } else PlayResult(this, PlayError.INVALID_TURN) // if not your turn don't change the game
+        return if (boardResult.board != enemyBoard) {
+            // Check what board changed
+            if (enemyBoard == boardA)
+                PlayResult(
+                    copy(boardA = boardResult.board),
+                    Pair(boardResult.consequence, boardResult.error)
+                ) // TODO ("bota mais gambiarra")
+            else
+                PlayResult(copy(boardB = boardResult.board), Pair(boardResult.consequence, boardResult.error))
+        } else {
+            PlayResult(this, Pair(boardResult.consequence, boardResult.error))
+        }
+    }
+    return PlayResult(
+        this,
+        Pair(ShotConsequence.INVALID, PlayError.INVALID_TURN)
+    ) // if not your turn don't change the game
 }
 
 fun Game.checkWin(): GameState = if (boardA.win() || boardB?.win() ?: throw IllegalStateException()) OVER else FIGHT
