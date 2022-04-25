@@ -4,5 +4,6 @@ import battleship.model.board.Direction
 import battleship.model.board.Position
 import battleship.model.board.movePosition
 
+data class Ship(val type: ShipType, val head: Position, val dir: Direction)
 
 fun Ship.positions(): List<Position> = List(type.squares) { head.movePosition(dir, it) }

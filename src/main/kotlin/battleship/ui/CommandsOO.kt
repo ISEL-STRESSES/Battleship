@@ -48,8 +48,7 @@ fun getCommandsOO() = mapOf(
 
             val type = args[0].toShipTypeOrNull() ?: error("MUDAR ISTO MAIS TARDE TARDE TARDE - ordem do adolfo")
             val position = args[1].toPosition()
-            val direction =
-                args[2].toDirectionOrNull() ?: error("Invalid Position") // meter em enum class como o stor fez
+            val direction = args[2].toDirection() // meter em enum class como o stor fez
 
             val result = game.putShip(type, position, direction)
 
@@ -64,7 +63,23 @@ fun getCommandsOO() = mapOf(
         override val argsSyntax: String
             get() = "(<shipType> [<position> <align>] | all)"
     },
+    "REMOVE" to object : CommandsOO() {
+        override fun action(game: Game, args: List<String>): Game? {
+            require(args.size == 1) { "Invalid Arguments\n Use: $argsSyntax" }
 
+            return if(args[0] == "all")
+            {
+                game.removeAll()
+            } else {
+                val position = args[0].toPosition()
+                game.removeShip(position)
+            }
+        }
+
+        override fun show(game: Game) {
+            game.print()
+        }
+    },
     "GRID" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>) = game
         override fun show(game: Game) {
@@ -85,21 +100,13 @@ fun getCommandsOO() = mapOf(
             TODO("Not yet implemented")
         }
 
+
         override fun show(game: Game) {
             TODO("Not yet implemented")
         }
 
         override val argsSyntax: String
             get() = "<position>"
-    },
-    "REMOVE" to object : CommandsOO() {
-        override fun action(game: Game, args: List<String>): Game? {
-            TODO("Not yet implemented")
-        }
-
-        override fun show(game: Game) {
-            TODO("Not yet implemented")
-        }
     },
     "REFRESH" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game? {
@@ -113,5 +120,4 @@ fun getCommandsOO() = mapOf(
     "EXIT" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game? = null
     },
-
-    )
+)

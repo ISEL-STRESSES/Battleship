@@ -11,7 +11,7 @@ class Position private constructor(val column: Column, val row: Row) {
     companion object {
         // private as to only get Positions from the .get() methods
         val values = List(COLUMN_DIM * ROW_DIM) {
-            Position((it / COLUMN_DIM).indexToColumn(), (it % ROW_DIM).indexToRow())
+            Position((it / COLUMN_DIM).indexToColumn(), (it % COLUMN_DIM).indexToRow())
         }
 
         // get all possible positions
@@ -51,9 +51,12 @@ fun String.toPositionOrNull(): Position? {
  * Converts string to a Position
  */
 fun String.toPosition(): Position {
-    return toPositionOrNull() ?: error("Invalid String to convert into position!")
+    return toPositionOrNull() ?: error("Invalid Position $this")
 }
 
+/**
+ * @throws IndexOutOfBoundsException if resulting position is invalid
+ */
 fun Position.movePosition(dir: Direction, length: Int): Position {
     val x = this.column.ordinal + if (dir === Direction.HORIZONTAL) length else 0
     val y = this.row.ordinal + if (dir === Direction.VERTICAL) length else 0

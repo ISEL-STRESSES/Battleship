@@ -15,16 +15,64 @@ typealias Grid = Map<Position, Cell>
 
 data class Board(val fleet: Fleet = emptyList(), val grid: Grid = mapOf())
 
+data class Bounds(val topLeft: Coords, val bottomRight: Coords);
+
+
+fun getBounds(pos: Position, dir: Direction, size: Int): Bounds {
+    val extension = Pair(if (dir == Direction.HORIZONTAL) size else 0, if (dir == Direction.VERTICAL) size else 0);
+    return Bounds(
+        max(pos.column.ordinal - 1, 0) to max(pos.row.ordinal - 1, 0),
+        min(pos.column.ordinal + extension.first + 1, COLUMN_DIM) to min(
+            pos.row.ordinal + extension.second + 1,
+            ROW_DIM
+        )
+    )
+}
+
+
 fun Board.putShip(type: ShipType, pos: Position, direction: Direction): Board {
     // TODO: change exception to put result
     if (fleet.count { type == it.type } >= type.fleetQuantity)
-        throw Exception("No more ${type.name} to put")
+        error("No more ${type.name} to put")
+
+    if (direction == Direction.HORIZONTAL){
+        if (pos.column.ordinal + type.squares > COLUMN_DIM) error("Can't put ${type.name} in that position")
+    } else
+        if (pos.row.ordinal + type.squares > ROW_DIM) error("Can't put ${type.name} in that position");
+
+    // get bounds of ship
+    val bounds = getBounds(pos, direction, type.squares);
+
+    //iterate through cells to see if all these cells are empty otherwise throw error
+    for (y in bounds.topLeft.second until bounds.bottomRight.second) {
+        for (x in bounds.topLeft.first until bounds.bottomRight.first) {
+            if (this.grid[Position[x, y]] != null) error("Can't put ${type.name} in that position");
+        }
+    }
 
 
-    val newShip = Ship(type)
-    val cells = List(type.squares) { ShipCell(pos.movePosition(direction, it), newShip) }
+    val newShip = Ship(type, pos, direction)
+    val cells = newShip.positions().map { currPos -> ShipCell(currPos, newShip) }
 
     val newFleet = fleet + newShip
     val newGrid = grid + cells.associateBy { it.pos }
     return copy(fleet = newFleet, grid = newGrid)
 }
+
+fun Board.removeShip(pos: Position): Board {
+    // get cell at position
+    val cell = this.grid[pos]
+    return if (cell is ShipCell) {
+        val ship = cell.ship
+        val newFleet = fleet - ship;
+        val newGrid = grid - ship.positions();
+
+        Board(newFleet, newGrid)
+    } else {
+        this;
+    }
+}
+
+fun Game.enemyBoard(): Board = if (player === Player.A) boardA else boardB!!
+
+

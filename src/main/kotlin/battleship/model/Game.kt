@@ -40,6 +40,25 @@ fun Game.putShip(type: ShipType, pos: Position, direction: Direction): Game {
     return this.copy(boardA = newBoard)
 }
 
+fun Game.removeShip(pos: Position): Game {
+    check(this.state == SETUP) { "Cant change fleet after game started" }
+
+    val newBoard = boardA.removeShip(pos);
+    if (boardA === newBoard) error("No ship in $pos");
+    return this.copy(boardA = newBoard)
+}
+
+fun Game.removeAll(): Game {
+    check(this.state == SETUP) { "Cant change fleet after game started" }
+    return this.copy(boardA = Board())
+}
+
+//fun Game.getTarget(pos :Position) : Game {
+//    check(state == FIGHT) { "Cant change fleet after game started" }
+//
+//    val newBoard = boardB?.getTarget()
+//    return copy(boardB= newBoard)
+//}
 
 fun Game.putAllShips() {
     //TODO
