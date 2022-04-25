@@ -45,9 +45,18 @@ fun Cell.toChar(): Char {
  */
 fun printHelp() {
     println("Available Commands:")
+    println("\tHELP")
+    println("\tPUT\t\t(<shipType> [<position> <align>] | all)")
+    println("\tREMOVE\t\t<position> | all")
+    println("\tGRID")
+    println("\tSTART\t\t<name>")
+    println("\tSHOT\t\t<position>")
+    println("\tREFRESH")
+    println("\tEXIT")
+/*
     getCommandsOO().forEach {
         println("\t${it.key}\t\t${it.value.argsSyntax}")
-    }
+    }*/
 }
 
 /**

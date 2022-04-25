@@ -50,7 +50,14 @@ data class Game(
  *
  */
 fun Game.startGame(gameName: String, st: Storage): Game {
-    TODO("Not yet implemented")
+    val player = st.start(gameName, boardA)
+    return if (player == Player.B) {
+        val gameFromDB = st.load(this)
+        val newGame = copy(boardA = gameFromDB.boardA, boardB = boardA, player = Player.B)
+        newGame
+    } else {
+        this
+    }.also { st.store(it) } // MINDBLOWING
 }
 
 /**
@@ -133,10 +140,6 @@ fun Game.placeShip(type: ShipType, position: Position): Game
 
  */
 
-enum class ShotConsequence {
-    MISS, HIT, SUNK, INVALID
-}
-
 /**
  *
  */
@@ -148,10 +151,9 @@ fun Game.makeShot(pos: Position): PlayResult {
     if (player == turn) {
         val enemyBoard = getPlayerBoard(player.other())
         checkNotNull(enemyBoard) // TODO ("gambiarra") //não deveria ser preciso pois já verificámos que estamos no "FIGHT_STATE" logo boardB!=null
-
         val boardResult = enemyBoard.makeShot(pos)
 
-        return if (boardResult.board != enemyBoard) {
+        return if (boardResult.board !== enemyBoard) {
             // Check what board changed
             if (enemyBoard == boardA)
                 PlayResult(

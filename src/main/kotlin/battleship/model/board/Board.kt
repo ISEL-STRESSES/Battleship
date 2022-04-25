@@ -63,8 +63,8 @@ fun Board.putShip(type: ShipType, pos: Position, direction: Direction): Board {
         }
     }
 
-    val newShip = Ship(type, pos, direction)
-    val cells = newShip.positions().map { currPos -> ShipCell(currPos, newShip) }
+    val newShip = Ship(type, pos, direction, List(type.squares) { pos.movePosition(direction, it) })
+    val cells = newShip.positions.map { currPos -> ShipCell(currPos, newShip) }
 
     val newFleet = fleet + newShip
     val newGrid = grid + cells.associateBy { it.pos }
@@ -83,6 +83,10 @@ fun Board.removeShip(pos: Position): Board {
     } else {
         this
     }
+}
+
+enum class ShotConsequence {
+    MISS, HIT, SUNK, INVALID
 }
 
 data class BoardResult(val board: Board, val consequence: ShotConsequence, val error: PlayError = PlayError.NONE)
