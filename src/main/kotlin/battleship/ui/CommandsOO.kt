@@ -1,9 +1,10 @@
 package battleship.ui
 
-import battleship.model.Game
-import battleship.model.board.toDirectionOrNull
+import battleship.model.*
+import battleship.model.board.enemyBoard
+import battleship.model.board.toDirection
 import battleship.model.board.toPosition
-import battleship.model.putShip
+import battleship.model.board.toPositionOrNull
 import battleship.model.ship.toShipTypeOrNull
 
 /**

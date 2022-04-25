@@ -5,8 +5,7 @@ class Position{
 +row
 +column
 {static} +values: List<Position>
-{static} +id: String
-{static} +get()
++get()
 }
 
 class Row{
@@ -21,6 +20,6 @@ class Column{
 {static} +values: List<Column>
 }
 
-Position <|-- Row
-Position <|-- Column
+Row <-- Position
+Column <-- Position
 @enduml
