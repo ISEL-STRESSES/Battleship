@@ -1,8 +1,6 @@
 package battleship.model.board
 
-import battleship.model.BoardResult
-import battleship.model.Game
-import battleship.model.Player
+import battleship.model.PlayError
 import battleship.model.ShotConsequence
 import battleship.model.ship.Ship
 import battleship.model.ship.ShipType
@@ -71,7 +69,7 @@ fun Board.putShip(type: ShipType, pos: Position, direction: Direction): Board {
 
     val newFleet = fleet + newShip
     val newGrid = grid + cells.associateBy { it.pos }
-    return copy(fleet = newFleet, grid = newGrid)
+    return Board(newFleet, newGrid)
 }
 
 fun Board.removeShip(pos: Position): Board {
@@ -88,12 +86,31 @@ fun Board.removeShip(pos: Position): Board {
     }
 }
 
-fun Game.enemyBoard(): Board = if (player === Player.A) boardA else boardB!!
+data class BoardResult(val board: Board, val consequence: ShotConsequence, val error: PlayError = PlayError.NONE)
 
 fun Board.makeShot(pos: Position): BoardResult {
+    val elemToFind = grid[pos]
+    val newGrid: Grid
+    if (elemToFind != null) {
+        //Check if elem is ShipCell, if yes make ShipHit, else "Position Already Shot"
+        val cell = grid.entries.first { it.key == pos } //it.positions().any{ shipCell -> shipCell == pos}}.positions()
+        return if (cell.value is ShipCell) { //TODO (apenas a ShipCell Class e nao derivados (ShipHit e ShipSunk)"))
+            var consequence = ShotConsequence.HIT
+            val ship = (cell.value as ShipCell).ship // ship with position that was shot
+            newGrid = grid + Pair(pos, ShipHit(pos, ship))
+            val correspondentPos = newGrid.entries.filter { it.key in ship.positions() }
+            if (correspondentPos.all { it.value is ShipHit }) { // if after hitting the ship all Cells are ShipHit, make them ShipSunk
+                consequence = ShotConsequence.SUNK
+                newGrid.entries.mapIndexed { idx, currElem ->
+                    if (currElem == correspondentPos[idx])
+                        Pair(currElem.key, ShipSunk(currElem.key, ship))
+                }
+            }
+            BoardResult(copy(grid = newGrid), consequence)
+        } else BoardResult(this, ShotConsequence.INVALID, PlayError.INVALID_SHOT)
 
-    if (grid[pos] != null) {
     } else {
-        grid[pos].BoardResult(this, ShotConsequence.MISS)
+        newGrid = grid + Pair(pos, MissCell(pos))
+        return BoardResult(copy(grid = newGrid), ShotConsequence.MISS)
     }
 }

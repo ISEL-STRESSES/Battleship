@@ -7,11 +7,10 @@ import battleship.storage.Storage
 
 // enum class PutError { NONE, INVALID_POSITION, INVALID_ARGUMENTS }
 
-//
-enum class PlayError { NONE, INVALID_TURN, GAME_OVER }
+enum class PlayError { NONE, INVALID_SHOT, INVALID_TURN, GAME_OVER }
 
 //
-data class PlayResult(val game: Game, val error: PlayError)
+data class PlayResult(val game: Game, val errors: Pair<ShotConsequence, PlayError>)
 
 /**
  * Keep the current state of the game.
@@ -69,7 +68,6 @@ fun Game.putShip(type: ShipType, pos: Position, dir: Direction): Game {
  * @return updated [Game]
  */
 fun Game.removeShip(pos: Position): Game {
-    state.checkState(SETUP) // Verify you're in the right state for put command
 
     val newBoard = boardA.removeShip(pos)
     if (boardA === newBoard) error("No ship in $pos")
@@ -81,7 +79,6 @@ fun Game.removeShip(pos: Position): Game {
  * @return updated [Game]
  */
 fun Game.removeAll(): Game {
-    state.checkState(SETUP) // Verify you're in the right state for put command
     return this.copy(boardA = Board())
 }
 
@@ -130,7 +127,6 @@ enum class ShotConsequence {
 fun Game.getPlayerBoard(target: Player) = if (target == Player.A) boardA else boardB
 
 // TODO() FAZER A MESMA COISA PARA O PUT
-data class BoardResult(val board: Board, val consequence: ShotConsequence, val error: PlayError = PlayError.NONE)
 
 fun Game.makeShot(pos: Position): PlayResult {
     return if (player == turn) {

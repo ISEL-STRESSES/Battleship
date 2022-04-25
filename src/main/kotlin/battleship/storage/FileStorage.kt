@@ -12,10 +12,10 @@ class FileStorage : Storage {
     override fun start(name: String, board: Board): Player {
         val file = getFile(name)
         if (file.exists()) // player A has already begun
-            {
+        {
 
-                return Player.B
-            }
+            return Player.B
+        }
         file.writeText("")
 
         return Player.A

@@ -45,6 +45,8 @@ fun getCommandsOO(st: Storage) = mapOf(
     "PUT" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game {
             require(args.size == 3) { "Invalid Arguments" }
+            game.state.checkState(GameState.SETUP) // Verify you're in the right state for put command
+
 
             val type = args[0].toShipTypeOrNull() ?: error("MUDAR ISTO MAIS TARDE TARDE TARDE - ordem do adolfo")
             val position = args[1].toPosition()
@@ -65,6 +67,8 @@ fun getCommandsOO(st: Storage) = mapOf(
     "REMOVE" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game {
             require(args.size == 1) { "Invalid Arguments" }
+            game.state.checkState(GameState.SETUP) // Verify you're in the right state for put command
+
 
             return if (args[0] == "all") {
                 game.removeAll()
@@ -105,13 +109,14 @@ fun getCommandsOO(st: Storage) = mapOf(
         override fun action(game: Game, args: List<String>): Game {
 
             require(args.size == 1) { "Invalid Arguments\nUse: $argsSyntax" }
-            checkNotNull(game.boardB) { "Game not Started" }
-
+            game.state.checkState(GameState.FIGHT)
             val pos = args.first().toPositionOrNull() ?: error("Invalid $argsSyntax")
-            val shot = game.makeShot(pos) // retorna game question
-            val getGameStatus = shot.game.checkWin()
+            val result = game.makeShot(pos)
+            //TODO FAZER O TRATAMENTO DOS ERROS E CONSEQUENCIAS DO SHOT
+
+            val getGameStatus = result.game.checkWin()
             /* not good board still giving me a Headache (my board?) */
-            return shot.game.copy(state = getGameStatus, turn = game.player.other()) // TODO("Not yet implemented")
+            return result.game.copy(state = getGameStatus, turn = game.player.other()) // TODO("Not yet implemented")
         }
 
         override fun show(game: Game) {

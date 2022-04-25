@@ -59,6 +59,10 @@ abstract class Cell{
 pos: Position
 }
 
+class MissCell{
+pos: Position
+}
+Cell <|-right- MissCell
 
 class ShipCell{
 pos: Position
