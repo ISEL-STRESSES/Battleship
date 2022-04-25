@@ -9,3 +9,5 @@ interface Storage {
     fun store(game: Game)
     fun load(game: Game): Game
 }
+
+typealias FileContent = List<String>

@@ -16,7 +16,7 @@ import battleship.storage.Storage
 enum class PlayError { NONE, INVALID_SHOT, INVALID_TURN, GAME_OVER }
 
 //
-data class PlayResult(val game: Game, val errors: Pair<ShotConsequence, PlayError>)
+data class PlayResult(val game: Game, val consequence: ShotConsequence)
 
 /**
  * Keep the current state of the game.
@@ -91,7 +91,7 @@ fun Game.putShip(type: ShipType, pos: Position, dir: Direction): Game {
  * @return updated [Game]
  */
 fun Game.removeShip(pos: Position): Game {
-
+    state.checkState(GameState.SETUP) // Verify you're in the right state for remove command
     val newBoard = boardA.removeShip(pos)
     if (boardA === newBoard) error("No ship in $pos")
     return this.copy(boardA = newBoard)
@@ -148,6 +148,14 @@ fun Game.getPlayerBoard(target: Player) = if (target == Player.A) boardA else bo
 // TODO() FAZER A MESMA COISA PARA O PUT
 
 fun Game.makeShot(pos: Position): PlayResult {
+    state.checkState(GameState.FIGHT) // Verify you're in the right state for shot command
+    require(player == turn) { "Wait for other player" }
+
+    val enemyBoard = getPlayerBoard(player.other())
+    checkNotNull(enemyBoard) // TODO ("gambiarra") //não deveria ser preciso pois já verificámos que estamos no "FIGHT_STATE" logo boardB!=null
+    val boardResult = enemyBoard.makeShot(pos)
+
+    /*
     if (player == turn) {
         val enemyBoard = getPlayerBoard(player.other())
         checkNotNull(enemyBoard) // TODO ("gambiarra") //não deveria ser preciso pois já verificámos que estamos no "FIGHT_STATE" logo boardB!=null
@@ -158,18 +166,18 @@ fun Game.makeShot(pos: Position): PlayResult {
             if (enemyBoard == boardA)
                 PlayResult(
                     copy(boardA = boardResult.board),
-                    Pair(boardResult.consequence, boardResult.error)
+                    boardResult.consequence
                 ) // TODO ("bota mais gambiarra")
             else
-                PlayResult(copy(boardB = boardResult.board), Pair(boardResult.consequence, boardResult.error))
+                PlayResult(copy(boardB = boardResult.board), boardResult.consequence)
         } else {
-            PlayResult(this, Pair(boardResult.consequence, boardResult.error))
+            PlayResult(this, boardResult.consequence)
         }
     }
-    return PlayResult(
-        this,
-        Pair(ShotConsequence.INVALID, PlayError.INVALID_TURN)
-    ) // if not your turn don't change the game
+    error("Wait for other")
+
+     */
+    TODO()
 }
 
 fun Game.checkWin(): GameState =

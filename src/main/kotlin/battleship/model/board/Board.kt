@@ -1,7 +1,6 @@
 package battleship.model.board
 
 import battleship.model.PlayError
-import battleship.model.ShotConsequence
 import battleship.model.ship.Ship
 import battleship.model.ship.ShipType
 import kotlin.math.max
@@ -89,7 +88,7 @@ enum class ShotConsequence {
     MISS, HIT, SUNK, INVALID
 }
 
-data class BoardResult(val board: Board, val consequence: ShotConsequence, val error: PlayError = PlayError.NONE)
+data class ShotResult(val board: Board, val consequence: ShotConsequence, val error: PlayError = PlayError.NONE)
 
 fun Board.makeShot(pos: Position): ShotResult {
     when (val cell = grid[pos]) { // THE FUCK IS THIS

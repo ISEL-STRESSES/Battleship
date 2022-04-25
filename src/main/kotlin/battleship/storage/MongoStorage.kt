@@ -71,10 +71,10 @@ class MongoStorage(driver: MongoDriver) : Storage {
     override fun load(game: Game): Game {
         val doc = collection.getDocument(game.name)
         checkNotNull(doc) { "No document in Load" }
-        if (doc.movesA.size == game.boardA.grid.size) {
+        if (doc.contentA.size == game.boardA.grid.size) {
             return game
         }
-        val pos = doc.movesA.last().toPositionOrNull() ?: error("Invalid Position in Load")
+        val pos = doc.contentA.last().toPositionOrNull() ?: error("Invalid Position in Load")
         return game.copy(boardA = game.boardA/*.addMove(pos)*/)
     }
 }
