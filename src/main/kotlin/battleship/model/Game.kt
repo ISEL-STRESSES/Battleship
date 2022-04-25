@@ -3,25 +3,35 @@ package battleship.model
 import battleship.model.GameState.*
 import battleship.model.board.*
 import battleship.model.ship.ShipType
+import battleship.storage.Storage
+
+// enum class PutError { NONE, INVALID_POSITION, INVALID_ARGUMENTS }
+
+//
+enum class PlayError { NONE, INVALID_TURN, GAME_OVER }
+
+//
+data class PlayResult(val game: Game, val error: PlayError)
 
 /**
  * Keep the current state of the game.
- * @property SETUP setup stage where only PUT commands will be allowed;
- * @property FIGHT fight stage where you can do all the commands except the ones in the [SETUP] phase;
- * @property OVER game over stage meaning you can't do any commands.
+ * @property SETUP  setup stage where only PUT commands will be allowed;
+ * @property FIGHT  fight stage where you can do all the commands except the ones in the [SETUP] phase;
+ * @property OVER   game over stage meaning you can't do any commands.
  */
 enum class GameState {
     SETUP, FIGHT, OVER
 }
 
-enum class PutError { NONE, INVALID_POSITION, INVALID_ARGUMENTS }
-
-
-enum class PlayError { NONE, INVALID_TURN, GAME_OVER }
-
-data class PlayResult(val game: Game, val error: PutError)
-
-
+/**
+ * Central object that represents the battleship game
+ * @property name name of the game
+ * @property boardA [Board] of the first player
+ * @property boardB [Board] of the second player
+ * @property state current [GameState]
+ * @property player game [Player]
+ * @property turn current [Player] to make a turn.
+ */
 data class Game(
     val name: String,
     val boardA: Board,
@@ -31,37 +41,59 @@ data class Game(
     val turn: Player = Player.A
 )
 
+fun GameState.checkState(wantedState: GameState) {
+    when (wantedState) {
+        SETUP -> check(wantedState != this) { "Can't change fleet after game started" }
+        FIGHT -> check(wantedState != this) { "Can't make a shot before start" }
+        OVER -> check(wantedState != this) { "Game Over, FATALITY" }
+    }
+}
 
-fun Game.putShip(type: ShipType, pos: Position, direction: Direction): Game {
-    check(this.state == SETUP) { "Cant change fleet after game started" }
+/**
+ *[Game] Function that will put a ship if it's a valid command and ship
+ * @param type [ShipType] of the ship to put
+ * @param pos head [Position] of the ship
+ * @param dir [Direction] of the ship
+ * @return updated [Game]
+ */
+fun Game.putShip(type: ShipType, pos: Position, dir: Direction): Game {
+    state.checkState(SETUP) // Verify you're in the right state for put command
 
-    val newBoard = boardA.putShip(type, pos, direction)
-
+    val newBoard = boardA.putShip(type, pos, dir)
     return this.copy(boardA = newBoard)
 }
 
+/**
+ *[Game] Function that will remove a ship if it's a valid command and ship
+ * @param pos [Position] to remove the ship from
+ * @return updated [Game]
+ */
 fun Game.removeShip(pos: Position): Game {
-    check(this.state == SETUP) { "Cant change fleet after game started" }
+    state.checkState(SETUP) // Verify you're in the right state for put command
 
-    val newBoard = boardA.removeShip(pos);
-    if (boardA === newBoard) error("No ship in $pos");
+    val newBoard = boardA.removeShip(pos)
+    if (boardA === newBoard) error("No ship in $pos")
     return this.copy(boardA = newBoard)
 }
 
+/**
+ *[Game] Function that will remove all ships if it's a valid command
+ * @return updated [Game]
+ */
 fun Game.removeAll(): Game {
-    check(this.state == SETUP) { "Cant change fleet after game started" }
+    state.checkState(SETUP) // Verify you're in the right state for put command
     return this.copy(boardA = Board())
 }
 
-//fun Game.getTarget(pos :Position) : Game {
+// fun Game.getTarget(pos :Position) : Game {
 //    check(state == FIGHT) { "Cant change fleet after game started" }
 //
 //    val newBoard = boardB?.getTarget()
 //    return copy(boardB= newBoard)
-//}
+// }
 
 fun Game.putAllShips() {
-    //TODO
+    // TODO
 //    while(true){
 //        val pos = Position.values.random()
 //        val currShip = ShipType.values.forEach {
@@ -76,6 +108,10 @@ fun createGame(): Game {
     return Game("", Board(), Board())
 }
 
+fun startGame(name: String, st: Storage): Game {
+    TODO()
+}
+
 /*
 fun Game.placeShip(type: ShipType, position: Position): Game
 {
@@ -83,15 +119,33 @@ fun Game.placeShip(type: ShipType, position: Position): Game
 }
 
  */
-fun Game.getTarget(pos: Position, boardA: Board) {
-    TODO()
+
+enum class ShotConsequence {
+    MISS, HIT, SUNK, INVALID
 }
 
-fun Game.checkWin(): GameState {
-    var acc = 0
-    val count = boardA.fleet.forEach { acc += it.type.squares }
-    //so vale a pena contar os chunks a partir de acc jogadas
-    val allSunk = boardA.grid.any { it.value !is ShipSunk }
-    return if (!allSunk) FIGHT else OVER
+/**
+ *
+ */
+fun Game.getPlayerBoard(target: Player) = if (target == Player.A) boardA else boardB
+
+// TODO() FAZER A MESMA COISA PARA O PUT
+data class BoardResult(val board: Board, val consequence: ShotConsequence, val error: PlayError = PlayError.NONE)
+
+fun Game.makeShot(pos: Position): PlayResult {
+    return if (player == turn) {
+        state.checkState(FIGHT)
+        val enemyBoard = getPlayerBoard(player.other())
+        checkNotNull(enemyBoard) // TODO ("gambiarra") //não deveria ser preciso pois já verificámos que estamos no "FIGHT_STATE" logo boardB!=null
+
+        val boardResult = enemyBoard.makeShot(pos)
+
+        // Check what board changed
+        if (enemyBoard == boardA)
+            PlayResult(copy(boardA = boardResult.board), boardResult.error) // TODO ("bota mais gambiarra")
+        else
+            PlayResult(copy(boardB = boardResult.board), boardResult.error)
+    } else PlayResult(this, PlayError.INVALID_TURN) // if not your turn don't change the game
 }
 
+fun Game.checkWin(): GameState = if (boardA.win() || boardB?.win() ?: throw IllegalStateException()) OVER else FIGHT

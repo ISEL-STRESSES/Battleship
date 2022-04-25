@@ -11,4 +11,3 @@ class DirectionTest {
         assertSame(null, "k".toDirectionOrNull())
     }
 }
-

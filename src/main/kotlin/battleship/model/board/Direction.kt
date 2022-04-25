@@ -21,4 +21,3 @@ fun String.toDirectionOrNull(): Direction? {
  * @return returns the direction from the first letter of the string
  */
 fun String.toDirection(): Direction = toDirectionOrNull() ?: error("Invalid direction 5")
-

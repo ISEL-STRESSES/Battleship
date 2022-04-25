@@ -1,6 +1,6 @@
 package battleship.ui
 
-import battleship.model.*
+import battleship.model.Game
 import battleship.model.board.*
 import battleship.model.ship.ShipType
 
@@ -18,7 +18,7 @@ const val CHAR_HIT = '*'
 const val CHAR_SUNK = 'X'
 const val CHAR_WATER = ' '
 
-//Horizontal separator condensed
+// Horizontal separator condensed
 val horizontalSeparators = CHAR_WATER.repeat(HORIZONTAL_IDENT) + cross + horSep.repeat(BOARD_CHAR_DIM) + cross
 
 /**
@@ -90,7 +90,6 @@ fun Board.printRow(y: Int) {
     print(" ") // print final space
     print(verSep)
 }
-
 
 /**
  * Prints the Ship information on the right of the [board]

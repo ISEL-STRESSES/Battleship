@@ -1,8 +1,6 @@
-package battleship.model
+package battleship.model.board
 
-import battleship.model.board.Position
 import battleship.model.ship.Ship
-
 
 /**
  * Represents an empty cell
@@ -36,5 +34,3 @@ open class ShipHit(pos: Position, ship: Ship) : ShipCell(pos, ship)
  * @property ship associated ship to the [ShipSunk]
  */
 class ShipSunk(pos: Position, ship: Ship) : ShipHit(pos, ship)
-
-

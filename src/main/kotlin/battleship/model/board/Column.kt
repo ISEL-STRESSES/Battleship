@@ -6,7 +6,7 @@ const val COLUMN_FIRST_LETTER = 'A'
 /**
  * All Rows that make up the game.
  * @property letter Character associated with the position, starting from COLUMN_FIRST_LETTER
- * @property ordinal Columns's index in the board
+ * @property ordinal Column's index in the board
  */
 class Column private constructor(idx: Int) {
     val letter = COLUMN_FIRST_LETTER + idx

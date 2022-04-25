@@ -1,12 +1,12 @@
-package battleship.ui//package battleship.ui
+package battleship.ui // package battleship.ui
 //
-//import battleship.model.Game
+// import battleship.model.Game
 //
 //
-///**
+// /**
 // * Represents a command.
 // */
-//class CommandFP(
+// class CommandFP(
 //    /**
 //     * Operation to be performed in the game with the indicated arguments.
 //     * @param game Actual game state.
@@ -25,12 +25,12 @@ package battleship.ui//package battleship.ui
 //     * Description of the syntax of the arguments
 //     */
 //    val argsSyntax: String = ""
-//)
+// )
 //
-///**
+// /**
 // * Creates the associative map of game commands that associates the name of the command to its representation.
 // */
-//fun getCommandsFP() = mapOf(
+// fun getCommandsFP() = mapOf(
 //    "GRID" to CommandFP(
 //        action = { game, _ ->
 //            checkNotNull(game) { "Game not started yet" }
@@ -54,4 +54,4 @@ package battleship.ui//package battleship.ui
 //            st.load(game)
 //        }
 //    )
-//)
+// )

@@ -1,11 +1,11 @@
 package battleship.ui
 
 import battleship.model.*
-import battleship.model.board.enemyBoard
 import battleship.model.board.toDirection
 import battleship.model.board.toPosition
 import battleship.model.board.toPositionOrNull
 import battleship.model.ship.toShipTypeOrNull
+import battleship.storage.Storage
 
 /**
  * Represents a command.
@@ -34,26 +34,24 @@ abstract class CommandsOO {
 /**
  * Creates the associative map of game commands that associates the name of the command to its representation.
  */
-fun getCommandsOO() = mapOf(
+fun getCommandsOO(st: Storage) = mapOf(
 
     "HELP" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>) = game
         override fun show(game: Game) {
-            //NOT TODO CALOR DID THE HARDCORE
             printHelp()
         }
     },
     "PUT" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game {
-            require(args.size == 3) { "Invalid Arguments\n Use: $argsSyntax" }
+            require(args.size == 3) { "Invalid Arguments" }
 
             val type = args[0].toShipTypeOrNull() ?: error("MUDAR ISTO MAIS TARDE TARDE TARDE - ordem do adolfo")
             val position = args[1].toPosition()
             val direction = args[2].toDirection() // meter em enum class como o stor fez
 
             val result = game.putShip(type, position, direction)
-
-            //return result
+            // return result
             return result
         }
 
@@ -65,11 +63,10 @@ fun getCommandsOO() = mapOf(
             get() = "(<shipType> [<position> <align>] | all)"
     },
     "REMOVE" to object : CommandsOO() {
-        override fun action(game: Game, args: List<String>): Game? {
-            require(args.size == 1) { "Invalid Arguments\n Use: $argsSyntax" }
+        override fun action(game: Game, args: List<String>): Game {
+            require(args.size == 1) { "Invalid Arguments" }
 
-            return if(args[0] == "all")
-            {
+            return if (args[0] == "all") {
                 game.removeAll()
             } else {
                 val position = args[0].toPosition()
@@ -80,6 +77,9 @@ fun getCommandsOO() = mapOf(
         override fun show(game: Game) {
             game.print()
         }
+
+        override val argsSyntax: String
+            get() = "<position> | all"
     },
     "GRID" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>) = game
@@ -89,40 +89,43 @@ fun getCommandsOO() = mapOf(
     },
     "START" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game? {
-            TODO("Not yet implemented")
+            require(args.size == 1) { "Invalid Arguments" }
+            require(args[0].isNotBlank()) { }
+            val gameName = args[0]
+            val res = game.startGame(gameName, st)
+            return game
         }
 
         override fun show(game: Game) {
-            TODO("Not yet implemented")
+            game.print()
         }
     },
-    "SHOT" to object : CommandsOO() {
-        override fun action(game: Game, args: List<String>): Game? {
 
-            require(args.size == 1) { "Invalid Arguments\n Use: $argsSyntax" }
+    "SHOT" to object : CommandsOO() {
+        override fun action(game: Game, args: List<String>): Game {
+
+            require(args.size == 1) { "Invalid Arguments\nUse: $argsSyntax" }
             checkNotNull(game.boardB) { "Game not Started" }
 
             val pos = args.first().toPositionOrNull() ?: error("Invalid $argsSyntax")
-            val aim = game.getTarget(pos, game.enemyBoard())
-            val getGameStatus = game.checkWin()
-            return game.copy(
-                state = getGameStatus,
-                turn = game.player.other()
-            ) /* not good board still giving me a Headache (my board?) */
-            TODO("Not yet implemented")
+            val shot = game.makeShot(pos) // retorna game question
+            val getGameStatus = shot.game.checkWin()
+            /* not good board still giving me a Headache (my board?) */
+            return shot.game.copy(state = getGameStatus, turn = game.player.other()) // TODO("Not yet implemented")
         }
-
 
         override fun show(game: Game) {
             game.print()
             TODO("Not yet implemented")
         }
 
-        override val argsSyntax: String
-            get() = "<position>"
+        override val argsSyntax by lazy { "<position>" }
     },
     "REFRESH" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game? {
+            // tem de ir buscar o novo estado da db
+            // dar print a board
+            // retorno nao devia ser UNIT?????
             TODO("Not yet implemented")
         }
 

@@ -1,0 +1,13 @@
+//-RODRIGO----
+put car a3 h
+put sub b3 h //invalid position
+put sub j3 v
+remove all
+put c a1 h
+put cr a1 h
+put sub d5 v
+//-CARLOS----
+put 5 a1 v
+put 4 j1 v
+put 4 d8 h
+put meninas
