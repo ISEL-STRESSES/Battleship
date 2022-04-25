@@ -1,10 +1,7 @@
 package battleship.model
 
 import battleship.model.GameState.*
-import battleship.model.board.Board
-import battleship.model.board.Direction
-import battleship.model.board.Position
-import battleship.model.board.putShip
+import battleship.model.board.*
 import battleship.model.ship.ShipType
 
 /**
@@ -28,7 +25,7 @@ data class PlayResult(val game: Game, val error: PutError)
 data class Game(
     val name: String,
     val boardA: Board,
-    val boardB: Board,
+    val boardB: Board? = null,
     val state: GameState = SETUP,
     val player: Player = Player.A,
     val turn: Player = Player.A

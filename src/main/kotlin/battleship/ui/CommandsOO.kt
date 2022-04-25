@@ -35,6 +35,13 @@ abstract class CommandsOO {
  */
 fun getCommandsOO() = mapOf(
 
+    "HELP" to object : CommandsOO() {
+        override fun action(game: Game, args: List<String>) = game
+        override fun show(game: Game) {
+            //NOT TODO CALOR DID THE HARDCORE
+            printHelp()
+        }
+    },
     "PUT" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game {
             require(args.size == 3) { "Invalid Arguments\n Use: $argsSyntax" }
@@ -62,13 +69,6 @@ fun getCommandsOO() = mapOf(
         override fun action(game: Game, args: List<String>) = game
         override fun show(game: Game) {
             game.print()
-        }
-    },
-    "HELP" to object : CommandsOO() {
-        override fun action(game: Game, args: List<String>) = game
-        override fun show(game: Game) {
-            //NOT TODO CALOR DID THE HARDCORE
-            printHelp()
         }
     },
     "START" to object : CommandsOO() {

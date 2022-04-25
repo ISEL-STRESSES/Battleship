@@ -1,20 +1,8 @@
 package battleship.model.ship
 
-import battleship.model.ShipCell
+import battleship.model.board.Direction
+import battleship.model.board.Position
+import battleship.model.board.movePosition
 
 
-data class Ship(val type: ShipType)
-
-enum class HitStatus {
-    HIT, SUNK
-}
-
-typealias ShipHitBox = List<ShipCell>
-
-fun Ship.makeBox() {
-    TODO()
-}
-
-fun Ship.checkBox() {
-    TODO()
-}
+fun Ship.positions(): List<Position> = List(type.squares) { head.movePosition(dir, it) }

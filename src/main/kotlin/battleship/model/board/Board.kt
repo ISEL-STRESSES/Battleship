@@ -1,9 +1,14 @@
 package battleship.model.board
 
 import battleship.model.Cell
+import battleship.model.Game
+import battleship.model.Player
 import battleship.model.ShipCell
 import battleship.model.ship.Ship
 import battleship.model.ship.ShipType
+import battleship.model.ship.positions
+import kotlin.math.max
+import kotlin.math.min
 
 typealias Fleet = List<Ship>
 typealias Grid = Map<Position, Cell>
