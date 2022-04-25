@@ -12,6 +12,7 @@ import kotlin.math.min
 
 typealias Fleet = List<Ship>
 typealias Grid = Map<Position, Cell>
+typealias Coords = Pair<Int, Int> //Pair<X, Y>
 
 data class Board(val fleet: Fleet = emptyList(), val grid: Grid = mapOf())
 

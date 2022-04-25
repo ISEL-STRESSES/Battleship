@@ -97,11 +97,23 @@ fun getCommandsOO() = mapOf(
     },
     "SHOT" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game? {
+
+            require(args.size == 1) { "Invalid Arguments\n Use: $argsSyntax" }
+            checkNotNull(game.boardB) { "Game not Started" }
+
+            val pos = args.first().toPositionOrNull() ?: error("Invalid $argsSyntax")
+            val aim = game.getTarget(pos, game.enemyBoard())
+            val getGameStatus = game.checkWin()
+            return game.copy(
+                state = getGameStatus,
+                turn = game.player.other()
+            ) /* not good board still giving me a Headache (my board?) */
             TODO("Not yet implemented")
         }
 
 
         override fun show(game: Game) {
+            game.print()
             TODO("Not yet implemented")
         }
 
@@ -114,6 +126,7 @@ fun getCommandsOO() = mapOf(
         }
 
         override fun show(game: Game) {
+            game.print()
             TODO("Not yet implemented")
         }
     },

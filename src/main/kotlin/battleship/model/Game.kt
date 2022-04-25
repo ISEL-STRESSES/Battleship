@@ -83,3 +83,15 @@ fun Game.placeShip(type: ShipType, position: Position): Game
 }
 
  */
+fun Game.getTarget(pos: Position, boardA: Board) {
+    TODO()
+}
+
+fun Game.checkWin(): GameState {
+    var acc = 0
+    val count = boardA.fleet.forEach { acc += it.type.squares }
+    //so vale a pena contar os chunks a partir de acc jogadas
+    val allSunk = boardA.grid.any { it.value !is ShipSunk }
+    return if (!allSunk) FIGHT else OVER
+}
+
