@@ -2,11 +2,10 @@ package battleship.storage
 
 import battleship.model.Game
 import battleship.model.Player
-import battleship.model.board.Board
-import battleship.model.board.Grid
-import battleship.model.board.MissCell
-import battleship.model.board.ShipHit
+import battleship.model.board.*
 import battleship.model.ship.Ship
+import battleship.model.ship.toShipType
+import battleship.model.ship.toShipTypeOrNull
 import mongoDB.MongoDriver
 import mongoDB.deleteDocument
 import mongoDB.getDocument
@@ -28,29 +27,14 @@ class MongoStorage(driver: MongoDriver) : Storage {
     data class Doc(val _id: String, val contentA: List<String>, val contentB: List<String>, val turn: String)
 
     /**
-     * TODO
+     * The collection with all the games.
      */
     private val collection = driver.getCollection<Doc>("games")
 
     /**
-     * TODO
-     */
-    override fun start(name: String, board: Board): Player {
-        val doc = collection.getDocument(name)
-        if (doc != null) {
-            if (doc.contentA.isNotEmpty() && doc.contentB.isEmpty()) {
-                collection.replaceDocument(Doc(name, doc.contentA, board.serialize(), doc.turn))
-                return Player.B
-            } else {
-                collection.deleteDocument(name)
-            }
-        }
-        collection.insertDocument(Doc(name, board.serialize(), emptyList(), Player.A.name))
-        return Player.A
-    }
-
-    /**
-     * TODO
+     * Function that will serialize a [Ship] into a string
+     * @param grid [Grid] grid where the ship is located
+     * @return string information in string
      */
     private fun Ship.serialize(grid: Grid): String {
         val name = type.name
@@ -59,7 +43,8 @@ class MongoStorage(driver: MongoDriver) : Storage {
     }
 
     /**
-     * TODO
+     * Function that will serialize a [Board] into a [FileContent]
+     * @return [FileContent] with all the content that will be uploaded into the [Storage]
      */
     private fun Board.serialize(): FileContent {
         val fleetEntries = fleet.map { it.serialize(grid) }
@@ -68,14 +53,32 @@ class MongoStorage(driver: MongoDriver) : Storage {
     }
 
     /**
-     * TODO
+     * TODO()
      */
-    private fun String.deserialize() {
+    private fun String.deserialize() :Pair<Ship?, List<Cell>> {
         val split = split(" ")
+        if (split.first() == SHIP_INDICATOR){
+            val pos = split.drop(4).map { it.toPosition() }
+            val type = split[1].toShipType()
+            val head = split[2].toPosition()
+            val dir = split[3].toDirection()
+            val shipCells = List(type.squares) { head.movePosition(dir, it) }
+            val ship = Ship(type, head, dir, shipCells)
+            return ship to split.last().mapIndexed { idx, elem ->
+                if( elem == SHIP_CELL_SHOT) ShipHit(pos[idx], ship)
+                else ShipCell(pos[idx], ship)
+            }
+
+        } else if(split.first() == MISS_INDICATOR){
+            val pos = split[1].toPosition()
+            val newCell = MissCell(pos)
+            return null to listOf(newCell)
+        }
+        return null to emptyList()
     }
 
     /**
-     * TODO
+     * TODO()
      */
     private fun FileContent.deserialize(): Board {
         val entries = map { it.deserialize() }
@@ -86,7 +89,7 @@ class MongoStorage(driver: MongoDriver) : Storage {
     }
 
     /**
-     * TODO
+     * TODO()
      */
     override fun store(game: Game) {
         checkNotNull(game.boardB) // TODO("TAO FEIO CATANO")
@@ -94,7 +97,7 @@ class MongoStorage(driver: MongoDriver) : Storage {
     }
 
     /**
-     * TODO
+     * TODO()
      */
     override fun load(game: Game): Game {
         val doc = collection.getDocument(game.name)

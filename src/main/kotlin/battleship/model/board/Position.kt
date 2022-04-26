@@ -6,6 +6,7 @@ package battleship.model.board
  * @property row describes position's row
  */
 class Position private constructor(val column: Column, val row: Row) {
+
     override fun toString() = "${column.letter}${row.number}"
 
     companion object {

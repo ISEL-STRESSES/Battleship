@@ -6,9 +6,11 @@ import battleship.ui.readCommand
 import mongoDB.MongoDriver
 import kotlin.system.exitProcess
 
+const val DATABASE_NAME = "BattleShip"
+
 fun main() {
     try {
-        MongoDriver("PVV").use { drv ->
+        MongoDriver(DATABASE_NAME).use { drv ->
             var game: Game = createGame()
             val cmds = getCommandsOO(FileStorage())
             while (true) {

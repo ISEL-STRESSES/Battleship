@@ -8,7 +8,6 @@ import battleship.model.board.ShotConsequence
 import battleship.model.board.makeShot
 import battleship.model.board.putShip
 import battleship.model.board.removeShip
-import battleship.model.board.win
 import battleship.model.ship.ShipType
 import battleship.storage.Storage
 
