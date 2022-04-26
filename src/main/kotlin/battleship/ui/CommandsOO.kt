@@ -1,6 +1,7 @@
 package battleship.ui
 
 import battleship.model.Game
+import battleship.model.board.isComplete
 import battleship.model.board.toDirection
 import battleship.model.board.toPosition
 import battleship.model.putShip
@@ -91,14 +92,16 @@ fun getCommandsOO(st: Storage) = mapOf(
         }
     },
     "START" to object : CommandsOO() {
-        override fun action(game: Game, args: List<String>): Game? {
+        override fun action(game: Game, args: List<String>): Game {
             require(args.size == 1 && args[0].isNotBlank()) { "Invalid Arguments" }
+            check(game.boardA.fleet.isComplete()) { "Complete fleet before start" }
             val gameName = args[0]
             val res = game.startGame(gameName, st)
             return game
         }
 
         override fun show(game: Game) {
+            println(game.player.id)
             game.print()
         }
 

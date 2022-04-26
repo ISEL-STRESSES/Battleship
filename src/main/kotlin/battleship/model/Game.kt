@@ -1,5 +1,6 @@
 package battleship.model
 
+import battleship.model.GameState.*
 import battleship.model.board.Board
 import battleship.model.board.Direction
 import battleship.model.board.Position
@@ -13,9 +14,22 @@ import battleship.storage.Storage
 
 // enum class PutError { NONE, INVALID_POSITION, INVALID_ARGUMENTS }
 
-enum class PlayError { NONE, INVALID_SHOT, INVALID_TURN, GAME_OVER }
+/**
+ * available play errors
+ * @property NONE no error associated;
+ * @property INVALID_SHOT invalid shot taken;
+ * @property INVALID_TURN invalid turn;
+ * @property GAME_OVER game over.
+ */
+enum class PlayError {
+    NONE, INVALID_SHOT, INVALID_TURN, GAME_OVER // game over is not used
+}
 
-//
+/**
+ * Keeps the game and the correspondent consequence of a shot.
+ * @property game BattleShip [Game];
+ * @property consequence [ShotConsequence] after the shot was taken.
+ */
 data class PlayResult(val game: Game, val consequence: ShotConsequence)
 
 /**
@@ -41,7 +55,7 @@ data class Game(
     val name: String,
     val boardA: Board,
     val boardB: Board? = null,
-    val state: GameState = GameState.SETUP,
+    val state: GameState = SETUP,
     val player: Player = Player.A,
     val turn: Player = Player.A
 )
@@ -65,9 +79,9 @@ fun Game.startGame(gameName: String, st: Storage): Game {
  */
 fun GameState.checkState(wantedState: GameState) {
     when (wantedState) {
-        GameState.SETUP -> check(wantedState != this) { "Can't change fleet after game started" }
-        GameState.FIGHT -> check(wantedState != this) { "Can't make a shot before start" }
-        GameState.OVER -> check(wantedState != this) { "Game Over, FATALITY" }
+        SETUP -> check(wantedState == this) { "Can't change fleet after game started" }
+        FIGHT -> check(wantedState == this) { "Can't make a shot before start" }
+        OVER -> check(wantedState == this) { "Game Over, FATALITY" }
     }
 }
 
@@ -79,7 +93,7 @@ fun GameState.checkState(wantedState: GameState) {
  * @return updated [Game]
  */
 fun Game.putShip(type: ShipType, pos: Position, dir: Direction): Game {
-    state.checkState(GameState.SETUP) // Verify you're in the right state for put command
+    state.checkState(SETUP)
 
     val newBoard = boardA.putShip(type, pos, dir)
     return this.copy(boardA = newBoard)
@@ -91,7 +105,7 @@ fun Game.putShip(type: ShipType, pos: Position, dir: Direction): Game {
  * @return updated [Game]
  */
 fun Game.removeShip(pos: Position): Game {
-    state.checkState(GameState.SETUP) // Verify you're in the right state for remove command
+    state.checkState(SETUP)
     val newBoard = boardA.removeShip(pos)
     if (boardA === newBoard) error("No ship in $pos")
     return this.copy(boardA = newBoard)
@@ -102,6 +116,7 @@ fun Game.removeShip(pos: Position): Game {
  * @return updated [Game]
  */
 fun Game.removeAll(): Game {
+    state.checkState(SETUP)
     return this.copy(boardA = Board())
 }
 
@@ -124,62 +139,30 @@ fun Game.putAllShips() {
 //    }
 }
 
+/**
+ *[Game] Function that will create the initial game
+ * @return created game
+ */
 fun createGame(): Game {
     return Game("", Board(), Board())
 }
 
-fun startGame(name: String, st: Storage): Game {
-    TODO()
-}
-
-/*
-fun Game.placeShip(type: ShipType, position: Position): Game
-{
-
-}
-
- */
-
 /**
- *
+ *[Game] Function that will get a player board associated with a player, should not be used when boardB is null
+ * @param target [Player] to find the board
+ * @return Player [Board]
+ * @exception IllegalStateException Cannot get other board, if boardb is nullable
  */
 fun Game.getPlayerBoard(target: Player) = if (target == Player.A) boardA else boardB
 
 // TODO() FAZER A MESMA COISA PARA O PUT
 
 fun Game.makeShot(pos: Position): PlayResult {
-    state.checkState(GameState.FIGHT) // Verify you're in the right state for shot command
+    state.checkState(FIGHT)
     require(player == turn) { "Wait for other player" }
 
     val enemyBoard = getPlayerBoard(player.other())
-    checkNotNull(enemyBoard) // TODO ("gambiarra") //não deveria ser preciso pois já verificámos que estamos no "FIGHT_STATE" logo boardB!=null
+    checkNotNull(enemyBoard)
     val boardResult = enemyBoard.makeShot(pos)
-
-    /*
-    if (player == turn) {
-        val enemyBoard = getPlayerBoard(player.other())
-        checkNotNull(enemyBoard) // TODO ("gambiarra") //não deveria ser preciso pois já verificámos que estamos no "FIGHT_STATE" logo boardB!=null
-        val boardResult = enemyBoard.makeShot(pos)
-
-        return if (boardResult.board !== enemyBoard) {
-            // Check what board changed
-            if (enemyBoard == boardA)
-                PlayResult(
-                    copy(boardA = boardResult.board),
-                    boardResult.consequence
-                ) // TODO ("bota mais gambiarra")
-            else
-                PlayResult(copy(boardB = boardResult.board), boardResult.consequence)
-        } else {
-            PlayResult(this, boardResult.consequence)
-        }
-    }
-    error("Wait for other")
-
-     */
-    TODO()
+    TODO("lol")
 }
-
-fun Game.checkWin(): GameState =
-    if (boardA.win() || boardB?.win() ?: throw IllegalStateException()) GameState.OVER
-    else GameState.FIGHT

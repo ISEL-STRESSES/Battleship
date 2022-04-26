@@ -13,13 +13,17 @@ import mongoDB.getDocument
 import mongoDB.insertDocument
 import mongoDB.replaceDocument
 
-/**
- *
- */
+
+const val SHIP_INDICATOR = "S"
+const val MISS_INDICATOR = "M"
+const val SHIP_CELL_SHOT = '1'
+const val SHIP_CELL = '0'
+
+
 class MongoStorage(driver: MongoDriver) : Storage {
 
     /**
-     * TODO()
+     * Representation of the game state in a document.
      */
     data class Doc(val _id: String, val contentA: List<String>, val contentB: List<String>, val turn: String)
 
@@ -49,11 +53,9 @@ class MongoStorage(driver: MongoDriver) : Storage {
      * TODO
      */
     private fun Ship.serialize(grid: Grid): String {
-        val name = type
-        val head = dir.name.first()
-        val dir = dir
-        val cellStatus = positions.map { if (grid[it] is ShipHit) '1' else '0' }.joinToString { "" }
-        return "S $name $head $dir $cellStatus" // TODO: 26/04/2022 tha fuck is that "S"
+        val name = type.name
+        val cellStatus = positions.map { if (grid[it] is ShipHit) SHIP_CELL_SHOT else SHIP_CELL }.joinToString("")
+        return ("$SHIP_INDICATOR $name $head $dir $cellStatus")
     }
 
     /**
@@ -76,8 +78,11 @@ class MongoStorage(driver: MongoDriver) : Storage {
      * TODO
      */
     private fun FileContent.deserialize(): Board {
-        TODO()
-        // return this.fold(Board()) { (acc, e) -> }
+        val entries = map { it.deserialize() }
+        val ships = entries.mapNotNull { it.first }
+        val grid = entries.map{ it.second }.flatten().associateBy { it.pos }
+
+        return Board(ships, grid)
     }
 
     /**

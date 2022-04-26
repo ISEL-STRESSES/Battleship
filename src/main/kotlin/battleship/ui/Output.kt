@@ -98,7 +98,9 @@ fun printColumnsIDX() {
  * @param y index of the row to print
  */
 fun Board.printRow(y: Int) {
-    print(' '.repeat(HORIZONTAL_IDENT))
+    val rowNumber = Row.values[y].number.toString().padStart(2).padEnd(3)
+
+    print(rowNumber)
     print(verSep)
     repeat(COLUMN_DIM) { x ->
         val cell = grid[Position[x, y]]

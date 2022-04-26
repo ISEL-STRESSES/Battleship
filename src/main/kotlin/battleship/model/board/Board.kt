@@ -1,6 +1,8 @@
 package battleship.model.board
 
+import battleship.model.Game
 import battleship.model.PlayError
+import battleship.model.PlayResult
 import battleship.model.ship.Ship
 import battleship.model.ship.ShipType
 import kotlin.math.max
@@ -8,29 +10,42 @@ import kotlin.math.min
 
 typealias Fleet = List<Ship>
 typealias Grid = Map<Position, Cell>
-typealias Coords = Pair<Int, Int> // Pair<X, Y>
+typealias Coords = Pair<Int, Int> // TODO(Convert to Position)
 
+/**
+ * Board of each player
+ * @property fleet [Fleet] of the player, starting as an empty list
+ * @property grid [Grid] of the player, starting as an empty map
+ */
 data class Board(val fleet: Fleet = emptyList(), val grid: Grid = mapOf())
 
 /**
- * @brief returns the number of cells that the board has as ships
+ * Returns the number of [ShipCell] remaining (where a ship that has not been sunked is)
+ * @return number of [ShipCell] cells
  */
 fun Board.cellsQuantity(): Int {
     return this.fleet.fold(0) { acc, ship -> acc + ship.type.squares }
 }
 
 /**
- *
+ * [Board] Function that represents if a player has lost
+ * @return Boolean
  */
 fun Board.win() = (cellsQuantity() - grid.entries.count { (_, it) -> it is ShipSunk }) == 0
 
 /**
- *
+ * Class with the ends of each Ship's BlackBox
+ * @property topLeft [Coords] of the top left position
+ * @property bottomRight [Coords] of the bottom right position
  */
 data class Bounds(val topLeft: Coords, val bottomRight: Coords)
 
 /**
- *
+ * Function that will create the bounds of a ship
+ * @param pos [Position] of the head of the ship
+ * @param dir [Direction] of the ship
+ * @param size size of the ship
+ * @return [Bounds] of the ship
  */
 fun getBounds(pos: Position, dir: Direction, size: Int): Bounds {
     val extension = Pair(if (dir == Direction.HORIZONTAL) size else 0, if (dir == Direction.VERTICAL) size else 0)
@@ -43,26 +58,34 @@ fun getBounds(pos: Position, dir: Direction, size: Int): Bounds {
     )
 }
 
-fun Board.putShip(type: ShipType, pos: Position, direction: Direction): Board {
-    // TODO: change exception to put result
+
+/**
+ * [Board] Function that will put a ship
+ * @param type [ShipType] of the ship to put
+ * @param pos head [Position] of the ship
+ * @param dir [Direction] of the ship
+ * @return updated [Board]
+ */
+fun Board.putShip(type: ShipType, pos: Position, dir: Direction): Board {
+    // TODO() change return to PutResult just like the shot function
     if (fleet.count { type == it.type } >= type.fleetQuantity)
         error("No more ${type.name} to put")
 
-    if (direction == Direction.HORIZONTAL) {
+    if (dir == Direction.HORIZONTAL) {
         if (pos.column.ordinal + type.squares > COLUMN_DIM) error("Can't put ${type.name} in that position")
     } else if (pos.row.ordinal + type.squares > ROW_DIM) error("Can't put ${type.name} in that position")
 
     // get bounds of ship
-    val bounds = getBounds(pos, direction, type.squares)
+    val bounds = getBounds(pos, dir, type.squares)
 
-    // iterate through cells to see if all these cells are empty otherwise throw error
+    // iterate through cells to see if all these cells are empty otherwise throw can't put ship
     for (y in bounds.topLeft.second until bounds.bottomRight.second) {
         for (x in bounds.topLeft.first until bounds.bottomRight.first) {
             if (this.grid[Position[x, y]] != null) error("Can't put ${type.name} in that position")
         }
     }
 
-    val newShip = Ship(type, pos, direction, List(type.squares) { pos.movePosition(direction, it) })
+    val newShip = Ship(type, pos, dir, List(type.squares) { pos.movePosition(dir, it) })
     val cells = newShip.positions.map { currPos -> ShipCell(currPos, newShip) }
 
     val newFleet = fleet + newShip
@@ -70,6 +93,11 @@ fun Board.putShip(type: ShipType, pos: Position, direction: Direction): Board {
     return Board(newFleet, newGrid)
 }
 
+/**
+ *[Board] Function that will remove a ship
+ * @param pos [Position] to remove the ship from
+ * @return updated [Board]
+ */
 fun Board.removeShip(pos: Position): Board {
     // get cell at position
     val cell = this.grid[pos]
@@ -84,16 +112,34 @@ fun Board.removeShip(pos: Position): Board {
     }
 }
 
+/**
+ * Class that represents the consequence of the shot taken
+ * @property MISS shot was missed
+ * @property HIT shot was hit
+ * @property SUNK shot has sunken a ship
+ * @property INVALID shot was invalid
+ */
 enum class ShotConsequence {
     MISS, HIT, SUNK, INVALID
 }
 
+/**
+ * Keeps the board, the correspondent consequence of a shot, and the error(if there is one) associated with that shot.
+ * @property board [Board] of the player to be shot;
+ * @property consequence [ShotConsequence] consequence of the shot taken;
+ * @property error [PlayError] error associated.
+ */
 data class ShotResult(val board: Board, val consequence: ShotConsequence, val error: PlayError = PlayError.NONE)
 
+/**
+ * [Board] Function that will make a shot.
+ * @param pos [Position] from the shot.
+ * @return [ShotResult] with the updated [Game], [ShotConsequence] and [PlayError] associated.
+ */
 fun Board.makeShot(pos: Position): ShotResult {
-    when (val cell = grid[pos]) { // THE FUCK IS THIS
+    when (val cell = grid[pos]) {
         is MissCell, is ShipHit -> {
-            // Ship sunk is infered as an invalid shot because of its inherited from ShipHit
+            // Ship sunk is inferred as an invalid shot because of its inherited from ShipHit
             return ShotResult(this, ShotConsequence.INVALID, PlayError.INVALID_SHOT)
         }
         is ShipCell -> {
@@ -115,3 +161,5 @@ fun Board.makeShot(pos: Position): ShotResult {
     }
     return ShotResult(this, ShotConsequence.INVALID, PlayError.INVALID_SHOT)
 }
+
+fun Fleet.isComplete() = isNotEmpty()//TODO(DON'T FUCKING FORGET TO REMOVE) size == ShipType.values.sumOf { it.fleetQuantity }
