@@ -1,6 +1,7 @@
 import battleship.model.Game
 import battleship.model.createGame
 import battleship.storage.FileStorage
+import battleship.storage.MongoStorage
 import battleship.ui.getCommandsOO
 import battleship.ui.readCommand
 import mongoDB.MongoDriver
@@ -12,7 +13,7 @@ fun main() {
     try {
         MongoDriver(DATABASE_NAME).use { drv ->
             var game: Game = createGame()
-            val cmds = getCommandsOO(FileStorage())
+            val cmds = getCommandsOO(MongoStorage(drv))
             while (true) {
                 val (name, args) = readCommand()
                 val cmd = cmds[name]

@@ -9,6 +9,7 @@ import battleship.model.removeAll
 import battleship.model.removeShip
 import battleship.model.ship.toShipTypeOrNull
 import battleship.model.startGame
+import battleship.model.refresh
 import battleship.storage.Storage
 
 /**
@@ -97,7 +98,7 @@ fun getCommandsOO(st: Storage) = mapOf(
             check(game.boardA.fleet.isComplete()) { "Complete fleet before start" }
             val gameName = args[0]
             val res = game.startGame(gameName, st)
-            return game
+            return res
         }
 
         override fun show(game: Game) {
@@ -135,16 +136,12 @@ fun getCommandsOO(st: Storage) = mapOf(
         override val argsSyntax by lazy { "<position>" }
     },
     "REFRESH" to object : CommandsOO() {
-        override fun action(game: Game, args: List<String>): Game? {
-            // tem de ir buscar o novo estado da db
-            // dar print a board
-            // retorno nao devia ser UNIT?????
-            TODO("Not yet implemented")
+        override fun action(game: Game, args: List<String>): Game {
+        return game.refresh(st)
         }
 
         override fun show(game: Game) {
             game.print()
-            TODO("Not yet implemented")
         }
     },
     "EXIT" to object : CommandsOO() {

@@ -48,7 +48,7 @@ class MongoStorage(driver: MongoDriver) : Storage {
      */
     private fun Board.serialize(): FileContent {
         val fleetEntries = fleet.map { it.serialize(grid) }
-        val missEntries = grid.entries.mapNotNull { if (it.value is MissCell) "M ${it.key}" else null }
+        val missEntries = grid.entries.mapNotNull { if (it.value is MissCell) "$MISS_INDICATOR ${it.key}" else null }
         return fleetEntries + missEntries
     }
 
@@ -91,9 +91,28 @@ class MongoStorage(driver: MongoDriver) : Storage {
     /**
      * TODO()
      */
+    override fun start(name: String, board: Board): Player {
+        val doc = collection.getDocument(name)
+        if (doc != null) {
+            if (doc.contentA.isNotEmpty() && doc.contentB.isEmpty()) {
+                collection.replaceDocument(Doc(name, doc.contentA, board.serialize(), doc.turn))
+                return Player.B
+            } else {
+                collection.deleteDocument(name)
+            }
+        }
+        collection.insertDocument(Doc(name, board.serialize(), emptyList(), Player.A.name))
+        return Player.A
+    }
+
+
+    /**
+     * TODO()
+     */
     override fun store(game: Game) {
-        checkNotNull(game.boardB) // TODO("TAO FEIO CATANO")
-        collection.replaceDocument(Doc(game.name, game.boardA.serialize(), game.boardB.serialize(), game.turn.other().name))
+        val boardAEntry = game.boardA.serialize()
+        val boardBAEntry = if(game.boardB != null) game.boardB.serialize() else emptyList()
+        collection.replaceDocument(Doc(game.name, boardAEntry, boardBAEntry, game.turn.name))
     }
 
     /**

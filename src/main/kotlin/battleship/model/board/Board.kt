@@ -31,7 +31,7 @@ fun Board.cellsQuantity(): Int {
  * [Board] Function that represents if a player has lost
  * @return Boolean
  */
-fun Board.win() = (cellsQuantity() - grid.entries.count { (_, it) -> it is ShipSunk }) == 0
+fun Board.lost() = (cellsQuantity() - grid.entries.count { (_, it) -> it is ShipSunk }) <= 0
 
 /**
  * Class with the ends of each Ship's BlackBox

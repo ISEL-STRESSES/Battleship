@@ -12,7 +12,7 @@ class Position private constructor(val column: Column, val row: Row) {
     companion object {
         // private as to only get Positions from the .get() methods
         val values = List(COLUMN_DIM * ROW_DIM) {
-            Position((it / COLUMN_DIM).indexToColumn(), (it % COLUMN_DIM).indexToRow())
+            Position((it % COLUMN_DIM).indexToColumn(), (it / COLUMN_DIM).indexToRow())
         }
 
         // get all possible positions
@@ -21,8 +21,14 @@ class Position private constructor(val column: Column, val row: Row) {
          * @param indexColumn ordinal of the column.
          * @param indexRow ordinal of the row.
          * @return Position.
+         * @throws IndexOutOfBoundsException
          */
-        operator fun get(indexColumn: Int, indexRow: Int) = values[indexColumn * COLUMN_DIM + indexRow]
+        operator fun get(indexColumn: Int, indexRow: Int) : Position
+        {
+            if(indexColumn >= COLUMN_DIM || indexRow >= ROW_DIM)
+                throw IndexOutOfBoundsException("Exceeded position bounds")
+            return values[indexRow * COLUMN_DIM + indexColumn]
+        }
 
         /**
          * Getter function for getting a position.

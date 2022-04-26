@@ -7,6 +7,7 @@ enum class Direction {
     HORIZONTAL, VERTICAL
 }
 
+
 /**
  * Converts String into a Direction, null if such direction does not exist
  * @return returns the direction from the first letter of the string
@@ -20,4 +21,4 @@ fun String.toDirectionOrNull(): Direction? {
  * Converts String into a Direction, null if such direction does not exist
  * @return returns the direction from the first letter of the string
  */
-fun String.toDirection(): Direction = toDirectionOrNull() ?: error("Invalid direction 5")
+fun String.toDirection(): Direction = toDirectionOrNull() ?: error("Invalid direction $this")

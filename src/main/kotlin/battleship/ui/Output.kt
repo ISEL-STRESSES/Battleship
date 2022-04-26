@@ -1,21 +1,15 @@
 package battleship.ui
 
 import battleship.model.Game
-import battleship.model.board.Board
-import battleship.model.board.COLUMN_DIM
-import battleship.model.board.Cell
-import battleship.model.board.Column
-import battleship.model.board.MissCell
-import battleship.model.board.Position
-import battleship.model.board.ROW_DIM
-import battleship.model.board.ShipCell
-import battleship.model.board.ShipHit
-import battleship.model.board.ShipSunk
+import battleship.model.GameState
+import battleship.model.board.*
+import battleship.model.getPlayerBoard
 import battleship.model.ship.ShipType
 
 const val BOARD_CHAR_DIM = COLUMN_DIM * 2 + 1
 const val LETTERS_IDENT = 5
 const val HORIZONTAL_IDENT = 3
+const val BOARD_SEPARATION = 3
 
 const val horSep = '-'
 const val verSep = '|'
@@ -62,10 +56,6 @@ fun printHelp() {
     println("\tSHOT\t\t<position>")
     println("\tREFRESH")
     println("\tEXIT")
-/*
-    getCommandsOO().forEach {
-        println("\t${it.key}\t\t${it.value.argsSyntax}")
-    }*/
 }
 
 /**
@@ -73,10 +63,18 @@ fun printHelp() {
  */
 fun Game.print() {
     printColumnsIDX() // Prints column indexes
+    if(state != GameState.SETUP) { //TODO()
+        print(LETTERS_IDENT)
+        printColumnsIDX()
+    }
+    println()
     println(horizontalSeparators) // Print top separator
     repeat(ROW_DIM) {
-        boardA.printRow(it)
-        printShipData(it, boardA)
+        val playerBoard = getPlayerBoard(player)
+        val enemyBoard = getPlayerBoard(player.other())
+
+        playerBoard.printRow(it)
+        if(state != GameState.SETUP) enemyBoard.printRow(it)
         println()
     }
     println(horizontalSeparators) // Print bottom separator
@@ -90,7 +88,6 @@ fun printColumnsIDX() {
     Column.values.forEach {
         print(it.letter.toString().padEnd(2))
     }
-    println()
 }
 
 /**

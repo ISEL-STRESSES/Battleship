@@ -63,14 +63,20 @@ data class Game(
  *
  */
 fun Game.startGame(gameName: String, st: Storage): Game {
+    check(state == SETUP) { "Game Already Started" }
+    val gameFight = copy(state = FIGHT)
     val player = st.start(gameName, boardA)
     return if (player == Player.B) {
-        val gameFromDB = st.load(this)
-        val newGame = copy(boardA = gameFromDB.boardA, boardB = boardA, player = Player.B)
+        val gameFromDB = st.load(gameFight)
+        val newGame = copy(boardA = gameFromDB.boardA, boardB = boardA, state = FIGHT, player = Player.B)
         newGame
     } else {
-        this
+        gameFight
     }.also { st.store(it) } // MINDBLOWING
+}
+
+fun Game.refresh(st: Storage) : Game {
+    return st.load(this)
 }
 
 /**
@@ -119,13 +125,10 @@ fun Game.removeAll(): Game {
     return this.copy(boardA = Board())
 }
 
-// fun Game.getTarget(pos :Position) : Game {
-//    check(state == FIGHT) { "Cant change fleet after game started" }
-//
-//    val newBoard = boardB?.getTarget()
-//    return copy(boardB= newBoard)
-// }
-
+/**
+ *[Game] Function that will add all ships if it's a valid command
+ * @return updated [Game]
+ */
 fun Game.putAllShips() {
     TODO()
 //    while(true){
@@ -152,10 +155,17 @@ fun createGame(): Game {
  * @return Player [Board]
  * @exception IllegalStateException Cannot get other board, if boardb is nullable
  */
-fun Game.getPlayerBoard(target: Player) = if (target == Player.A) boardA else boardB
+fun Game.getPlayerBoard(target: Player) : Board
+{
+    checkNotNull(boardB)
+    return if (target == Player.A) boardA else boardB
+}
 
-// TODO() FAZER A MESMA COISA PARA O PUT
-
+/**
+ * [Game] Function that will make a shot if it's a valid state and a valid shot
+ * @param pos [Position] from the shot
+ * @return [PlayResult] with the updated [Game] and [PlayError] associated
+ */
 fun Game.makeShot(pos: Position): PlayResult {
     state.checkState(FIGHT)
     require(player == turn) { "Wait for other player" }
