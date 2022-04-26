@@ -1,7 +1,16 @@
 package battleship.ui
 
 import battleship.model.Game
-import battleship.model.board.*
+import battleship.model.board.Board
+import battleship.model.board.COLUMN_DIM
+import battleship.model.board.Cell
+import battleship.model.board.Column
+import battleship.model.board.MissCell
+import battleship.model.board.Position
+import battleship.model.board.ROW_DIM
+import battleship.model.board.ShipCell
+import battleship.model.board.ShipHit
+import battleship.model.board.ShipSunk
 import battleship.model.ship.ShipType
 
 const val BOARD_CHAR_DIM = COLUMN_DIM * 2 + 1
