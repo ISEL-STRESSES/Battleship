@@ -16,6 +16,6 @@ class DirectionTest {
 
     @Test
     fun `String to Direction Exceptions`() {
-        assertThrows<IllegalStateException> {"dfhdfherhtrh".toDirection() }
+        assertThrows<IllegalStateException> { "dfhdfherhtrh".toDirection() }
     }
 }
