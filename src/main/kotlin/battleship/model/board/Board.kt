@@ -2,7 +2,9 @@ package battleship.model.board
 
 import battleship.model.Game
 import battleship.model.PlayError
-import battleship.model.board.ShotConsequence.*
+import battleship.model.board.ShotCnsequence.*
+import battleship.model.ship.Bounds
+import battleship.model.ship.toList
 import battleship.model.ship.Ship
 import battleship.model.ship.ShipType
 import kotlin.math.max
@@ -10,7 +12,6 @@ import kotlin.math.min
 
 typealias Fleet = List<Ship>
 typealias Grid = Map<Position, Cell>
-typealias Coords = Pair<Int, Int> // TODO(Convert to Position)
 
 /**
  * Board of each player
@@ -34,13 +35,6 @@ fun Board.cellsQuantity(): Int {
 fun Board.lost() = (cellsQuantity() - grid.entries.count { (_, it) -> it is ShipSunk }) <= 0
 
 /**
- * Class with the ends of each Ship's BlackBox
- * @property topLeft [Coords] of the top left position
- * @property bottomRight [Coords] of the bottom right position
- */
-data class Bounds(val topLeft: Coords, val bottomRight: Coords)
-
-/**
  * Function that will create the bounds of a ship
  * @param pos [Position] of the head of the ship
  * @param dir [Direction] of the ship
@@ -48,12 +42,10 @@ data class Bounds(val topLeft: Coords, val bottomRight: Coords)
  * @return [Bounds] of the ship
  */
 fun getBounds(pos: Position, dir: Direction, size: Int): Bounds {
-    val extension = Pair(if (dir == Direction.HORIZONTAL) size else 0, if (dir == Direction.VERTICAL) size else 0)
+    val extension = Pair(if (dir == Direction.HORIZONTAL) size - 1 else 0, if (dir == Direction.VERTICAL) size - 1 else 0)
     return Bounds(
-        max(pos.column.ordinal - 1, 0) to max(pos.row.ordinal - 1, 0),
-        min(pos.column.ordinal + extension.first + 1, COLUMN_DIM) to min(
-            pos.row.ordinal + extension.second + 1,
-            ROW_DIM
+        Position[max(pos.column.ordinal-1, 0), max(pos.row.ordinal-1, 0)],
+        Position[min(pos.column.ordinal + extension.first + 1, COLUMN_DIM - 1), min(pos.row.ordinal + extension.second + 1, ROW_DIM - 1)]
         )
     )
 }
@@ -78,17 +70,16 @@ fun Board.putShip(type: ShipType, pos: Position, dir: Direction): PutResult {
 
     if (dir == Direction.HORIZONTAL) {
         if (pos.column.ordinal + type.squares > COLUMN_DIM) error("Can't put ${type.name} in that position")
-    } else if (pos.row.ordinal + type.squares > ROW_DIM) error("Can't put ${type.name} in that position")
+    } else {
+        if (pos.row.ordinal + type.squares > ROW_DIM) error("Can't put ${type.name} in that position")
+    }
 
     // get bounds of ship
     val bounds = getBounds(pos, dir, type.squares)
 
     // iterate through cells to see if all these cells are empty otherwise throw can't put ship
-    for (y in bounds.topLeft.second until bounds.bottomRight.second) {
-        for (x in bounds.topLeft.first until bounds.bottomRight.first) {
-            if (this.grid[Position[x, y]] != null) error("Can't put ${type.name} in that position")
-        }
-    }
+    val hasCollision = bounds.toList().any { grid[it] != null || it.}
+    if(hasCollision) error("Can't put ${type.name} in that position")
 
     val newShip = Ship(type, pos, dir, List(type.squares) { pos.movePosition(dir, it) })
     val cells = newShip.positions.map { currPos -> ShipCell(currPos, newShip) }

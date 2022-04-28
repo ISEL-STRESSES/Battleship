@@ -89,19 +89,16 @@ typealias LigmaG = Pair<Position, Direction>
 
 fun Board.getPossiblePositions(size : Int, dir: Direction) : List<LigmaG>
 {
-    val mList = mutableListOf<LigmaG>()
+    val allPositions = Position.values;
+    //remove positions at sides
+    val firstStep = if(dir === Direction.HORIZONTAL)
+            allPositions.filter { it.column.ordinal < COLUMN_DIM - size}
+        else
+            allPositions.filter { it.row.ordinal < ROW_DIM - size}
+    //remove positions occupied by ships
+    val secondStep = firstStep.filter { it == it }
 
-    for(x in 0 until COLUMN_DIM - size - 1)
-    {
-        for(y in 0 until ROW_DIM - size - 1)
-        {
-            val origin = Position[x,y]
-            val positions = List(size) { origin.movePosition(dir, it) }
-            if(positions.all{grid[it] == null}) mList.add(origin to dir)
-        }
-    }
-
-    return mList
+    //remove positions that putting a ship would collide with
 }
 
 
