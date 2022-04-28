@@ -94,7 +94,8 @@ class MongoStorage(driver: MongoDriver) : Storage {
                 collection.deleteDocument(name)
             }
         }
-        collection.insertDocument(Doc(name, board.serialize(), emptyList(), Player.A.name))
+        val boardAEntry = board.serialize()
+        collection.insertDocument(Doc(name, boardAEntry, emptyList(), Player.A.name))
         return Player.A
     }
 
@@ -113,20 +114,8 @@ class MongoStorage(driver: MongoDriver) : Storage {
     override fun load(game: Game): Game {
         val doc = collection.getDocument(game.name)
         checkNotNull(doc) { "No document in Load" }
-        checkNotNull(game.boardB) { TODO("FAZER MELHOR") }
-        if (game.turn == Player.A && game.turn.name == doc.turn) {
-            // game is updated
-            if (doc.contentB.size == game.boardB.grid.size) {
-                return game
-            }
-            return game.copy(boardB = doc.contentB.deserialize())
-        } else if (game.turn == Player.B && game.turn.name == doc.turn) {
-            // game is updated
-            if (doc.contentA.size == game.boardA.grid.size) {
-                return game
-            }
-            return game.copy(boardA = doc.contentA.deserialize())
-        }
-        return game
+        val boardA = doc.contentA.deserialize()
+        val boardB = if (doc.contentB.isNotEmpty()) doc.contentB.deserialize() else null
+        return game.copy(boardA = boardA, boardB = boardB, turn = Player.valueOf(doc.turn))
     }
 }

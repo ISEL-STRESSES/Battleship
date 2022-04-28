@@ -58,16 +58,15 @@ data class Game(
  *
  */
 fun Game.startGame(gameName: String, st: Storage): Game {
-    check(state == SETUP) { "Game Already Started" }
-    val gameFight = copy(state = FIGHT)
+    val gameFight = copy(name = gameName, state = FIGHT)
     val player = st.start(gameName, boardA)
     return if (player == Player.B) {
         val gameFromDB = st.load(gameFight)
-        val newGame = copy(boardA = gameFromDB.boardA, boardB = boardA, state = FIGHT, player = Player.B)
-        newGame
+        val newGame = gameFight.copy(boardA = gameFromDB.boardA, boardB = boardA, state = FIGHT, player = Player.B)
+        newGame.also { st.store(it) }
     } else {
         gameFight
-    }.also { st.store(it) } // MINDBLOWING
+    }
 }
 
 
@@ -96,13 +95,77 @@ fun Game.putShip(type: ShipType, pos: Position, dir: Direction): Game {
     return this.copy(boardA = newBoard)
 }
 
+typealias LigmaG = Pair<Position, Direction>
+
+
+fun Board.getPossiblePositions(size : Int, dir: Direction) : List<LigmaG>
+{
+    val mList = mutableListOf<LigmaG>()
+
+    for(x in 0 until COLUMN_DIM - size - 1)
+    {
+        for(y in 0 until ROW_DIM - size - 1)
+        {
+            val origin = Position[x,y]
+            val positions = List(size) { origin.movePosition(dir, it) }
+            if(positions.all{grid[it] == null}) mList.add(origin to dir)
+        }
+    }
+
+    return mList
+}
+
+
+fun Game.putRandomShip(type : ShipType) : Game
+{
+    val allowSpace = boardA.getPossiblePositions(type.squares, Direction.HORIZONTAL) +
+                     boardA.getPossiblePositions(type.squares, Direction.VERTICAL)
+
+    if(allowSpace.isEmpty())
+    {
+        return this
+    }
+    val randomState = allowSpace.random()
+    val newBoard = boardA.putShip(type, randomState.first, randomState.second)
+    return this.copy(boardA = newBoard)
+}
+
+fun Game.putAllShips() : Game
+{
+    var newGame = this
+    do {
+        val possiblePool = ShipType.values.filter{ type -> type.fleetQuantity - boardA.fleet.count{ship -> ship.type == type} > 0 }
+        newGame = newGame.putRandomShip(possiblePool.random())
+    } while(newGame != this)
+    return newGame
+}
+
+/*
+/**
+ *[Game] Function that will add all ships if it's a valid command
+ * @return updated [Game]
+ */
+fun Game.putAllShips() {
+    state.checkPutState()
+    while(true){
+        val pos = Position.values.random()
+        val currShip = ShipType.values.forEach {
+            super.hiputS
+        }/
+//        this.putShip(currShip, pos)
+//    }
+    TODO()
+}
+
+ */
+
+
 /**
  *[Game] Function that will remove a ship if it's a valid command and ship
  * @param pos [Position] to remove the ship from
  * @return updated [Game]
  */
 fun Game.removeShip(pos: Position): Game {
-    state.checkState(SETUP)
     val newBoard = boardA.removeShip(pos)
     if (boardA === newBoard) error("No ship in $pos")
     return this.copy(boardA = newBoard)

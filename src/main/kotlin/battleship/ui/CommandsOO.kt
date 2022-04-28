@@ -90,19 +90,20 @@ fun getCommandsOO(st: Storage) = mapOf(
         override fun action(game: Game, args: List<String>) = game
         override fun show(game: Game) {
             game.print()
+
         }
     },
     "START" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game {
             require(args.size == 1 && args[0].isNotBlank()) { "Invalid Arguments" }
+            check(game.state == GameState.SETUP) { "Game Already Started" } //TODO() put this shit in checkstate function
             check(game.boardA.fleet.isComplete()) { "Complete fleet before start" }
             val gameName = args[0]
             return game.startGame(gameName, st)
         }
 
         override fun show(game: Game) {
-            println(game.player.id)
-            game.print()
+            println("You are the Player ${game.player.id}")
         }
 
         override val argsSyntax: String
@@ -123,8 +124,7 @@ fun getCommandsOO(st: Storage) = mapOf(
         }
 
         override fun show(game: Game) {
-            TODO("dfgdfg")
-            // game.print()
+            game.print()
         }
 
         override val argsSyntax by lazy { "<position>" }

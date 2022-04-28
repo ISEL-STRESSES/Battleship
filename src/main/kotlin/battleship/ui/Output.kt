@@ -33,7 +33,7 @@ fun Char.repeat(amount: Int) = "$this".repeat(amount)
 /**
  * Returns the according char from the [Cell], blank space if it is none of the defined cells, meaning it is a "water" cell
  */
-fun Cell.toChar(): Char {
+fun Cell?.toChar(): Char {
     return when (this) {
         is ShipSunk -> CHAR_SUNK
         is ShipHit -> CHAR_HIT
@@ -68,7 +68,13 @@ fun Game.print() {
         printColumnsIDX()
     }
     println()
-    println(horizontalSeparators) // Print top separator
+
+    print(horizontalSeparators) // Print top separator
+    if (state != GameState.SETUP) {
+        print(horizontalSeparators)
+    }
+    println()
+
     repeat(ROW_DIM) {
         val playerBoard = getPlayerBoard(player)
 
@@ -84,7 +90,24 @@ fun Game.print() {
         }
         println()
     }
-    println(horizontalSeparators) // Print bottom separator
+    print(horizontalSeparators) // Print top separator
+    if (state != GameState.SETUP) {
+        //print()
+        print(horizontalSeparators)
+    }
+    println()
+
+    //Player turn status
+    if(state != GameState.SETUP)
+    {
+        if(player === turn)
+        {
+            println("Is your turn")
+        } else {
+            println("Wait for other (use refresh command)")
+        }
+    }
+
 }
 
 /**
@@ -102,31 +125,25 @@ fun printColumnsIDX() {
  * @param row index of the row to print
  * @param hide boolean that allows to hide enemy board
  */
-fun Board.printRow(y: Int) {
-    val rowNumber = Row.values[y].number.toString().padStart(2).padEnd(3)
-
-    print(rowNumber)
-    print(verSep)
-    repeat(COLUMN_DIM) { x ->
-        val cell = grid[Position[x, y]]
-        val cellChar = cell?.toChar() ?: CHAR_WATER
-        print(" $cellChar")
+fun Board?.printRow(row: Int, hide : Boolean) {
+    if(this == null)
+    {
+        print(verSep)
+        print(" ".repeat(COLUMN_DIM * 2 + 1))
+        print(verSep)
+    } else {
+        print(verSep)
+        repeat(COLUMN_DIM) { x ->
+            val cell = grid[Position[x, row]]
+            val char = cell.toChar()
+            if(hide && char == CHAR_SHIP)
+            {
+                print(" $CHAR_WATER")
+            } else {
+                print(" $char")
+            }
+        }
+        print(" ") // print final space
+        print(verSep)
     }
-    print(" ") // print final space
-    print(verSep)
-}
-
-/**
- * Prints the Ship information on the right of the [board]
- * @param idx index of the ship
- * @param board board to print the data with
- */
-fun printShipData(idx: Int = -1, board: Board) {
-    if (idx !in 0 until ShipType.values.size)
-        return
-
-    val type = ShipType.values[idx]
-    val placedCount = board.fleet.count { it.type === type }
-
-    print(" $placedCount x " + CHAR_SHIP.repeat(type.squares) + " of ${type.fleetQuantity} (${type.name})")
 }

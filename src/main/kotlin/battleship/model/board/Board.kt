@@ -130,7 +130,7 @@ enum class ShotConsequence {
  * @property consequence [ShotConsequence] consequence of the shot taken;
  * @property error [PlayError] error associated.
  */
-data class ShotResult(val board: Board, val consequence: ShotConsequence, val error: PlayError = PlayError.NONE)
+data class ShotResult(val board: Board, val consequence: ShotConsequence)
 
 /**
  * [Board] Function that will make a shot.
@@ -141,18 +141,19 @@ fun Board.makeShot(pos: Position): ShotResult {
     when (val cell = grid[pos]) {
         is MissCell, is ShipHit -> {
             // Ship sunk is inferred as an invalid shot because of its inherited from ShipHit
-            return ShotResult(this, ShotConsequence.INVALID, PlayError.INVALID_SHOT)
+            return ShotResult(this, ShotConsequence.INVALID)
         }
         is ShipCell -> {
             val ship = cell.ship
             val gridAfterShot = grid + (pos to ShipHit(pos, ship))
+
+            val hasSunk = ship.positions.all { gridAfterShot[it] is ShipHit }
             // check if ship is sunk
-            val hasSunk = ship.positions.all { grid[it] is ShipHit }
             return if (hasSunk) {
                 val gridAfterSunk = grid + ship.positions.map { it to ShipSunk(it, ship) }
                 ShotResult(copy(grid = gridAfterSunk), ShotConsequence.SUNK)
             } else {
-                ShotResult(copy(grid = gridAfterShot), ShotConsequence.HIT)
+                return ShotResult(copy(grid = gridAfterShot), ShotConsequence.HIT)
             }
         }
         null -> {
@@ -160,7 +161,7 @@ fun Board.makeShot(pos: Position): ShotResult {
             return ShotResult(copy(grid = grid + (pos to MissCell(pos))), ShotConsequence.MISS)
         }
     }
-    return ShotResult(this, ShotConsequence.INVALID, PlayError.INVALID_SHOT)
+    return ShotResult(this, ShotConsequence.INVALID)
 }
 
 /**
