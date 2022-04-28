@@ -5,18 +5,7 @@ import battleship.model.Player
 import battleship.model.board.*
 import battleship.model.ship.Ship
 import battleship.model.ship.toShipType
-import battleship.model.ship.toShipTypeOrNull
-import mongoDB.MongoDriver
-import mongoDB.deleteDocument
-import mongoDB.getDocument
-import mongoDB.insertDocument
-import mongoDB.replaceDocument
-
-
-const val SHIP_INDICATOR = "S"
-const val MISS_INDICATOR = "M"
-const val SHIP_CELL_SHOT = '1'
-const val SHIP_CELL = '0'
+import mongoDB.*
 
 
 class MongoStorage(driver: MongoDriver) : Storage {
@@ -53,23 +42,27 @@ class MongoStorage(driver: MongoDriver) : Storage {
     }
 
     /**
-     * TODO()
+     * Function that will deserialize a string from a file
+     * @return pair with reference to the ship and the list of Cells from the ship
      */
-    private fun String.deserialize() :Pair<Ship?, List<Cell>> {
+    private fun String.deserialize(): Pair<Ship?, List<Cell>> {
         val split = split(" ")
-        if (split.first() == SHIP_INDICATOR){
-            val pos = split.drop(4).map { it.toPosition() }
+        if (split.first() == SHIP_INDICATOR) {
             val type = split[1].toShipType()
             val head = split[2].toPosition()
             val dir = split[3].toDirection()
-            val shipCells = List(type.squares) { head.movePosition(dir, it) }
-            val ship = Ship(type, head, dir, shipCells)
-            return ship to split.last().mapIndexed { idx, elem ->
-                if( elem == SHIP_CELL_SHOT) ShipHit(pos[idx], ship)
-                else ShipCell(pos[idx], ship)
-            }
+            val hits = split[4]
+            val shipPositions = List(type.squares) { head.movePosition(dir, it) }
+            val ship = Ship(type, head, dir, shipPositions)
 
-        } else if(split.first() == MISS_INDICATOR){
+            val shipCells = if(hits.all{ it == SHIP_CELL_SHOT})
+                shipPositions.map { ShipSunk(it, ship) }
+            else
+                shipPositions.mapIndexed { num, it -> if(hits[num] == SHIP_CELL_SHOT) ShipHit(it, ship) else ShipCell(it, ship) }
+
+            return ship to shipCells
+
+        } else if (split.first() == MISS_INDICATOR) {
             val pos = split[1].toPosition()
             val newCell = MissCell(pos)
             return null to listOf(newCell)
@@ -83,7 +76,7 @@ class MongoStorage(driver: MongoDriver) : Storage {
     private fun FileContent.deserialize(): Board {
         val entries = map { it.deserialize() }
         val ships = entries.mapNotNull { it.first }
-        val grid = entries.map{ it.second }.flatten().associateBy { it.pos }
+        val grid = entries.map { it.second }.flatten().associateBy { it.pos }
 
         return Board(ships, grid)
     }
@@ -105,14 +98,13 @@ class MongoStorage(driver: MongoDriver) : Storage {
         return Player.A
     }
 
-
     /**
      * TODO()
      */
     override fun store(game: Game) {
         val boardAEntry = game.boardA.serialize()
-        val boardBAEntry = if(game.boardB != null) game.boardB.serialize() else emptyList()
-        collection.replaceDocument(Doc(game.name, boardAEntry, boardBAEntry, game.turn.name))
+        val boardBEntry = if (game.boardB != null) game.boardB.serialize() else emptyList()
+        collection.replaceDocument(Doc(game.name, boardAEntry, boardBEntry, game.turn.name))
     }
 
     /**

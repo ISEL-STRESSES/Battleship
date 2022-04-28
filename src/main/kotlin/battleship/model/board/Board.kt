@@ -2,7 +2,7 @@ package battleship.model.board
 
 import battleship.model.Game
 import battleship.model.PlayError
-import battleship.model.PlayResult
+import battleship.model.board.ShotConsequence.*
 import battleship.model.ship.Ship
 import battleship.model.ship.ShipType
 import kotlin.math.max
@@ -65,6 +65,7 @@ fun getBounds(pos: Position, dir: Direction, size: Int): Bounds {
  * @param pos head [Position] of the ship
  * @param dir [Direction] of the ship
  * @return updated [Board]
+ * @throws IllegalStateException
  */
 fun Board.putShip(type: ShipType, pos: Position, dir: Direction): Board {
     // TODO() change return to PutResult just like the shot function
@@ -94,7 +95,7 @@ fun Board.putShip(type: ShipType, pos: Position, dir: Direction): Board {
 }
 
 /**
- *[Board] Function that will remove a ship
+ * [Board] Function that will remove a ship
  * @param pos [Position] to remove the ship from
  * @return updated [Board]
  */
@@ -162,4 +163,9 @@ fun Board.makeShot(pos: Position): ShotResult {
     return ShotResult(this, ShotConsequence.INVALID, PlayError.INVALID_SHOT)
 }
 
-fun Fleet.isComplete() = isNotEmpty()//TODO(DON'T FUCKING FORGET TO REMOVE) size == ShipType.values.sumOf { it.fleetQuantity }
+/**
+ * Function that will check it fleet is complete.
+ * @return true if the fleet is full else false
+ */
+fun Fleet.isComplete() =
+    isNotEmpty() // TODO(DON'T FUCKING FORGET TO REMOVE) size == ShipType.values.sumOf { it.fleetQuantity }

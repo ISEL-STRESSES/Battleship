@@ -1,9 +1,7 @@
 package battleship.model.board
 
-import kotlin.test.*
-import battleship.model.board.Position
-import battleship.model.board.movePosition
 import org.junit.jupiter.api.assertThrows
+import kotlin.test.*
 
 /**
  * The f1.Position type identifies a position in the battleship game grid (Column and f1.Row)
@@ -46,18 +44,18 @@ class PositionTest {
 
     @Test
     fun `Test Move Position`() {
-        //move 0
+        // move 0
         val origin = Position[0, 0]
         assertSame(origin, origin.movePosition(Direction.HORIZONTAL, 0))
         assertSame(origin, origin.movePosition(Direction.VERTICAL, 0))
-        //move length
+        // move length
         assertSame(Position[5, 0], origin.movePosition(Direction.HORIZONTAL, 5))
         assertSame(Position[0, 5], origin.movePosition(Direction.VERTICAL, 5))
     }
 
     @Test
     fun `Test Move Position OutOfBounds`() {
-        //move 0
+        // move 0
         val origin = Position[0, 0]
 
         assertThrows<IndexOutOfBoundsException> { origin.movePosition(Direction.HORIZONTAL, COLUMN_DIM + 1) }

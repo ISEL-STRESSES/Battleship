@@ -4,8 +4,6 @@ import battleship.model.Game
 import battleship.model.Player
 import battleship.model.board.Board
 
-
-
 typealias FileContent = List<String>
 
 /**

@@ -1,13 +1,8 @@
 package battleship.model
 
 import battleship.model.GameState.*
-import battleship.model.board.Board
-import battleship.model.board.Direction
-import battleship.model.board.Position
-import battleship.model.board.ShotConsequence
-import battleship.model.board.makeShot
-import battleship.model.board.putShip
-import battleship.model.board.removeShip
+import battleship.model.PlayError.*
+import battleship.model.board.*
 import battleship.model.ship.ShipType
 import battleship.storage.Storage
 
@@ -75,9 +70,6 @@ fun Game.startGame(gameName: String, st: Storage): Game {
     }.also { st.store(it) } // MINDBLOWING
 }
 
-fun Game.refresh(st: Storage) : Game {
-    return st.load(this)
-}
 
 /**
  *
@@ -125,21 +117,6 @@ fun Game.removeAll(): Game {
     return this.copy(boardA = Board())
 }
 
-/**
- *[Game] Function that will add all ships if it's a valid command
- * @return updated [Game]
- */
-fun Game.putAllShips() {
-    TODO()
-//    while(true){
-//        val pos = Position.values.random()
-//        val currShip = ShipType.values.forEach {
-//            super.hiputS
-//        }
-//
-//        this.putShip(currShip, pos)
-//    }
-}
 
 /**
  *[Game] Function that will create the initial game
@@ -155,9 +132,7 @@ fun createGame(): Game {
  * @return Player [Board]
  * @exception IllegalStateException Cannot get other board, if boardb is nullable
  */
-fun Game.getPlayerBoard(target: Player) : Board
-{
-    checkNotNull(boardB)
+fun Game.getPlayerBoard(target: Player): Board? {
     return if (target == Player.A) boardA else boardB
 }
 
@@ -173,5 +148,26 @@ fun Game.makeShot(pos: Position): PlayResult {
     val enemyBoard = getPlayerBoard(player.other())
     checkNotNull(enemyBoard)
     val boardResult = enemyBoard.makeShot(pos)
-    TODO("lol")
+
+    val newBoardA = if(playerBoard == boardA) boardA else boardResult.board
+    val newBoardB = if(playerBoard == boardB) boardB else boardResult.board
+
+    val newTurn = if (boardResult.consequence === ShotConsequence.HIT || boardResult.consequence === ShotConsequence.SUNK)
+    {
+        turn
+    } else {
+        turn.other()
+    }
+
+    println(boardResult.consequence)
+    println(ShipType.values.sumOf {it.squares})
+
+    val newGame = copy(boardA = newBoardA, boardB = newBoardB, turn = newTurn)
+
+    if(boardResult.consequence !== ShotConsequence.INVALID)
+    {
+        st.store(newGame)
+    }
+
+    return PlayResult(newGame, boardResult.consequence)
 }

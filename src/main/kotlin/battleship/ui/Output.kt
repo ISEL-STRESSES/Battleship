@@ -6,20 +6,20 @@ import battleship.model.board.*
 import battleship.model.getPlayerBoard
 import battleship.model.ship.ShipType
 
-const val BOARD_CHAR_DIM = COLUMN_DIM * 2 + 1
-const val LETTERS_IDENT = 5
-const val HORIZONTAL_IDENT = 3
-const val BOARD_SEPARATION = 3
+private const val BOARD_CHAR_DIM = COLUMN_DIM * 2 + 1
+private const val LETTERS_IDENT = 5
+private const val HORIZONTAL_IDENT = 3
+private const val BOARD_SEPARATION = 3
 
-const val horSep = '-'
-const val verSep = '|'
-const val cross = '+'
+private const val horSep = '-'
+private const val verSep = '|'
+private const val cross = '+'
 
-const val CHAR_MISS = 'O'
-const val CHAR_SHIP = '#'
-const val CHAR_HIT = '*'
-const val CHAR_SUNK = 'X'
-const val CHAR_WATER = ' '
+private const val CHAR_MISS = 'O'
+private const val CHAR_SHIP = '#'
+private const val CHAR_HIT = '*'
+private const val CHAR_SUNK = 'X'
+private const val CHAR_WATER = ' '
 
 // Horizontal separator condensed
 val horizontalSeparators = CHAR_WATER.repeat(HORIZONTAL_IDENT) + cross + horSep.repeat(BOARD_CHAR_DIM) + cross
@@ -63,18 +63,25 @@ fun printHelp() {
  */
 fun Game.print() {
     printColumnsIDX() // Prints column indexes
-    if(state != GameState.SETUP) { //TODO()
-        print(LETTERS_IDENT)
+    if (state != GameState.SETUP) {
+        print(" ")
         printColumnsIDX()
     }
     println()
     println(horizontalSeparators) // Print top separator
     repeat(ROW_DIM) {
         val playerBoard = getPlayerBoard(player)
-        val enemyBoard = getPlayerBoard(player.other())
 
-        playerBoard.printRow(it)
-        if(state != GameState.SETUP) enemyBoard.printRow(it)
+        val rowNumber = Row.values[it].number.toString().padStart(2).padEnd(3)
+        print(rowNumber)
+
+        playerBoard.printRow(it, false)
+
+        if (state != GameState.SETUP) {
+            val enemyBoard = getPlayerBoard(player.other())
+            print(" ".repeat(BOARD_SEPARATION))
+            enemyBoard.printRow(it, true)
+        }
         println()
     }
     println(horizontalSeparators) // Print bottom separator
@@ -92,7 +99,8 @@ fun printColumnsIDX() {
 
 /**
  * Prints a single row of the board to the standard output
- * @param y index of the row to print
+ * @param row index of the row to print
+ * @param hide boolean that allows to hide enemy board
  */
 fun Board.printRow(y: Int) {
     val rowNumber = Row.values[y].number.toString().padStart(2).padEnd(3)

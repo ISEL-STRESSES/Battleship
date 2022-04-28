@@ -23,9 +23,8 @@ class Position private constructor(val column: Column, val row: Row) {
          * @return Position.
          * @throws IndexOutOfBoundsException
          */
-        operator fun get(indexColumn: Int, indexRow: Int) : Position
-        {
-            if(indexColumn >= COLUMN_DIM || indexRow >= ROW_DIM)
+        operator fun get(indexColumn: Int, indexRow: Int): Position {
+            if (indexColumn >= COLUMN_DIM || indexRow >= ROW_DIM)
                 throw IndexOutOfBoundsException("Exceeded position bounds")
             return values[indexRow * COLUMN_DIM + indexColumn]
         }
