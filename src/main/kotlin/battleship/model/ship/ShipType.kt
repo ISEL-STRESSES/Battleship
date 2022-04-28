@@ -1,10 +1,16 @@
 package battleship.model.ship
 
+import battleship.model.board.Column.Companion.values
+import battleship.model.board.Row
+import battleship.model.board.Row.Companion.values
+
 /**
  * All ship types allowed in the game.
- * @property name battleship.model.Board.Ship.Ship type name.
- * @property squares Number of squares occupied vertically or horizontally.
- * @property fleetQuantity Number of ships of this type in the starting fleet.
+ * @property name [ShipType] name.
+ * @property squares Number of squares occupied.
+ * @property fleetQuantity Number of ships of this type available.
+ * @property values companion object that has all the possible values for [ShipType]
+ *
  */
 class ShipType private constructor(val name: String, val squares: Int, val fleetQuantity: Int) {
     companion object {
@@ -17,11 +23,11 @@ class ShipType private constructor(val name: String, val squares: Int, val fleet
     }
 }
 
-// TODO: averiguar se podemso reduzir linhas no toShipTypeOrNull() e toShipType()
+// TODO: averiguar se podemos reduzir linhas no toShipTypeOrNull()
 /**
  * Returns a [ShipType] according to the string, if string is an integer, return a ship by number of squares
- *          else if it is a string, return the only [ShipType] that starts with the string as prefix
- *          else return null
+ *      else if it is a string, return the only [ShipType] that starts with the string as prefix
+ *      else return null
  */
 fun String.toShipTypeOrNull(): ShipType? {
     val num = this.toIntOrNull()

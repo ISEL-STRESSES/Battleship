@@ -82,7 +82,6 @@ fun getCommandsOO(st: Storage) = mapOf(
         override fun show(game: Game) {
             game.print()
         }
-
         override val argsSyntax: String
             get() = "<position> | all"
     },
@@ -101,17 +100,14 @@ fun getCommandsOO(st: Storage) = mapOf(
             val gameName = args[0]
             return game.startGame(gameName, st)
         }
-
         override fun show(game: Game) {
             println("You are the Player ${game.player.id}")
         }
-
         override val argsSyntax: String
             get() = "<name>"
     },
 
     "SHOT" to object : CommandsOO() {
-
         override fun action(game: Game, args: List<String>): Game {
             require(args.size == 1) { "Invalid Arguments" }
             check(game.state == GameState.FIGHT) { "Can't make a shot before start" }
@@ -122,11 +118,9 @@ fun getCommandsOO(st: Storage) = mapOf(
             val result = loadedGame.makeShot(pos, st)
             return result.game
         }
-
         override fun show(game: Game) {
             game.print()
         }
-
         override val argsSyntax by lazy { "<position>" }
     },
     "REFRESH" to object : CommandsOO() {
@@ -134,7 +128,6 @@ fun getCommandsOO(st: Storage) = mapOf(
             check(game.state != GameState.SETUP) { "Can't refresh an open game" }
             return st.load(game)
         }
-
         override fun show(game: Game) {
             game.print()
         }

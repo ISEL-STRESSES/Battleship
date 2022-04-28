@@ -1,12 +1,15 @@
 package battleship.model.board
 
+import battleship.model.board.Column.Companion.values
+
 const val ROW_DIM = 10
-const val ROW_FIRST_NUMBER = 1
+private const val ROW_FIRST_NUMBER = 1
 
 /**
- * All Rows that make up the game.
+ * All [Row] that make up the game.
  * @property number Digit associated with the position, starting from ROW_FIRST_NUMBER
  * @property ordinal Row's index in the board
+ * @property values companion object that has all the possible values for [Row]
  */
 class Row private constructor(idx: Int) {
     val number = ROW_FIRST_NUMBER + idx
@@ -18,17 +21,17 @@ class Row private constructor(idx: Int) {
 }
 
 /**
- * Return an object according to its digit position, null if it does not exist
+ * Return a [Row] according to its digit position, null if it does not exist
  */
 fun Int.toRowOrNull() = Row.values.elementAtOrNull(this - ROW_FIRST_NUMBER)
 
 /**
- * Return an object according to its index, null if it does not exit
+ * Return a [Row] according to its index, null if it does not exit
  */
 fun Int.indexToRowOrNull() = Row.values.elementAtOrNull(this)
 
 /**
- * Return a row object according to its index
+ * Return a [Row] object according to its index
  * @throws IndexOutOfBoundsException
  */
 fun Int.indexToRow() = Row.values[this]

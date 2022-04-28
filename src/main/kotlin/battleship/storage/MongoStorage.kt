@@ -7,8 +7,13 @@ import battleship.model.ship.Ship
 import battleship.model.ship.toShipType
 import mongoDB.*
 
+private const val SHIP_INDICATOR = "S"
+private const val MISS_INDICATOR = "M"
+private const val SHIP_CELL_SHOT = '1'
+private const val SHIP_CELL = '0'
 
 class MongoStorage(driver: MongoDriver) : Storage {
+
 
     /**
      * Representation of the game state in a document.
@@ -71,7 +76,8 @@ class MongoStorage(driver: MongoDriver) : Storage {
     }
 
     /**
-     * TODO()
+     * Function that will deserialize the file into a [Board]
+     * @return [Board]
      */
     private fun FileContent.deserialize(): Board {
         val entries = map { it.deserialize() }
@@ -82,7 +88,10 @@ class MongoStorage(driver: MongoDriver) : Storage {
     }
 
     /**
-     * TODO()
+     * Function that will start a game making the needed changes to the DB
+     * @param name name of the game
+     * @param board board of the player to start the game with
+     * @return [Player] that started the game
      */
     override fun start(name: String, board: Board): Player {
         val doc = collection.getDocument(name)
@@ -100,7 +109,8 @@ class MongoStorage(driver: MongoDriver) : Storage {
     }
 
     /**
-     * TODO()
+     * Function that will store a game in the DB making the needed changes.
+     * @param game [Game] to store.
      */
     override fun store(game: Game) {
         val boardAEntry = game.boardA.serialize()
@@ -109,7 +119,9 @@ class MongoStorage(driver: MongoDriver) : Storage {
     }
 
     /**
-     * TODO()
+     * Function that will load a game from the DB.
+     * @param game [Game] to load.
+     *
      */
     override fun load(game: Game): Game {
         val doc = collection.getDocument(game.name)

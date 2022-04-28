@@ -1,12 +1,13 @@
 package battleship.model.board
 
 const val COLUMN_DIM = 10
-const val COLUMN_FIRST_LETTER = 'A'
+private const val COLUMN_FIRST_LETTER = 'A'
 
 /**
- * All Rows that make up the game.
- * @property letter Character associated with the position, starting from COLUMN_FIRST_LETTER
+ * All [Column] that make up the game.
+ * @property letter Character associated with the position, starting from [COLUMN_FIRST_LETTER]
  * @property ordinal Column's index in the board
+ * @property values companion object that has all the possible values for [Column]
  */
 class Column private constructor(idx: Int) {
     val letter = COLUMN_FIRST_LETTER + idx
@@ -18,17 +19,17 @@ class Column private constructor(idx: Int) {
 }
 
 /**
- * Return a column according to its letter position, null if it does not exist
+ * Return a [Column] according to its letter position, null if it does not exist
  */
 fun Char.toColumnOrNull() = Column.values.elementAtOrNull(this.uppercaseChar() - COLUMN_FIRST_LETTER)
 
 /**
- * Return a column according to its index, null if it does not exit
+ * Return a [Column] according to its index, null if it does not exit
  */
 fun Int.indexToColumnOrNull() = Column.values.elementAtOrNull(this)
 
 /**
- * Return a column object according to its index
+ * Return a [Column] object according to its index
  * @throws IndexOutOfBoundsException
  */
 fun Int.indexToColumn() = Column.values[this]

@@ -58,7 +58,8 @@ fun getBounds(pos: Position, dir: Direction, size: Int): Bounds {
     )
 }
 
-
+enum class PutError { NONE, INVALID_POSITION, INVALID_ARGUMENTS }
+data class PutResult(val game: Game, val error: PutError)
 /**
  * [Board] Function that will put a ship
  * @param type [ShipType] of the ship to put
@@ -68,9 +69,10 @@ fun getBounds(pos: Position, dir: Direction, size: Int): Bounds {
  * @throws IllegalStateException
  */
 fun Board.putShip(type: ShipType, pos: Position, dir: Direction): Board {
+
     // TODO() change return to PutResult just like the shot function
     if (fleet.count { type == it.type } >= type.fleetQuantity)
-        error("No more ${type.name} to put")
+         error("No more ${type.name} to put")
 
     if (dir == Direction.HORIZONTAL) {
         if (pos.column.ordinal + type.squares > COLUMN_DIM) error("Can't put ${type.name} in that position")
@@ -112,6 +114,7 @@ fun Board.removeShip(pos: Position): Board {
         this
     }
 }
+
 
 /**
  * Class that represents the consequence of the shot taken

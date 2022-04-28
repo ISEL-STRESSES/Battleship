@@ -1,9 +1,11 @@
 package battleship.model.board
 
 /**
- * All positions that make up the game
- * @property column describes position's column
- * @property row describes position's row
+ * All [Position] that make up the game
+ * @property column describes position's [Column]
+ * @property row describes position's [Row]
+ * @property toString to string override function
+ * @property values companion object that has all the possible values for [Position]
  */
 class Position private constructor(val column: Column, val row: Row) {
 
@@ -15,12 +17,11 @@ class Position private constructor(val column: Column, val row: Row) {
             Position((it % COLUMN_DIM).indexToColumn(), (it / COLUMN_DIM).indexToRow())
         }
 
-        // get all possible positions
         /**
          * Getter function for getting a position.
-         * @param indexColumn ordinal of the column.
-         * @param indexRow ordinal of the row.
-         * @return Position.
+         * @param indexColumn ordinal of the [Column].
+         * @param indexRow ordinal of the [Row].
+         * @return [Position].
          * @throws IndexOutOfBoundsException
          */
         operator fun get(indexColumn: Int, indexRow: Int): Position {
@@ -33,14 +34,15 @@ class Position private constructor(val column: Column, val row: Row) {
          * Getter function for getting a position.
          * @param column key for the column.
          * @param row key for the row.
-         * @return Position.
+         * @return [Position].
          */
         operator fun get(column: Column, row: Row) = get(column.ordinal, row.ordinal)
     }
 }
 
 /**
- * Converts String into a Position, null if such position does not exist
+ * Converts String into a [Position], null if such position does not exist
+ * @return [Position]
  */
 fun String.toPositionOrNull(): Position? {
     if (this.isBlank()) return null
@@ -54,17 +56,23 @@ fun String.toPositionOrNull(): Position? {
 }
 
 /**
- * Converts string to a Position
+ * Converts string to a [Position]
+ * @return [Position]
+ * @throws IllegalStateException
  */
 fun String.toPosition(): Position {
     return toPositionOrNull() ?: error("Invalid Position $this")
 }
 
 /**
+ * Function that will move a [Position] X amount of times
+ * @param dir direction to move the [Position]
+ * @param amount amount of times to move the [Position]
+ * @return [Position] moved
  * @throws IndexOutOfBoundsException if resulting position is invalid
  */
-fun Position.movePosition(dir: Direction, length: Int): Position {
-    val x = this.column.ordinal + if (dir === Direction.HORIZONTAL) length else 0
-    val y = this.row.ordinal + if (dir === Direction.VERTICAL) length else 0
+fun Position.movePosition(dir: Direction, amount: Int): Position {
+    val x = this.column.ordinal + if (dir === Direction.HORIZONTAL) amount else 0
+    val y = this.row.ordinal + if (dir === Direction.VERTICAL) amount else 0
     return Position[x, y]
 }

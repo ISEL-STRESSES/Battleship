@@ -7,8 +7,11 @@ import battleship.ui.readCommand
 import mongoDB.MongoDriver
 import kotlin.system.exitProcess
 
-const val DATABASE_NAME = "BattleShip"
+private const val DATABASE_NAME = "BattleShip"
 
+/**
+ * Main function that will be run in order to play the BattleShip Game
+ */
 fun main() {
     try {
         MongoDriver(DATABASE_NAME).use { drv ->
@@ -18,7 +21,7 @@ fun main() {
                 val (name, args) = readCommand()
                 val cmd = cmds[name]
                 if (cmd == null) {
-                    println("Invalid Command! \nUse the Command HELP for the available commands list")
+                    println("Invalid Command! \nUse the Command HELP for the available command list")
                 } else {
                     try {
                         game = cmd.action(game, args) ?: exitProcess(0)

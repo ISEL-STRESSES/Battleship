@@ -6,7 +6,7 @@ import battleship.model.board.*
 import battleship.model.ship.ShipType
 import battleship.storage.Storage
 
-// enum class PutError { NONE, INVALID_POSITION, INVALID_ARGUMENTS }
+
 
 /**
  * available play errors
@@ -16,7 +16,7 @@ import battleship.storage.Storage
  * @property GAME_OVER game over.
  */
 enum class PlayError {
-    NONE, INVALID_SHOT, INVALID_TURN, GAME_OVER // game over is not used
+    NONE, INVALID_SHOT, INVALID_TURN, GAME_OVER
 }
 
 /**
@@ -55,7 +55,10 @@ data class Game(
 )
 
 /**
- *
+ * [Game] Function that will start the game if it meets the requirements
+ * @param gameName name of the game
+ * @param st storage to use
+ * @return updated [Game]
  */
 fun Game.startGame(gameName: String, st: Storage): Game {
     val gameFight = copy(name = gameName, state = FIGHT)
@@ -71,15 +74,10 @@ fun Game.startGame(gameName: String, st: Storage): Game {
 
 
 /**
- *
+ * Function that checks if [GameState] is setup state
+ * @throws IllegalStateException
  */
-fun GameState.checkState(wantedState: GameState) {
-    when (wantedState) {
-        SETUP -> check(wantedState == this) { "Can't change fleet after game started" }
-        FIGHT -> check(wantedState == this) { "Can't make a shot before start" }
-        OVER -> check(wantedState == this) { "Game Over, FATALITY" }
-    }
-}
+fun GameState.checkPutState() = check(this == SETUP) { "Can't change fleet after game started" }
 
 /**
  * [Game] Function that will put a ship if it's a valid command and ship
@@ -89,7 +87,6 @@ fun GameState.checkState(wantedState: GameState) {
  * @return updated [Game]
  */
 fun Game.putShip(type: ShipType, pos: Position, dir: Direction): Game {
-    state.checkState(SETUP)
 
     val newBoard = boardA.putShip(type, pos, dir)
     return this.copy(boardA = newBoard)
@@ -176,7 +173,6 @@ fun Game.removeShip(pos: Position): Game {
  * @return updated [Game]
  */
 fun Game.removeAll(): Game {
-    state.checkState(SETUP)
     return this.copy(boardA = Board())
 }
 
@@ -204,10 +200,9 @@ fun Game.getPlayerBoard(target: Player): Board? {
  * @param pos [Position] from the shot
  * @return [PlayResult] with the updated [Game] and [PlayError] associated
  */
-fun Game.makeShot(pos: Position): PlayResult {
-    state.checkState(FIGHT)
-    require(player == turn) { "Wait for other player" }
+fun Game.makeShot(pos: Position, st : Storage): PlayResult {
 
+    val playerBoard = getPlayerBoard(player)
     val enemyBoard = getPlayerBoard(player.other())
     checkNotNull(enemyBoard)
     val boardResult = enemyBoard.makeShot(pos)

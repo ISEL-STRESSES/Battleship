@@ -8,7 +8,7 @@ enum class Direction {
 }
 
 /**
- * Converts String into a Direction, null if such direction does not exist
+ * Converts String into a [Direction], null if such direction does not exist
  * @return returns the direction from the first letter of the string
  */
 fun String.toDirectionOrNull(): Direction? {
@@ -17,7 +17,7 @@ fun String.toDirectionOrNull(): Direction? {
 }
 
 /**
- * Converts String into a Direction, null if such direction does not exist
+ * Converts String into a [Direction], null if such direction does not exist
  * @return returns the direction from the first letter of the string
  */
 fun String.toDirection(): Direction = toDirectionOrNull() ?: error("Invalid direction $this")
