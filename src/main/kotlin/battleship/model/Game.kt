@@ -20,13 +20,6 @@ enum class PlayError {
 }
 
 /**
- * Keeps the game and the correspondent consequence of a shot.
- * @property game BattleShip [Game];
- * @property consequence [ShotConsequence] after the shot was taken.
- */
-data class PlayResult(val game: Game, val consequence: ShotConsequence)
-
-/**
  * Keep the current state of the game.
  * @property SETUP setup stage where only PUT commands will be allowed;
  * @property FIGHT fight stage where you can do all the commands except the ones in the [SETUP] phase;
@@ -93,7 +86,6 @@ fun Game.putShip(type: ShipType, pos: Position, dir: Direction): Game {
 }
 
 typealias LigmaG = Pair<Position, Direction>
-
 
 fun Board.getPossiblePositions(size : Int, dir: Direction) : List<LigmaG>
 {
@@ -164,7 +156,6 @@ fun Game.putAllShips() {
  */
 fun Game.removeShip(pos: Position): Game {
     val newBoard = boardA.removeShip(pos)
-    if (boardA === newBoard) error("No ship in $pos")
     return this.copy(boardA = newBoard)
 }
 
@@ -195,37 +186,37 @@ fun Game.getPlayerBoard(target: Player): Board? {
     return if (target == Player.A) boardA else boardB
 }
 
+
+/**
+ * Keeps the game and the correspondent consequence of a shot.
+ * @property [Game] battleship game;
+ * @property [ShotConsequence] after the shot was taken.
+ */
+typealias GameShot = Pair<Game, ShotConsequence>
+
 /**
  * [Game] Function that will make a shot if it's a valid state and a valid shot
  * @param pos [Position] from the shot
- * @return [PlayResult] with the updated [Game] and [PlayError] associated
+ * @return [GameShot] with the updated [Game] and [ShotConsequence] associated
  */
-fun Game.makeShot(pos: Position, st : Storage): PlayResult {
+fun Game.makeShot(pos: Position, st : Storage): GameShot {
 
     val playerBoard = getPlayerBoard(player)
     val enemyBoard = getPlayerBoard(player.other())
     checkNotNull(enemyBoard)
     val boardResult = enemyBoard.makeShot(pos)
 
-    val newBoardA = if(playerBoard == boardA) boardA else boardResult.board
-    val newBoardB = if(playerBoard == boardB) boardB else boardResult.board
+    val newBoardA = if(playerBoard == boardA) boardA else boardResult.first
+    val newBoardB = if(playerBoard == boardB) boardB else boardResult.first
 
-    val newTurn = if (boardResult.consequence === ShotConsequence.HIT || boardResult.consequence === ShotConsequence.SUNK)
+    if(boardResult.second !== ShotConsequence.INVALID)
     {
-        turn
-    } else {
-        turn.other()
+        val newTurn = if (boardResult.second == ShotConsequence.MISS){
+             turn.other()
+        } else  turn
+
+        st.store(copy(boardA = newBoardA, boardB = newBoardB, turn = newTurn))
     }
 
-    println(boardResult.consequence)
-    println(ShipType.values.sumOf {it.squares})
-
-    val newGame = copy(boardA = newBoardA, boardB = newBoardB, turn = newTurn)
-
-    if(boardResult.consequence !== ShotConsequence.INVALID)
-    {
-        st.store(newGame)
-    }
-
-    return PlayResult(newGame, boardResult.consequence)
+    return GameShot(this, boardResult.second)
 }

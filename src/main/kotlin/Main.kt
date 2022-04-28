@@ -4,6 +4,7 @@ import battleship.model.createGame
 import battleship.storage.MongoStorage
 import battleship.ui.getCommandsOO
 import battleship.ui.readCommand
+import com.mongodb.MongoException
 import mongoDB.MongoDriver
 import kotlin.system.exitProcess
 

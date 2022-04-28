@@ -76,7 +76,11 @@ fun getCommandsOO(st: Storage) = mapOf(
                 game.removeAll()
             } else {
                 val position = args[0].toPosition()
-                game.removeShip(position)
+                val updatedGame = game.removeShip(position)//TODO THE FUCK
+                if (game.boardA === updatedGame.boardA){
+                    error("No ship in $position")
+                }
+                updatedGame
             }
         }
         override fun show(game: Game) {
@@ -116,7 +120,9 @@ fun getCommandsOO(st: Storage) = mapOf(
             val loadedGame = st.load(game)
             val pos = args.first().toPositionOrNull() ?: error("Invalid ${args.first()}")
             val result = loadedGame.makeShot(pos, st)
-            return result.game
+            TODO("TREAT WHEN result.second == invalid show INVALID POSITION MESSAGE")
+            println(result.second)
+            return result.first
         }
         override fun show(game: Game) {
             game.print()

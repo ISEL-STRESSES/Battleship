@@ -58,8 +58,10 @@ fun getBounds(pos: Position, dir: Direction, size: Int): Bounds {
     )
 }
 
-enum class PutError { NONE, INVALID_POSITION, INVALID_ARGUMENTS }
-data class PutResult(val game: Game, val error: PutError)
+enum class PutConsequence { NONE, INVALID_SHIP, INVALID_POSITION, INVALID_ARGUMENTS }
+
+typealias PutResult = Pair<Game, PutConsequence>
+
 /**
  * [Board] Function that will put a ship
  * @param type [ShipType] of the ship to put
@@ -68,7 +70,7 @@ data class PutResult(val game: Game, val error: PutError)
  * @return updated [Board]
  * @throws IllegalStateException
  */
-fun Board.putShip(type: ShipType, pos: Position, dir: Direction): Board {
+fun Board.putShip(type: ShipType, pos: Position, dir: Direction): PutResult {
 
     // TODO() change return to PutResult just like the shot function
     if (fleet.count { type == it.type } >= type.fleetQuantity)
@@ -93,7 +95,8 @@ fun Board.putShip(type: ShipType, pos: Position, dir: Direction): Board {
 
     val newFleet = fleet + newShip
     val newGrid = grid + cells.associateBy { it.pos }
-    return Board(newFleet, newGrid)
+    val newBoard = Board(newFleet, newGrid)
+    return PutResult(newBoard, consequence)
 }
 
 /**
@@ -126,25 +129,18 @@ fun Board.removeShip(pos: Position): Board {
 enum class ShotConsequence {
     MISS, HIT, SUNK, INVALID
 }
-
-/**
- * Keeps the board, the correspondent consequence of a shot, and the error(if there is one) associated with that shot.
- * @property board [Board] of the player to be shot;
- * @property consequence [ShotConsequence] consequence of the shot taken;
- * @property error [PlayError] error associated.
- */
-data class ShotResult(val board: Board, val consequence: ShotConsequence)
+typealias ShotResult = Pair<Board, ShotConsequence>
 
 /**
  * [Board] Function that will make a shot.
  * @param pos [Position] from the shot.
- * @return [ShotResult] with the updated [Game], [ShotConsequence] and [PlayError] associated.
+ * @return [ShotResult] with the updated [Board] and [ShotConsequence].
  */
 fun Board.makeShot(pos: Position): ShotResult {
     when (val cell = grid[pos]) {
         is MissCell, is ShipHit -> {
             // Ship sunk is inferred as an invalid shot because of its inherited from ShipHit
-            return ShotResult(this, ShotConsequence.INVALID)
+                return ShotResult(this, ShotConsequence.INVALID)
         }
         is ShipCell -> {
             val ship = cell.ship
@@ -164,7 +160,7 @@ fun Board.makeShot(pos: Position): ShotResult {
             return ShotResult(copy(grid = grid + (pos to MissCell(pos))), ShotConsequence.MISS)
         }
     }
-    return ShotResult(this, ShotConsequence.INVALID)
+    //TODO() error("Invalid")
 }
 
 /**
