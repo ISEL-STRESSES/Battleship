@@ -1,6 +1,7 @@
 package battleship.model.board
 
 import battleship.model.board.Column.Companion.values
+import battleship.model.board.Row.Companion.values
 
 const val ROW_DIM = 10
 private const val ROW_FIRST_NUMBER = 1

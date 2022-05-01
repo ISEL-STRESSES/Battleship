@@ -4,7 +4,6 @@ import battleship.model.Game
 import battleship.model.GameState
 import battleship.model.board.*
 import battleship.model.getPlayerBoard
-import battleship.model.ship.ShipType
 
 private const val BOARD_CHAR_DIM = COLUMN_DIM * 2 + 1
 private const val LETTERS_IDENT = 5
@@ -98,10 +97,8 @@ fun Game.print() {
     println()
 
     //Player turn status
-    if(state != GameState.SETUP)
-    {
-        if(player === turn)
-        {
+    if (state != GameState.SETUP) {
+        if (player === turn) {
             println("Is your turn")
         } else {
             println("Wait for other (use refresh command)")
@@ -125,9 +122,8 @@ fun printColumnsIDX() {
  * @param row index of the row to print
  * @param hide boolean that allows to hide enemy board
  */
-fun Board?.printRow(row: Int, hide : Boolean) {
-    if(this == null)
-    {
+fun Board?.printRow(row: Int, hide: Boolean) {
+    if (this == null) {
         print(verSep)
         print(" ".repeat(COLUMN_DIM * 2 + 1))
         print(verSep)
@@ -136,8 +132,7 @@ fun Board?.printRow(row: Int, hide : Boolean) {
         repeat(COLUMN_DIM) { x ->
             val cell = grid[Position[x, row]]
             val char = cell.toChar()
-            if(hide && char == CHAR_SHIP)
-            {
+            if (hide && char == CHAR_SHIP) {
                 print(" $CHAR_WATER")
             } else {
                 print(" $char")

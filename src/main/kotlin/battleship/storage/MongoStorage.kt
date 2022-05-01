@@ -60,10 +60,15 @@ class MongoStorage(driver: MongoDriver) : Storage {
             val shipPositions = List(type.squares) { head.movePosition(dir, it) }
             val ship = Ship(type, head, dir, shipPositions)
 
-            val shipCells = if(hits.all{ it == SHIP_CELL_SHOT})
+            val shipCells = if (hits.all { it == SHIP_CELL_SHOT })
                 shipPositions.map { ShipSunk(it, ship) }
             else
-                shipPositions.mapIndexed { num, it -> if(hits[num] == SHIP_CELL_SHOT) ShipHit(it, ship) else ShipCell(it, ship) }
+                shipPositions.mapIndexed { num, it ->
+                    if (hits[num] == SHIP_CELL_SHOT) ShipHit(it, ship) else ShipCell(
+                        it,
+                        ship
+                    )
+                }
 
             return ship to shipCells
 

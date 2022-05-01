@@ -10,7 +10,7 @@ import battleship.model.board.Position
  */
 data class Bounds(val topLeft: Position, val bottomRight: Position)
 
-fun Bounds.toList() : List<Position> {
+fun Bounds.toList(): List<Position> {
     val list = mutableListOf<Position>(); //TODO remove this mutability
     for (x in topLeft.column.ordinal..bottomRight.column.ordinal) {
         for (y in topLeft.row.ordinal..bottomRight.row.ordinal) {
@@ -20,17 +20,15 @@ fun Bounds.toList() : List<Position> {
     return list
 }
 
-fun Bounds.collidesWith(other : Bounds) : Boolean
-{
-    return  topLeft.column.ordinal <= other.topLeft.column.ordinal &&
+fun Bounds.collidesWith(other: Bounds): Boolean {
+    return topLeft.column.ordinal <= other.topLeft.column.ordinal &&
             bottomRight.column.ordinal <= other.bottomRight.column.ordinal &&
             topLeft.row.ordinal >= other.topLeft.row.ordinal &&
             bottomRight.row.ordinal <= other.bottomRight.row.ordinal
 }
 
-fun Position.isInside(bounds : Bounds) : Boolean
-{
-    return  column.ordinal >= bounds.topLeft.column.ordinal &&
+fun Position.isInside(bounds: Bounds): Boolean {
+    return column.ordinal >= bounds.topLeft.column.ordinal &&
             row.ordinal >= bounds.topLeft.row.ordinal &&
             column.ordinal <= bounds.bottomRight.column.ordinal &&
             row.ordinal <= bounds.bottomRight.row.ordinal
@@ -49,4 +47,5 @@ data class Ship(
     val head: Position,
     val dir: Direction,
     val positions: List<Position>,
-    val bounds : Bounds)
+    val bounds: Bounds
+)

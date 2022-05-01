@@ -7,7 +7,6 @@ import battleship.model.ship.ShipType
 import battleship.storage.Storage
 
 
-
 /**
  * available play errors
  * @property NONE no error associated;
@@ -65,36 +64,36 @@ fun Game.startGame(gameName: String, st: Storage): Game {
     }
 }
 
-
 /**
- * Function that checks if [GameState] is setup state
- * @throws IllegalStateException
+ * Keeps the game and the correspondent consequence of a put.
+ * @property [Game] battleship game;
+ * @property [PutConsequence] after the put was done.
  */
-fun GameState.checkPutState() = check(this == SETUP) { "Can't change fleet after game started" }
+typealias GamePut = Pair<Game, PutConsequence>
+
 
 /**
  * [Game] Function that will put a ship if it's a valid command and ship
  * @param type [ShipType] of the ship to put
  * @param pos head [Position] of the ship
  * @param dir [Direction] of the ship
- * @return updated [Game]
+ * @return updated [GamePut]
  */
-fun Game.putShip(type: ShipType, pos: Position, dir: Direction): Game {
+fun Game.putShip(type: ShipType, pos: Position, dir: Direction): GamePut {
 
-    val newBoard = boardA.putShip(type, pos, dir)
-    return this.copy(boardA = newBoard)
+    val result = boardA.putShip(type, pos, dir)
+    return GamePut(this.copy(boardA = result.first), result.second)
 }
 
 typealias LigmaG = Pair<Position, Direction>
 
-fun Board.getPossiblePositions(size : Int, dir: Direction) : List<LigmaG>
-{
-    val allPositions = Position.values;
+fun Board.getPossiblePositions(size: Int, dir: Direction): List<LigmaG> {
+    val allPositions = Position.values
     //remove positions at sides
-    val firstStep = if(dir === Direction.HORIZONTAL)
-            allPositions.filter { it.column.ordinal < COLUMN_DIM - size}
-        else
-            allPositions.filter { it.row.ordinal < ROW_DIM - size}
+    val firstStep = if (dir === Direction.HORIZONTAL)
+        allPositions.filter { it.column.ordinal < COLUMN_DIM - size }
+    else
+        allPositions.filter { it.row.ordinal < ROW_DIM - size }
     //remove positions occupied by ships
     val secondStep = firstStep.filter { it == it }
 
@@ -102,27 +101,30 @@ fun Board.getPossiblePositions(size : Int, dir: Direction) : List<LigmaG>
 }
 
 
-fun Game.putRandomShip(type : ShipType) : Game
-{
+fun Game.putRandomShip(type: ShipType): Game {
     val allowSpace = boardA.getPossiblePositions(type.squares, Direction.HORIZONTAL) +
-                     boardA.getPossiblePositions(type.squares, Direction.VERTICAL)
+            boardA.getPossiblePositions(type.squares, Direction.VERTICAL)
 
-    if(allowSpace.isEmpty())
-    {
+    if (allowSpace.isEmpty()) {
         return this
     }
     val randomState = allowSpace.random()
-    val newBoard = boardA.putShip(type, randomState.first, randomState.second)
-    return this.copy(boardA = newBoard)
+    val result = boardA.putShip(
+        type,
+        randomState.first,
+        randomState.second
+    ) //TODO (se o result.second for != NONE manda com o caralho porque deu merda)
+    //return if (result.second != PutConsequence.NONE) GamePut(this.copy(boardA = result.first), result.second)
+    return this.copy(boardA = result.first)
 }
 
-fun Game.putAllShips() : Game
-{
+fun Game.putAllShips(): Game {
     var newGame = this
     do {
-        val possiblePool = ShipType.values.filter{ type -> type.fleetQuantity - boardA.fleet.count{ship -> ship.type == type} > 0 }
+        val possiblePool =
+            ShipType.values.filter { type -> type.fleetQuantity - boardA.fleet.count { ship -> ship.type == type } > 0 }
         newGame = newGame.putRandomShip(possiblePool.random())
-    } while(newGame != this)
+    } while (!newGame.boardA.fleet.isComplete())
     return newGame
 }
 
@@ -196,21 +198,20 @@ typealias GameShot = Pair<Game, ShotConsequence>
  * @param pos [Position] from the shot
  * @return [GameShot] with the updated [Game] and [ShotConsequence] associated
  */
-fun Game.makeShot(pos: Position, st : Storage): GameShot {
+fun Game.makeShot(pos: Position, st: Storage): GameShot {
 
     val playerBoard = getPlayerBoard(player)
     val enemyBoard = getPlayerBoard(player.other())
     checkNotNull(enemyBoard)
     val boardResult = enemyBoard.makeShot(pos)
 
-    val newBoardA = if(playerBoard == boardA) boardA else boardResult.first
-    val newBoardB = if(playerBoard == boardB) boardB else boardResult.first
+    val newBoardA = if (playerBoard == boardA) boardA else boardResult.first
+    val newBoardB = if (playerBoard == boardB) boardB else boardResult.first
 
-    if(boardResult.second !== ShotConsequence.INVALID)
-    {
-        val newTurn = if (boardResult.second == ShotConsequence.MISS){
-             turn.other()
-        } else  turn
+    if (boardResult.second !== ShotConsequence.INVALID) {
+        val newTurn = if (boardResult.second == ShotConsequence.MISS) {
+            turn.other()
+        } else turn
 
         st.store(copy(boardA = newBoardA, boardB = newBoardB, turn = newTurn))
     }

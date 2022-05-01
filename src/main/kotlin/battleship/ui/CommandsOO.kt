@@ -3,7 +3,6 @@ package battleship.ui
 import battleship.model.*
 import battleship.model.board.*
 import battleship.model.ship.toShipType
-import battleship.model.ship.toShipTypeOrNull
 import battleship.storage.Storage
 
 /**
@@ -43,49 +42,57 @@ fun getCommandsOO(st: Storage) = mapOf(
     },
     "PUT" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game {
-            require(args.size == 1|| args.size == 3) { "Invalid Arguments" }
-            game.state.checkPutState()
+            require(args.size == 1 || args.size == 3) { "Invalid Arguments" }
+            check(game.state == GameState.SETUP) { "Can't change fleet after game started" }
 
-            if(args.size == 1)
-            {
-                if(args[0] == "all")
-                    return game.putAllShips();
+            if (args.size == 1) {
+                return if (args[0] == "all")
+                    game.putAllShips()
                 else {
                     val type = args[0].toShipType()
-                    return game.putRandomShip(type)
+                    game.putRandomShip(type)
                 }
             } else {
                 val type = args[0].toShipType()
                 val position = args[1].toPosition()
-                val direction = args[2].toDirection() // meter em enum class como o stor fez
-                return game.putShip(type, position, direction)
+                val direction = args[2].toDirection()
+                val result = game.putShip(type, position, direction)
+
+                if (result.second == PutConsequence.INVALID_SHIP) error("No more ${type.name} to put")
+                if (result.second == PutConsequence.INVALID_POSITION) error("Can't put ${type.name} in that position")
+
+                return result.first
             }
         }
+
         override fun show(game: Game) {
             game.print()
         }
+
         override val argsSyntax: String
             get() = "(<shipType> [<position> <align>] | all)"
     },
     "REMOVE" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game {
             require(args.size == 1) { "Invalid Arguments" }
-            game.state.checkPutState()
+            check(game.state == GameState.SETUP) { "Can't change fleet after game started" }
 
             return if (args[0] == "all") {
                 game.removeAll()
             } else {
                 val position = args[0].toPosition()
                 val updatedGame = game.removeShip(position)//TODO THE FUCK
-                if (game.boardA === updatedGame.boardA){
+                if (game.boardA === updatedGame.boardA) {
                     error("No ship in $position")
                 }
                 updatedGame
             }
         }
+
         override fun show(game: Game) {
             game.print()
         }
+
         override val argsSyntax: String
             get() = "<position> | all"
     },
@@ -99,14 +106,16 @@ fun getCommandsOO(st: Storage) = mapOf(
     "START" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game {
             require(args.size == 1 && args[0].isNotBlank()) { "Invalid Arguments" }
-            check(game.state == GameState.SETUP) { "Game Already Started" } //TODO() put this shit in checkstate function
+            check(game.state == GameState.SETUP) { "Game Already Started" }
             check(game.boardA.fleet.isComplete()) { "Complete fleet before start" }
             val gameName = args[0]
             return game.startGame(gameName, st)
         }
+
         override fun show(game: Game) {
             println("You are the Player ${game.player.id}")
         }
+
         override val argsSyntax: String
             get() = "<name>"
     },
@@ -118,15 +127,17 @@ fun getCommandsOO(st: Storage) = mapOf(
             check(game.player == game.turn || game.boardB == null) { "Wait for other player" }
 
             val loadedGame = st.load(game)
-            val pos = args.first().toPositionOrNull() ?: error("Invalid ${args.first()}")
+            val pos = args.first().toPosition()
             val result = loadedGame.makeShot(pos, st)
-            TODO("TREAT WHEN result.second == invalid show INVALID POSITION MESSAGE")
+            check(result.second != ShotConsequence.INVALID) { "Position already used" }
             println(result.second)
             return result.first
         }
+
         override fun show(game: Game) {
             game.print()
         }
+
         override val argsSyntax by lazy { "<position>" }
     },
     "REFRESH" to object : CommandsOO() {
@@ -134,6 +145,7 @@ fun getCommandsOO(st: Storage) = mapOf(
             check(game.state != GameState.SETUP) { "Can't refresh an open game" }
             return st.load(game)
         }
+
         override fun show(game: Game) {
             game.print()
         }

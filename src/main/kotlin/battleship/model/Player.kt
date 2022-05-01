@@ -7,5 +7,6 @@ package battleship.model
  */
 enum class Player(val id: Char) {
     A('A'), B('B');
+
     fun other() = if (this === A) B else A
 }

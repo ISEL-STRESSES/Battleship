@@ -1,8 +1,8 @@
 package battleship.model.ship
 
 import battleship.model.board.Column.Companion.values
-import battleship.model.board.Row
 import battleship.model.board.Row.Companion.values
+import battleship.model.ship.ShipType.Companion.values
 
 /**
  * All ship types allowed in the game.

@@ -1,4 +1,3 @@
-
 import battleship.model.Game
 import battleship.model.createGame
 import battleship.storage.MongoStorage
@@ -36,7 +35,7 @@ fun main() {
                 }
             }
         }
-    } catch(ex : MongoException) {
+    } catch (ex: MongoException) {
         println("An exception has occurred with MongoDB!")
         println("Exception message: ${ex.message}")
     }
