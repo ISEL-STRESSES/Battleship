@@ -1,6 +1,9 @@
 package battleship.model.board
 
-import battleship.model.board.ShotConsequence.*
+import battleship.model.PutConsequence
+import battleship.model.PutResult
+import battleship.model.ShotConsequence
+import battleship.model.ShotResult
 import battleship.model.ship.Ship
 import battleship.model.ship.ShipType
 import kotlin.math.max
@@ -35,7 +38,6 @@ fun Board.lost() = (cellsQuantity() - grid.entries.count { (_, it) -> it is Ship
  * @param pos [Position] of the head of the ship
  * @param dir [Direction] of the ship
  * @param size size of the ship
- * @return [Bounds] of the ship
  */
 fun getField(pos: Position, dir: Direction, size: Int): Set<Position> {
     val extension = Pair(if (dir === Direction.HORIZONTAL) size else 1, if (dir === Direction.VERTICAL) size else 1)
@@ -46,12 +48,6 @@ fun getField(pos: Position, dir: Direction, size: Int): Set<Position> {
     return makeRectangle(topLeft, bottomRight)
 }
 
-/**
- * Class that as all the possible outcomes of the put Command.
- */
-enum class PutConsequence { NONE, INVALID_SHIP, INVALID_POSITION, INVALID_RANDOM}
-
-typealias PutResult = Pair<Board, PutConsequence>
 
 /**
  * [Board] Function that will put a ship
@@ -110,19 +106,6 @@ fun Board.removeShip(pos: Position): Board {
     }
 }
 
-
-/**
- * Class that represents the consequence of the shot taken
- * @property MISS shot was missed
- * @property HIT shot was hit
- * @property SUNK shot has sunken a ship
- * @property INVALID shot was invalid
- */
-enum class ShotConsequence {
-    MISS, HIT, SUNK, INVALID
-}
-typealias ShotResult = Pair<Board, ShotConsequence>
-
 /**
  * [Board] Function that will make a shot.
  * @param pos [Position] from the shot.
@@ -132,7 +115,7 @@ fun Board.makeShot(pos: Position): ShotResult {
     return when (val cell = grid[pos]) {
         is MissCell, is ShipHit -> {
             // Ship sunk is inferred as an invalid shot because of its inherited from ShipHit
-            ShotResult(this, INVALID)
+            ShotResult(this, ShotConsequence.INVALID)
         }
         is ShipCell -> {
             val ship = cell.ship
@@ -142,14 +125,14 @@ fun Board.makeShot(pos: Position): ShotResult {
             // check if ship is sunk
             return if (hasSunk) {
                 val gridAfterSunk = grid + ship.positions.map { it to ShipSunk(it, ship) }
-                ShotResult(copy(grid = gridAfterSunk), SUNK)
+                ShotResult(copy(grid = gridAfterSunk), ShotConsequence.SUNK)
             } else {
-                ShotResult(copy(grid = gridAfterShot), HIT)
+                ShotResult(copy(grid = gridAfterShot), ShotConsequence.HIT)
             }
         }
         null -> {
             // Add cell to the grid with MissCell
-            return ShotResult(copy(grid = grid + (pos to MissCell(pos))), MISS)
+            return ShotResult(copy(grid = grid + (pos to MissCell(pos))), ShotConsequence.MISS)
         }
         else -> TODO("throw ???")
     }
@@ -161,21 +144,21 @@ fun Board.makeShot(pos: Position): ShotResult {
  * @param size Size of the ship to place.
  * @param dir direction of a [Ship].
  * @return Returns a List of possible positions and directions.
- * sala de estudos++
  */
 fun Board.getPossiblePositions(size: Int, dir: Direction): List<Pair<Direction, Position>> {
     val allPositions = Position.values
+
     //remove positions at sides
     val firstStep = if (dir === Direction.HORIZONTAL)
         allPositions.filter { it.column.ordinal <= COLUMN_DIM - size }
     else
         allPositions.filter { it.row.ordinal <= ROW_DIM - size }
     //remove positions occupied by ships
-    val secondStep = fleet.fold(firstStep.toSet()) { acc, ship -> acc subtract ship.field }
+    val secondStep = fleet.fold(firstStep) { acc, ship -> acc - ship.field }
     //remove positions that putting a ship would collide with
-    val thirdStep = secondStep.filter {
-        head -> getPositionsFromLine(head, dir, size).all {
-            !fleet.any{ship -> it in ship.field }
+    val thirdStep = secondStep.filter { head ->
+        getPositionsFromLine(head, dir, size).all {
+            !fleet.any { ship -> it in ship.field }
         }
     }
 
@@ -202,13 +185,13 @@ fun Board.putRandomShip(type: ShipType): PutResult {
  */
 fun Board.putAllShips(): PutResult {
 
-    if(fleet.isComplete()) return PutResult(this, PutConsequence.NONE)
+    if (fleet.isComplete()) return PutResult(this, PutConsequence.NONE)
 
-    val shipTypes = ShipType.values.filter { shipType -> shipType.fleetQuantity > fleet.count {shipType === it.type} }
-    val currType = shipTypes.random()
+    val shipTypes = ShipType.values.filter { shipType -> fleet.count { shipType === it.type } < shipType.fleetQuantity }
+    val currType = shipTypes.first()
 
     val newBoard = putRandomShip(currType)
-    if(newBoard.second !== PutConsequence.NONE)
+    if (newBoard.second !== PutConsequence.NONE)
         return PutResult(newBoard.first, newBoard.second)
 
     return newBoard.first.putAllShips()

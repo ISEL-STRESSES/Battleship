@@ -2,8 +2,10 @@ package battleship.ui
 
 import battleship.model.Game
 import battleship.model.GameState
+import battleship.model.Player
 import battleship.model.board.*
 import battleship.model.getPlayerBoard
+import battleship.model.ship.ShipType
 
 private const val BOARD_CHAR_DIM = COLUMN_DIM * 2 + 1
 private const val LETTERS_IDENT = 5
@@ -14,11 +16,14 @@ private const val horSep = '-'
 private const val verSep = '|'
 private const val cross = '+'
 
-private const val CHAR_MISS = 'O'
-private const val CHAR_SHIP = '#'
-private const val CHAR_HIT = '*'
+private const val CHAR_MISS = '!'
+private const val CHAR_SHIP = '█' //'#'
+private const val CHAR_HIT = '■'
 private const val CHAR_SUNK = 'X'
 private const val CHAR_WATER = ' '
+
+private const val MESSAGE_WIN = "You WIN"
+private const val MESSAGE_LOSE = "You LOSE"
 
 // Horizontal separator condensed
 val horizontalSeparators = CHAR_WATER.repeat(HORIZONTAL_IDENT) + cross + horSep.repeat(BOARD_CHAR_DIM) + cross
@@ -57,9 +62,54 @@ fun printHelp() {
     println("\tEXIT")
 }
 
-fun printShipData()
-{
-    println("")
+fun Board.printShipData(row: Int) {
+    // check if row is in the row to print
+    if (row !in 0 until ShipType.values.size) return
+
+    val type = ShipType.values[row]
+    val quantity = fleet.count { type === it.type }
+    val squares = "$CHAR_SHIP".repeat(type.squares)
+    print(" $quantity x $squares of ${type.fleetQuantity} (${type.name})")
+}
+
+fun Game.printStatus() {
+    //Player turn or win status
+    if (state != GameState.SETUP) {
+        if (boardA.lost()) {
+            if (player === Player.A)
+                println(MESSAGE_LOSE)
+            else
+                println(MESSAGE_WIN)
+        } else if (boardB != null && boardB.lost()) {
+            if (player === Player.B)
+                println(MESSAGE_LOSE)
+            else
+                println(MESSAGE_WIN)
+        }
+        if (player === turn) {
+            println("Is your turn")
+        } else {
+            println("Wait for other (use refresh command)")
+        }
+    }
+
+}
+
+fun printHorizontalSeperators(state: GameState) {
+    print(horizontalSeparators) // Print top separator
+    if (state != GameState.SETUP)
+        print(horizontalSeparators)
+    println()
+}
+
+fun Game.printTop() {
+    printColumnsIDX() // Prints column indexes
+    if (state != GameState.SETUP) {
+        print(" ")
+        printColumnsIDX()
+    }
+    println()
+    printHorizontalSeperators(state)
 }
 
 /**
@@ -67,17 +117,7 @@ fun printShipData()
  */
 fun Game.print() {
 
-    printColumnsIDX() // Prints column indexes
-    if (state != GameState.SETUP) {
-        print(" ")
-        printColumnsIDX()
-    }
-    println()
-    print(horizontalSeparators) // Print top separator
-    if (state != GameState.SETUP) {
-        print(horizontalSeparators)
-    }
-    println()
+    printTop()
 
     repeat(ROW_DIM) {
         val playerBoard = getPlayerBoard(player)
@@ -92,26 +132,14 @@ fun Game.print() {
             print(" ".repeat(BOARD_SEPARATION))
             enemyBoard.printRow(it, true)
         } else {
-            printShipData(it)
+            boardA.printShipData(it)
         }
         println()
     }
-    print(horizontalSeparators) // Print top separator
-    if (state != GameState.SETUP) {
-        //print()
-        print(horizontalSeparators)
-    }
-    println()
 
-    //Player turn status
-    if (state != GameState.SETUP) {
-        if (player === turn) {
-            println("Is your turn")
-        } else {
-            println("Wait for other (use refresh command)")
-        }
-    }
+    printHorizontalSeperators(state)
 
+    printStatus()
 }
 
 /**
@@ -139,11 +167,11 @@ fun Board?.printRow(row: Int, hide: Boolean) {
         repeat(COLUMN_DIM) { x ->
             val cell = grid[Position[x, row]]
             val char = cell.toChar()
-            if (hide && char == CHAR_SHIP) {
+            if (hide && char == CHAR_SHIP)
                 print(" $CHAR_WATER")
-            } else {
+            else
                 print(" $char")
-            }
+
         }
         print(" ") // print final space
         print(verSep)

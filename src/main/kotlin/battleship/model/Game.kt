@@ -22,10 +22,9 @@ enum class PlayError {
  * Keep the current state of the game.
  * @property SETUP setup stage where only PUT commands will be allowed;
  * @property FIGHT fight stage where you can do all the commands except the ones in the [SETUP] phase;
- * @property OVER game over stage meaning you can't do any commands.
  */
 enum class GameState {
-    SETUP, FIGHT, OVER
+    SETUP, FIGHT
 }
 
 /**
@@ -162,13 +161,17 @@ fun Game.makeShot(pos: Position, st: Storage): GameShot {
     val newBoardA = if (playerBoard == boardA) boardA else boardResult.first
     val newBoardB = if (playerBoard == boardB) boardB else boardResult.first
 
-    if (boardResult.second !== ShotConsequence.INVALID) {
-        val newTurn = if (boardResult.second == ShotConsequence.MISS) {
-            turn.other()
-        } else turn
+    if (boardResult.second === ShotConsequence.INVALID)
+        return GameShot(this, ShotConsequence.INVALID)
 
-        st.store(copy(boardA = newBoardA, boardB = newBoardB, turn = newTurn))
-    }
+    val newTurn = if (boardResult.second === ShotConsequence.MISS)
+        turn.other()
+    else
+        turn
 
-    return GameShot(this, boardResult.second)
+    val newGame = copy(boardA = newBoardA, boardB = newBoardB, turn = newTurn)
+
+    st.store(newGame)
+
+    return GameShot(newGame, boardResult.second)
 }

@@ -18,7 +18,6 @@ class GameTest {
         assertEquals(sut.name, "")
         assertEquals(sut.boardA, Board())
         assertEquals(sut.boardB, Board())
-        val state = GameState.FIGHT
         assertThrows<IllegalStateException> { check(sut.state === GameState.FIGHT) }
     }
 
@@ -70,6 +69,21 @@ class GameTest {
         val sut = initialGame.putShip("4".toShipType(), "a1".toPosition(), "h".toDirection()).first
             .putShip("4".toShipType(), "a3".toPosition(), "h".toDirection())
         assertEquals(sut.first.removeAll(), initialGame)
+    }
+
+    @Test
+    fun `Test Shot`() {
+
+    }
+
+    @Test
+    fun `Test Sunk Shot`() {
+
+    }
+
+    @Test
+    fun `Test Failed Shot`() {
+
     }
 
 }
