@@ -57,17 +57,22 @@ fun printHelp() {
     println("\tEXIT")
 }
 
+fun printShipData()
+{
+    println("")
+}
+
 /**
  * Function to print the [Game]
  */
 fun Game.print() {
+
     printColumnsIDX() // Prints column indexes
     if (state != GameState.SETUP) {
         print(" ")
         printColumnsIDX()
     }
     println()
-
     print(horizontalSeparators) // Print top separator
     if (state != GameState.SETUP) {
         print(horizontalSeparators)
@@ -86,6 +91,8 @@ fun Game.print() {
             val enemyBoard = getPlayerBoard(player.other())
             print(" ".repeat(BOARD_SEPARATION))
             enemyBoard.printRow(it, true)
+        } else {
+            printShipData(it)
         }
         println()
     }

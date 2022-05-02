@@ -76,3 +76,20 @@ fun Position.movePosition(dir: Direction, amount: Int): Position {
     val y = this.row.ordinal + if (dir === Direction.VERTICAL) amount else 0
     return Position[x, y]
 }
+
+fun getPositionsFromLine(pos : Position, dir : Direction, length : Int) = List(length) { pos.movePosition(dir, it) }
+
+/** Returns a list of all positions in a rectangle to the destination positon
+ *
+ * @throws IllegalArgumentException if [topLeft] isn't above and to the left of the [bottomRight] position
+ */
+fun makeRectangle(topLeft: Position, bottomRight: Position): Set<Position> {
+    require(topLeft.column.ordinal <= bottomRight.column.ordinal)
+    require(topLeft.row.ordinal <= bottomRight.row.ordinal)
+    val positions = (topLeft.row.ordinal..bottomRight.row.ordinal).fold(listOf<Position>()) { acc, y ->
+        acc + (topLeft.column.ordinal..bottomRight.column.ordinal).fold(listOf<Position>()) { acc2, x ->
+            acc2 + Position[x, y]
+        }
+    }
+    return positions.toSet()
+}

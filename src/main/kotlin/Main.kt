@@ -44,6 +44,6 @@ fun main() {
         println("An unknown exception has ocurred!")
         println("Exception message: ${ex.message}")
     } finally {
-        println("OS 4 F's do Grupo 1:\nForça\nFoco\nFé\nF***-**")
+        println("Bye!")
     }
 }

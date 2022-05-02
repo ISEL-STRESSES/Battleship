@@ -57,8 +57,9 @@ class MongoStorage(driver: MongoDriver) : Storage {
             val head = split[2].toPosition()
             val dir = split[3].toDirection()
             val hits = split[4]
-            val shipPositions = List(type.squares) { head.movePosition(dir, it) }
-            val ship = Ship(type, head, dir, shipPositions)
+            val shipPositions = getPositionsFromLine(head, dir, type.squares)
+            val shipField = getField(head, dir, type.squares)
+            val ship = Ship(type, head, dir, shipPositions, shipField)
 
             val shipCells = if (hits.all { it == SHIP_CELL_SHOT })
                 shipPositions.map { ShipSunk(it, ship) }

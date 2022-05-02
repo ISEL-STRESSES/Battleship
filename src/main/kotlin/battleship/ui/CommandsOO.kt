@@ -46,11 +46,18 @@ fun getCommandsOO(st: Storage) = mapOf(
             check(game.state == GameState.SETUP) { "Can't change fleet after game started" }
 
             if (args.size == 1) {
-                return if (args[0] == "all")
-                    game.putAllShips()
-                else {
+                if (args[0] == "all") {
+                    val res = game.putAllShips()
+                    if (res.second === PutConsequence.INVALID_RANDOM)
+                        error("Can't place more random ships")
+                    return res.first
+                } else {
                     val type = args[0].toShipType()
-                    game.putRandomShip(type)
+                    val result = game.putRandomShip(type)
+                    if (result.second === PutConsequence.INVALID_RANDOM) error("Can't place ${type.name} random ship")
+
+                    if (result.second === PutConsequence.INVALID_SHIP) error("No more ${type.name} to put")
+                    return result.first
                 }
             } else {
                 val type = args[0].toShipType()
@@ -58,8 +65,8 @@ fun getCommandsOO(st: Storage) = mapOf(
                 val direction = args[2].toDirection()
                 val result = game.putShip(type, position, direction)
 
-                if (result.second == PutConsequence.INVALID_SHIP) error("No more ${type.name} to put")
-                if (result.second == PutConsequence.INVALID_POSITION) error("Can't put ${type.name} in that position")
+                if (result.second === PutConsequence.INVALID_SHIP) error("No more ${type.name} to put")
+                if (result.second === PutConsequence.INVALID_POSITION) error("Can't put ${type.name} in that position")
 
                 return result.first
             }
@@ -81,7 +88,7 @@ fun getCommandsOO(st: Storage) = mapOf(
                 game.removeAll()
             } else {
                 val position = args[0].toPosition()
-                val updatedGame = game.removeShip(position)//TODO THE FUCK
+                val updatedGame = game.removeShip(position)
                 if (game.boardA === updatedGame.boardA) {
                     error("No ship in $position")
                 }
@@ -123,14 +130,17 @@ fun getCommandsOO(st: Storage) = mapOf(
     "SHOT" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game {
             require(args.size == 1) { "Invalid Arguments" }
-            check(game.state == GameState.FIGHT) { "Can't make a shot before start" }
-            check(game.player == game.turn || game.boardB == null) { "Wait for other player" }
+            check(game.state === GameState.FIGHT) { "Can't make a shot before start" }
+            check(game.player === game.turn || game.boardB == null) { "Wait for other player" }
 
             val loadedGame = st.load(game)
             val pos = args.first().toPosition()
             val result = loadedGame.makeShot(pos, st)
             check(result.second != ShotConsequence.INVALID) { "Position already used" }
+
+            //TODO change shot result to proper output
             println(result.second)
+
             return result.first
         }
 
@@ -152,5 +162,5 @@ fun getCommandsOO(st: Storage) = mapOf(
     },
     "EXIT" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game? = null
-    },
+    }
 )

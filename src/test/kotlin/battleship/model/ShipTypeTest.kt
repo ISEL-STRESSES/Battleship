@@ -1,5 +1,7 @@
 package battleship.model
 
+import battleship.model.board.COLUMN_DIM
+import battleship.model.board.ROW_DIM
 import battleship.model.ship.ShipType
 import battleship.model.ship.toShipType
 import battleship.model.ship.toShipTypeOrNull
@@ -42,5 +44,13 @@ class ShipTypeTest {
         assertFailsWith<NoSuchElementException> { "X".toShipType() }
         // More than 1 ship with "C" prefix
         assertFailsWith<NoSuchElementException> { "C".toShipType() }
+    }
+
+    @Test
+    fun `Make sure all ships are valid`() {
+        for (ship in ShipType.values) {
+            assertTrue { ship.squares >= 1 }
+            assertTrue { ship.squares <= COLUMN_DIM && ship.squares <= ROW_DIM } // a ship must be smaller than the board to be playable
+        }
     }
 }

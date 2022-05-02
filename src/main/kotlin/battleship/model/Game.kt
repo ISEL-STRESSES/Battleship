@@ -85,67 +85,23 @@ fun Game.putShip(type: ShipType, pos: Position, dir: Direction): GamePut {
     return GamePut(this.copy(boardA = result.first), result.second)
 }
 
-typealias LigmaG = Pair<Position, Direction>
-
-fun Board.getPossiblePositions(size: Int, dir: Direction): List<LigmaG> {
-    val allPositions = Position.values
-    //remove positions at sides
-    val firstStep = if (dir === Direction.HORIZONTAL)
-        allPositions.filter { it.column.ordinal < COLUMN_DIM - size }
-    else
-        allPositions.filter { it.row.ordinal < ROW_DIM - size }
-    //remove positions occupied by ships
-    val secondStep = firstStep.filter { it == it }
-
-    //remove positions that putting a ship would collide with
-}
-
-
-fun Game.putRandomShip(type: ShipType): Game {
-    val allowSpace = boardA.getPossiblePositions(type.squares, Direction.HORIZONTAL) +
-            boardA.getPossiblePositions(type.squares, Direction.VERTICAL)
-
-    if (allowSpace.isEmpty()) {
-        return this
-    }
-    val randomState = allowSpace.random()
-    val result = boardA.putShip(
-        type,
-        randomState.first,
-        randomState.second
-    ) //TODO (se o result.second for != NONE manda com o caralho porque deu merda)
-    //return if (result.second != PutConsequence.NONE) GamePut(this.copy(boardA = result.first), result.second)
-    return this.copy(boardA = result.first)
-}
-
-fun Game.putAllShips(): Game {
-    var newGame = this
-    do {
-        val possiblePool =
-            ShipType.values.filter { type -> type.fleetQuantity - boardA.fleet.count { ship -> ship.type == type } > 0 }
-        newGame = newGame.putRandomShip(possiblePool.random())
-    } while (!newGame.boardA.fleet.isComplete())
-    return newGame
-}
-
-/*
 /**
- *[Game] Function that will add all ships if it's a valid command
+ * TODO
+ */
+fun Game.putRandomShip(type: ShipType): GamePut {
+    val result = boardA.putRandomShip(type)
+    return GamePut(this.copy(boardA = result.first), result.second)
+}
+
+
+/**
+ * [Game] Function that will add all ships if it's a valid command
  * @return updated [Game]
  */
-fun Game.putAllShips() {
-    state.checkPutState()
-    while(true){
-        val pos = Position.values.random()
-        val currShip = ShipType.values.forEach {
-            super.hiputS
-        }/
-//        this.putShip(currShip, pos)
-//    }
-    TODO()
+fun Game.putAllShips(): GamePut {
+    val result = boardA.putAllShips()
+    return GamePut(this.copy(boardA = result.first), result.second)
 }
-
- */
 
 
 /**
@@ -171,9 +127,7 @@ fun Game.removeAll(): Game {
  *[Game] Function that will create the initial game
  * @return created game
  */
-fun createGame(): Game {
-    return Game("", Board(), Board())
-}
+fun createGame() = Game("", Board(), Board())
 
 /**
  *[Game] Function that will get a player board associated with a player, should not be used when boardB is null
