@@ -1,10 +1,7 @@
 package battleship.ui
 
-import battleship.model.Game
-import battleship.model.GameState
-import battleship.model.Player
+import battleship.model.*
 import battleship.model.board.*
-import battleship.model.getPlayerBoard
 import battleship.model.ship.ShipType
 
 private const val BOARD_CHAR_DIM = COLUMN_DIM * 2 + 1
@@ -142,6 +139,21 @@ fun Game.print() {
     printStatus()
 }
 
+fun printShotResult(result : ShotConsequence, hitType: ShipType?) {
+    when(result) {
+        ShotConsequence.HIT -> {
+            println("Ship Hit")
+        }
+        ShotConsequence.MISS -> {
+            println("Miss Shot")
+        }
+        ShotConsequence.SUNK -> {
+            if (hitType != null) {
+                println("${hitType.name} was Sunk")
+            }
+        }
+    }
+}
 /**
  * Prints the Column indexes of the board
  */

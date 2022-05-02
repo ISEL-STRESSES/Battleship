@@ -158,7 +158,7 @@ fun Game.makeShot(pos: Position, st: Storage): GameShot {
     val newBoardB = if (playerBoard == boardB) boardB else boardResult.first
 
     if (boardResult.second === ShotConsequence.INVALID)
-        return GameShot(this, ShotConsequence.INVALID)
+        return GameShot(this, ShotConsequence.INVALID, null)
 
     val newTurn = if (boardResult.second === ShotConsequence.MISS)
         turn.other()
@@ -169,5 +169,5 @@ fun Game.makeShot(pos: Position, st: Storage): GameShot {
 
     st.store(newGame)
 
-    return GameShot(newGame, boardResult.second)
+    return GameShot(newGame, boardResult.second, boardResult.third)
 }

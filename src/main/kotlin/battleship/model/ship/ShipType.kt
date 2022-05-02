@@ -23,13 +23,14 @@ class ShipType private constructor(val name: String, val squares: Int, val fleet
     }
 }
 
-// TODO: averiguar se podemos reduzir linhas no toShipTypeOrNull()
+
 /**
  * Returns a [ShipType] according to the string, if string is an integer, return a ship by number of squares
  *      else if it is a string, return the only [ShipType] that starts with the string as prefix
  *      else return null
  */
 fun String.toShipTypeOrNull(): ShipType? {
+    // TODO: averiguar se podemos reduzir linhas no toShipTypeOrNull()
     val num = this.toIntOrNull()
     return if (num == null) {
         val head = ShipType.values.firstOrNull { it.name.startsWith(this, true) }

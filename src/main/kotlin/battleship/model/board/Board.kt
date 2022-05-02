@@ -115,7 +115,7 @@ fun Board.makeShot(pos: Position): ShotResult {
     return when (val cell = grid[pos]) {
         is MissCell, is ShipHit -> {
             // Ship sunk is inferred as an invalid shot because of its inherited from ShipHit
-            ShotResult(this, ShotConsequence.INVALID)
+            ShotResult(this, ShotConsequence.INVALID, null)
         }
         is ShipCell -> {
             val ship = cell.ship
@@ -125,14 +125,14 @@ fun Board.makeShot(pos: Position): ShotResult {
             // check if ship is sunk
             return if (hasSunk) {
                 val gridAfterSunk = grid + ship.positions.map { it to ShipSunk(it, ship) }
-                ShotResult(copy(grid = gridAfterSunk), ShotConsequence.SUNK)
+                ShotResult(copy(grid = gridAfterSunk), ShotConsequence.SUNK, ship.type)
             } else {
-                ShotResult(copy(grid = gridAfterShot), ShotConsequence.HIT)
+                ShotResult(copy(grid = gridAfterShot), ShotConsequence.HIT, ship.type)
             }
         }
         null -> {
             // Add cell to the grid with MissCell
-            return ShotResult(copy(grid = grid + (pos to MissCell(pos))), ShotConsequence.MISS)
+            return ShotResult(copy(grid = grid + (pos to MissCell(pos))), ShotConsequence.MISS, null)
         }
         else -> throw UnsupportedOperationException( "UNREACHABLE CODE" )
     }
