@@ -134,7 +134,7 @@ fun Board.makeShot(pos: Position): ShotResult {
             // Add cell to the grid with MissCell
             return ShotResult(copy(grid = grid + (pos to MissCell(pos))), ShotConsequence.MISS)
         }
-        else -> TODO("throw ???")
+        else -> throw UnsupportedOperationException( "UNREACHABLE CODE" )
     }
 }
 

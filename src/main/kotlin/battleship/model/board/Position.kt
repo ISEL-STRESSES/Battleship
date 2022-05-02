@@ -77,17 +77,26 @@ fun Position.movePosition(dir: Direction, amount: Int): Position {
     return Position[x, y]
 }
 
+/**
+ * Function that calculates all positions form a line, Horizontal or Vertical.
+ * @param pos line head position.
+ * @param dir direction of a line.
+ * @param length size of a line.
+ * @return Returns a list with all the positions of a line
+ */
 fun getPositionsFromLine(pos: Position, dir: Direction, length: Int) = List(length) { pos.movePosition(dir, it) }
 
 /** Returns a list of all positions in a rectangle to the destination positon
- *
+ * @param topLeft Top left position of the hit box.
+ * @param bottomRight Bottom right position of the hit box.
+ * @return Returns a Set with the Box positions.
  * @throws IllegalArgumentException if [topLeft] isn't above and to the left of the [bottomRight] position
  */
 fun makeRectangle(topLeft: Position, bottomRight: Position): Set<Position> {
     require(topLeft.column.ordinal <= bottomRight.column.ordinal)
     require(topLeft.row.ordinal <= bottomRight.row.ordinal)
     val positions = (topLeft.row.ordinal..bottomRight.row.ordinal).fold(listOf<Position>()) { acc, y ->
-        acc + (topLeft.column.ordinal..bottomRight.column.ordinal).fold(listOf<Position>()) { acc2, x ->
+        acc + (topLeft.column.ordinal..bottomRight.column.ordinal).fold(listOf()) { acc2, x ->
             acc2 + Position[x, y]
         }
     }

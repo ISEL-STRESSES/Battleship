@@ -2,10 +2,29 @@ package battleship.model
 
 import battleship.model.ShotConsequence.*
 import battleship.model.board.Board
+import battleship.model.ship.ShipType
 
-
+/**
+ * Keeps the Board and the correspondent consequence of a placement of a ship.
+ * @property [Board] battleship game board;
+ * @property [PutConsequence] after the placement of a ship.
+ */
 typealias PutResult = Pair<Board, PutConsequence>
-typealias ShotResult = Pair<Board, ShotConsequence>
+
+/**
+ * Keeps the game and the correspondent consequence of a shot.
+ * @property [Game] battleship game;
+ * @property [ShotConsequence] after the shot was taken.
+ */
+typealias GameShot = Triple<Game, ShotConsequence, ShipType?>
+
+/**
+ * Keeps the game and the correspondent consequence of a shot.
+ * @property [Board] battleship game board;
+ * @property [ShotConsequence] after the shot was taken.
+ * @property [ShipType] ship that was hit or null.
+ */
+typealias ShotResult = Triple<Board, ShotConsequence, ShipType?>
 
 /**
  * Class that represents the consequence of the shot taken
@@ -22,3 +41,5 @@ enum class ShotConsequence {
  * Class that as all the possible outcomes of the put Command.
  */
 enum class PutConsequence { NONE, INVALID_SHIP, INVALID_POSITION, INVALID_RANDOM }
+
+

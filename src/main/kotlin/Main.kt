@@ -38,9 +38,7 @@ fun main() {
     } catch (ex: MongoException) {
         println("An exception has occurred with MongoDB!")
         println("Exception message: ${ex.message}")
-    }
-    // TODO: Specify for mongoDB specific exceptions
-    catch (ex: Exception) {
+    } catch (ex: Exception) {
         println("An unknown exception has ocurred!")
         println("Exception message: ${ex.message}")
     } finally {

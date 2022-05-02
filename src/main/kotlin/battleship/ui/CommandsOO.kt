@@ -142,8 +142,7 @@ fun getCommandsOO(st: Storage) = mapOf(
             val result = loadedGame.makeShot(pos, st)
             check(result.second != ShotConsequence.INVALID) { "Position already used" }
 
-            //TODO change shot result to proper output
-            println(result.second)
+            printShotResult(result.second, result.third)
 
             return result.first
         }

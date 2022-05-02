@@ -1,11 +1,11 @@
 package battleship.model
 
-import battleship.model.GameState.*
+import battleship.model.GameState.FIGHT
+import battleship.model.GameState.SETUP
 import battleship.model.PlayError.*
 import battleship.model.board.*
 import battleship.model.ship.ShipType
 import battleship.storage.Storage
-
 
 /**
  * available play errors
@@ -85,7 +85,10 @@ fun Game.putShip(type: ShipType, pos: Position, dir: Direction): GamePut {
 }
 
 /**
- * TODO
+ * Function that puts a random ship in the [Board].
+ * @receiver Game to alter.
+ * @param type Type of ship.
+ * @return Returns a game and it's consequence.
  */
 fun Game.putRandomShip(type: ShipType): GamePut {
     val result = boardA.putRandomShip(type)
@@ -138,13 +141,6 @@ fun Game.getPlayerBoard(target: Player): Board? {
     return if (target == Player.A) boardA else boardB
 }
 
-
-/**
- * Keeps the game and the correspondent consequence of a shot.
- * @property [Game] battleship game;
- * @property [ShotConsequence] after the shot was taken.
- */
-typealias GameShot = Pair<Game, ShotConsequence>
 
 /**
  * [Game] Function that will make a shot if it's a valid state and a valid shot
