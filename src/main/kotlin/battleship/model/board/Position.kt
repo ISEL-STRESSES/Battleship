@@ -77,7 +77,7 @@ fun Position.movePosition(dir: Direction, amount: Int): Position {
     return Position[x, y]
 }
 
-fun getPositionsFromLine(pos : Position, dir : Direction, length : Int) = List(length) { pos.movePosition(dir, it) }
+fun getPositionsFromLine(pos: Position, dir: Direction, length: Int) = List(length) { pos.movePosition(dir, it) }
 
 /** Returns a list of all positions in a rectangle to the destination positon
  *
