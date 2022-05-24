@@ -16,6 +16,13 @@ class GameState(val storage: Storage) {
         private set
     var message by mutableStateOf<String?>(null)
         private set
+    var selectedType by mutableStateOf<ShipType?>(null)
+        private set
+    var selectedDirection by mutableStateOf<Direction?>(Direction.HORIZONTAL) // TODO: set back to null
+        private set
+
+
+
 
     fun refresh() {
         game = storage.load(game);
@@ -32,6 +39,15 @@ class GameState(val storage: Storage) {
 
     fun removeAll() {
         game = game.removeAll()
+    }
+
+    fun setShipType(type : ShipType?) {
+        selectedType = type
+    }
+
+    fun setDirection(direction: Direction?)
+    {
+        selectedDirection = direction
     }
 
 }

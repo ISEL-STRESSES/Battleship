@@ -13,7 +13,7 @@ import battleship.storage.Storage
 
 @Composable
 fun FrameWindowScope.BattleshipApp(storage: Storage, onExit: () -> Unit) {
-    val state = remember { GameState(storage) } // State of UI (ViewModel)
+    val state = remember { GameState(storage) }
     MaterialTheme {
         GaloMenu(state, onExit = onExit)
 
