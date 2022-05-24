@@ -4,6 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import battleship.model.*
+import battleship.model.board.Direction
+import battleship.model.ship.ShipType
 import battleship.storage.Storage
 
 

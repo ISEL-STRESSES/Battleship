@@ -16,13 +16,14 @@ const val CELL_SIZE = 32
 @Composable
 fun CellView(cell: Cell?) {
     val modifier = Modifier.size(CELL_SIZE.dp).background(Color.White)
-    val m = modifier.background(when (cell)
-    {
-        is ShipSunk -> Color.Black
-        is ShipHit -> Color.Gray
-        is ShipCell -> listOf(Color.Yellow, Color.Green, Color.Magenta).random()
-        else -> Color.Cyan
-    })
+    val m = modifier.background(
+        when (cell) {
+            is ShipSunk -> Color.Black
+            is ShipHit -> Color.Gray
+            is ShipCell -> listOf(Color.Yellow, Color.Green, Color.Magenta).random()
+            else -> Color.Cyan
+        }
+    )
     Box(m) {
 
     }
@@ -44,31 +45,22 @@ fun BoardStatusView(fleet: Fleet)
 const val BOARD_LINE_WIDTH = 1
 
 @Composable
-fun BoardView(board: Board) {
-        Column( Modifier.background(Color.White)) {
-            Row {
-                repeat(COLUMN_DIM) {
-                    val modifier = Modifier.size(CELL_SIZE.dp)
-                    //TODO ADD SPACER AND PUT THIS IN ANOTHER FUNCTION LEGENDA
-                    val letter = it.indexToColumn().letter;
-                    Text(modifier = modifier, textAlign = TextAlign.Center, text = "$letter")
-                }
-            }
-            repeat(ROW_DIM) { line ->
-            if (line != 0) Spacer(Modifier.height(BOARD_LINE_WIDTH.dp))
-            Row {
-                repeat(COLUMN_DIM) { col ->
+fun BoardWithGuidesView(board: Board) {
+    Column(Modifier.background(Color.White)) {
+        //ROW with column identifiers
+        Row {
+            // Inicial Spacing
+            Spacer(modifier = Modifier.size(CELL_SIZE.dp))
 
-                    if (col != 0) Spacer(Modifier.width(BOARD_LINE_WIDTH.dp))
-                    /*
-                    val pos = Position(line, col)
-                    val fx: () -> Unit = { onClick?.invoke(pos) }
-
-                     */
-                    val cell = board.grid[Position[col, line]]
-                    CellView(cell)
-                }
-            }
+            // Upper letters
+            LetterAxisView()
+        }
+        //ROW with board and row identifiers
+        Row {
+            // Left side numbers
+            NumberAxisView()
+            // Board lol
+            BoardView(board)
         }
     }
 }
