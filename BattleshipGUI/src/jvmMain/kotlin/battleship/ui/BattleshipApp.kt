@@ -7,35 +7,51 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.window.FrameWindowScope
+import battleship.model.GameState
+import battleship.model.board.Direction
+import battleship.model.board.Position
+import battleship.model.board.ShipCell
 import battleship.model.ship.ShipType
 import battleship.storage.Storage
 
 
 @Composable
 fun FrameWindowScope.BattleshipApp(storage: Storage, onExit: () -> Unit) {
-    val state = remember { GameState(storage) }
+    val model = remember { ModelView(storage) }
     MaterialTheme {
-        GaloMenu(state, onExit = onExit)
+        GaloMenu(model, onExit = onExit)
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Row {
-                BoardWithGuidesView(
-                    state.game.boardA
-                )
-                if(state.game.state === battleship.model.GameState.SETUP)
+                val onClickCell : (Position) -> Unit = { pos ->
+                    val cell = model.game.boardA.grid[pos]
+                    if(cell is ShipCell)
+                        model.removeShip(pos);
+                    else
+                        model.putShip(pos)
+                }
+
+                // Left Side aka first Board
+                BoardWithGuidesView(model.game.boardA,onClickCell)
+
+                // RightSide aka SideView/other Board
+                if(model.game.state === GameState.SETUP)
                 {
-                    val onClickShip : (ShipType?)->Unit = {
-                        state.setShipType(it)
+                    val onClickShip : (ShipType?)->Unit = { type->
+                        model.setShipType(type)
                     }
-                    SideView(state.game.boardA.fleet, onClickShip, state.selectedType)
+                    val onClickDir : (Direction)->Unit = { dir->
+                        model.setDirection(dir)
+                    }
+                    SideView(model.game.boardA.fleet, onClickShip, model.selectedType, onClickDir, model.selectedDirection)
                 } else {
-                    state.game.boardB?.let {
-                        BoardWithGuidesView(it)
+                    model.game.boardB?.let {
+                        //TODO: BoardWithGuidesView(it)
                     }
                 }
             }
 
-            StatusView(state)
+            StatusView(model)
         }
     }
 }

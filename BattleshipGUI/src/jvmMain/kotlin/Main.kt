@@ -1,8 +1,3 @@
-import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.window.Window
@@ -28,7 +23,6 @@ fun main() {
                         size = DpSize.Unspecified
                     )
                 ) {
-                    //TODO: remove null storage lol <- ja arranjei este TODO lol
                     BattleshipApp(MongoStorage(drv), onExit = ::exitApplication);
                 }
             }
@@ -37,9 +31,11 @@ fun main() {
         println("An exception has occurred with MongoDB!")
         println("Exception message: ${ex.message}")
     } catch (ex: Exception) {
-        println("An unknown exception has ocurred!")
+        println("An unknown exception has occurred!")
         println("Exception message: ${ex.message}")
     } finally {
         println("Bye!")
     }
 }
+
+

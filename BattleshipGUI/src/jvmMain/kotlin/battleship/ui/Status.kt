@@ -1,33 +1,56 @@
 package battleship.ui
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+
 import battleship.model.board.COLUMN_DIM
+import battleship.model.GameState
+
+
+const val STATUS_BORDER_WIDTH = 2
+val STATUS_BORDER_COLOR = Color.Black
+
+const val STATUS_PROMPT_SETUP = "Edit Fleet"
+const val STATUS_PROMPT_FIGHT_CAN_PLAY = "It's your turn"
+const val STATUS_PROMPT_FIGHT_CANT_PLAY = "Sit yo ass down, not your turn"
+
+const val STATUS_WARN_VICTORY = "You WIN!"
+const val STATUS_WARN_DEFEAT = "You LOSE! ez clap"
+
+const val STATUS_WARN_INVALID_PUT = "Invalid put"
+const val STATUS_WARN_INVALID_SHOT = "Invalid Shot"
+const val STATUS_WARN_INVALID_TURN = "It's not your turn"
 
 
 @Composable
-fun StatusView(state: GameState) = Row(
-    Modifier.width((4.dp+CELL_SIZE.dp)* COLUMN_DIM),
+fun StatusView(model: ModelView) = Row(
+    Modifier.fillMaxWidth().border(STATUS_BORDER_WIDTH.dp, STATUS_BORDER_COLOR),
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween
 ) {
-    /*
-    with(state.game.state) {
-        Text(if (this === battleship.model.GameState.SETUP) "Game not started" else "Game: $name")
-        if (this!=null) {
-            if (board.winner==null)
-                Text(if (player == board.turn) "Its your turn" else "wait for other")
-            else
-                Text("You ${if (board.winner==player) "Win" else "Lose"}")
-            CellView(player,null)
+    when(model.game.state)
+    {
+        GameState.SETUP -> {
+            Text(STATUS_PROMPT_SETUP, fontWeight = FontWeight.Bold)
+        }
+        GameState.FIGHT -> {
+            // Bold Game
+            Text("Game:", fontWeight = FontWeight.Bold)
+            Text(model.game.name)
+            //val turnMsg = if(model)
+            Text("")
+            //Text("${state.game.name}")
         }
     }
-
-     */
 }
 

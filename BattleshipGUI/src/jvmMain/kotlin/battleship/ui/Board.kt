@@ -1,6 +1,7 @@
 package battleship.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -15,8 +16,8 @@ import java.awt.Point
 const val CELL_SIZE = 32
 
 @Composable
-fun CellView(cell: Cell?) {
-    val modifier = Modifier.size(CELL_SIZE.dp).background(Color.White)
+fun CellView(cell: Cell?, onClick: () -> Unit) {
+    val modifier = Modifier.size(CELL_SIZE.dp).background(Color.White).clickable(onClick = onClick)
     val m = modifier.background(
         when (cell) {
             is ShipSunk -> Color.Black
@@ -46,7 +47,7 @@ fun BoardStatusView(fleet: Fleet)
 const val BOARD_LINE = 1
 
 @Composable
-fun BoardView(board: Board) {
+fun BoardView(board: Board, onClickCell: (Position) -> Unit) {
     Column {
         repeat(ROW_DIM) { line ->
             if (line != 0) Spacer(Modifier.height(BOARD_LINE.dp))
@@ -58,8 +59,9 @@ fun BoardView(board: Board) {
             val pos = Position(line, col)
             val fx: () -> Unit = { onClick?.invoke(pos) }
              */
-                    val cell = board.grid[Position[col, line]]
-                    CellView(cell)
+                    val pos = Position[col, line];
+                    val cell = board.grid[pos]
+                    CellView(cell, onClick = { onClickCell(pos) })
                 }
             }
         }
@@ -100,7 +102,7 @@ fun NumberAxisView() {
 }
 
 @Composable
-fun BoardWithGuidesView(board: Board) {
+fun BoardWithGuidesView(board: Board, onClickCell: (Position) -> Unit) {
     Column(Modifier.background(Color.White)) {
         //ROW with column identifiers
         Row {
@@ -115,7 +117,7 @@ fun BoardWithGuidesView(board: Board) {
             // Left side numbers
             NumberAxisView()
             // Board lol
-            BoardView(board)
+            BoardView(board, onClickCell)
         }
     }
 }
