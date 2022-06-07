@@ -8,7 +8,7 @@ import battleship.model.board.isComplete
 
 
 @Composable
-fun FrameWindowScope.GaloMenu(model: ModelView, onExit: () -> Unit, ) {
+fun FrameWindowScope.GaloMenu(model: ModelView, onExit: () -> Unit) {
     MenuBar {
         Menu("Game") {
             Item("Start", enabled = model.game.state.hasNotStarted(), onClick = { model.start() })
@@ -16,7 +16,7 @@ fun FrameWindowScope.GaloMenu(model: ModelView, onExit: () -> Unit, ) {
             Item("Exit", onClick = onExit)
         }
         Menu("Fleet") {
-            //TODO: make sure put all and remove all are not enabled, and do it good :D
+            //TODO: make sure put all and remove all are not enabled, and do it good :D - it is still not good
             Item("Put All (remaining)", enabled = model.game.state.hasNotStarted() && !model.game.boardA.fleet.isComplete() , onClick = { model.putAllRandom() })
 
             Item("Remove All", enabled = model.game.state.hasNotStarted() && model.game.boardA.fleet.isNotEmpty(), onClick = { model.removeAll() })

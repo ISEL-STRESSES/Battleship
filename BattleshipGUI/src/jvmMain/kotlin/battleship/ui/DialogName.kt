@@ -15,14 +15,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogState
 
+const val DIALOG_DEFAULT_ENTRY = "Game Name"
 
 @Composable
 fun DialogName(onCancel: () -> Unit, onStart: (String) -> Unit) = Dialog(
     onCloseRequest = onCancel,
-    title = "Game name",
+    title = DIALOG_DEFAULT_ENTRY,
     state = DialogState(height = Dp.Unspecified, width = 350.dp)
 ) {
-    var name by remember { mutableStateOf("abc") }
+    var name by remember { mutableStateOf(DIALOG_DEFAULT_ENTRY) }
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         OutlinedTextField(
             name,

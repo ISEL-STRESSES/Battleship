@@ -24,7 +24,7 @@ enum class PlayError {
  * @property FIGHT fight stage where you can do all the commands except the ones in the [SETUP] phase;
  */
 enum class GameState {
-    SETUP, FIGHT
+    SETUP, FIGHT, OVER
 }
 
 /**
@@ -44,6 +44,13 @@ data class Game(
     val player: Player = Player.A,
     val turn: Player = Player.A
 )
+
+//data class GameFight(
+//    val name : String,
+//    val boardA: Board,
+//    val boardB: Board,
+//)
+
 
 /**
  * [Game] Function that will start the game if it meets the requirements

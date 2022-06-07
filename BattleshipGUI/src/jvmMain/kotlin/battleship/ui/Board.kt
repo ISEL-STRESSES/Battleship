@@ -13,21 +13,30 @@ import androidx.compose.ui.unit.dp
 import battleship.model.board.*
 import java.awt.Point
 
-const val CELL_SIZE = 32
+
+const val BOARD_CELL_SIZE = 32
+const val BOARD_LINE_SIZE = 1
+const val BOARD_WIDTH = (BOARD_CELL_SIZE + BOARD_LINE_SIZE) * (COLUMN_DIM + 1)
+const val BOARD_HEIGHT = (BOARD_CELL_SIZE + BOARD_LINE_SIZE) * (ROW_DIM + 1)
+
+val CELL_COLOR_SUNK = Color.Black;
+val CELL_COLOR_HIT = Color.Black;
+val CELL_COLOR_SHIP = Color(255, 140, 0); //Color.Blue
+val CELL_COLOR_WATER = Color.Cyan;
 
 @Composable
 fun CellView(cell: Cell?, onClick: () -> Unit) {
-    val modifier = Modifier.size(CELL_SIZE.dp).background(Color.White).clickable(onClick = onClick)
+    val modifier = Modifier.size(BOARD_CELL_SIZE.dp).background(Color.White).clickable(onClick = onClick)
     val m = modifier.background(
         when (cell) {
-            is ShipSunk -> Color.Black
-            is ShipHit -> Color.Gray
-            is ShipCell -> listOf(Color.Yellow, Color.Green, Color.Magenta).random()
-            else -> Color.Cyan
+            is ShipSunk -> CELL_COLOR_SUNK
+            is ShipHit -> CELL_COLOR_HIT
+            is ShipCell -> CELL_COLOR_SHIP
+            else -> CELL_COLOR_WATER
         }
     )
     Box(m) {
-
+        // TODO: add sprite in case cell is on fire kachow
     }
 }
 
@@ -44,17 +53,16 @@ fun BoardStatusView(fleet: Fleet)
 
  */
 
-const val BOARD_LINE = 1
 
 @Composable
-fun BoardView(board: Board, onClickCell: (Position) -> Unit) {
+fun BoardView(board: Board, hidden : Boolean = false, onClickCell: (Position) -> Unit) {
     Column {
         repeat(ROW_DIM) { line ->
-            if (line != 0) Spacer(Modifier.height(BOARD_LINE.dp))
+            if (line != 0) Spacer(Modifier.height(BOARD_LINE_SIZE.dp))
             Row {
                 // Board
                 repeat(COLUMN_DIM) { col ->
-                    if (col != 0) Spacer(Modifier.width(BOARD_LINE.dp))
+                    if (col != 0) Spacer(Modifier.width(BOARD_LINE_SIZE.dp))
                     /*
             val pos = Position(line, col)
             val fx: () -> Unit = { onClick?.invoke(pos) }
@@ -69,7 +77,7 @@ fun BoardView(board: Board, onClickCell: (Position) -> Unit) {
 }
 
 // TODO: should padding of boardline be in coordinate modifier?
-val coordinateModifier = Modifier.size(CELL_SIZE.dp)
+val coordinateModifier = Modifier.size(BOARD_CELL_SIZE.dp)
 
 @Composable
 fun PointView(str: String) {
@@ -84,7 +92,7 @@ fun LetterAxisView() {
         repeat(COLUMN_DIM) {
             val letter = it.indexToColumn().letter.toString()
             PointView(letter)
-            Spacer(Modifier.size(BOARD_LINE.dp))
+            Spacer(Modifier.size(BOARD_LINE_SIZE.dp))
         }
     }
 }
@@ -96,18 +104,18 @@ fun NumberAxisView() {
             val number = it.indexToRow().number.toString();
             PointView(number)
 
-            Spacer(Modifier.size(BOARD_LINE.dp))
+            Spacer(Modifier.size(BOARD_LINE_SIZE.dp))
         }
     }
 }
 
 @Composable
-fun BoardWithGuidesView(board: Board, onClickCell: (Position) -> Unit) {
+fun BoardWithGuidesView(board: Board,/* hidden : Boolean  ,*/onClickCell: (Position) -> Unit) {
     Column(Modifier.background(Color.White)) {
         //ROW with column identifiers
         Row {
-            // Inicial Spacing
-            Spacer(modifier = Modifier.size(CELL_SIZE.dp))
+            // Initial Spacing
+            Spacer(modifier = Modifier.size(BOARD_CELL_SIZE.dp))
 
             // Upper letters
             LetterAxisView()
@@ -116,8 +124,8 @@ fun BoardWithGuidesView(board: Board, onClickCell: (Position) -> Unit) {
         Row {
             // Left side numbers
             NumberAxisView()
-            // Board lol
-            BoardView(board, onClickCell)
+            // Board 
+            BoardView(board) { onClickCell }
         }
     }
 }
