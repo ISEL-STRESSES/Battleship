@@ -156,6 +156,8 @@ fun Game.getPlayerBoard(target: Player): Board? {
  */
 fun Game.makeShot(pos: Position, st: Storage): GameShot {
 
+    check(isYourTurn())
+
     val playerBoard = getPlayerBoard(player)
     val enemyBoard = getPlayerBoard(player.other())
     checkNotNull(enemyBoard)
@@ -168,9 +170,9 @@ fun Game.makeShot(pos: Position, st: Storage): GameShot {
         return GameShot(this, ShotConsequence.INVALID, null)
 
     val newTurn = if (boardResult.second === ShotConsequence.MISS)
-        turn.other()
-    else
-        turn
+            turn.other()
+        else
+            turn
 
     val newGame = copy(boardA = newBoardA, boardB = newBoardB, turn = newTurn)
 
@@ -178,3 +180,10 @@ fun Game.makeShot(pos: Position, st: Storage): GameShot {
 
     return GameShot(newGame, boardResult.second, boardResult.third)
 }
+
+fun Game.isYourTurn() = turn !== player
+fun Game.isNotYourTurn() = !isYourTurn()
+
+fun Game.hasStarted() = state !== SETUP
+fun Game.hasNotStarted() = !hasStarted()
+

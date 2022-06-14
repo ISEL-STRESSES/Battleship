@@ -11,7 +11,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import battleship.model.board.*
 
-const val BOARD_CELL_SIZE = 32
 const val BOARD_LINE_SIZE = 1
 //TODO: deixar esta equacao para depois, ja que o rodrigo nao para de chatear
 //TODO: Carlos Job
@@ -28,10 +27,6 @@ fun BoardView(board: Board, hidden : Boolean, onClickCell: (Position) -> Unit) {
                 // Board
                 repeat(COLUMN_DIM) { col ->
                     if (col != 0) Spacer(Modifier.width(BOARD_LINE_SIZE.dp))
-                    /*
-            val pos = Position(line, col)
-            val fx: () -> Unit = { onClick?.invoke(pos) }
-             */
                     val pos = Position[col, line];
                     val cell = board.grid[pos]
                     CellView(cell, hidden, onClick = { onClickCell(pos) })

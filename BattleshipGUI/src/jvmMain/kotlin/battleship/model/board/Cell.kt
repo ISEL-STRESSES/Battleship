@@ -6,7 +6,7 @@ import battleship.model.ship.Ship
  * Represents an empty cell
  * @property pos cell's position in the board
  */
-abstract class Cell(val pos: Position)
+sealed class Cell(val pos: Position)
 
 /**
  * Represents a failed shot

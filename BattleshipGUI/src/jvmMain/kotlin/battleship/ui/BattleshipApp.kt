@@ -28,8 +28,12 @@ fun FrameWindowScope.BattleshipApp(storage: Storage, onExit: () -> Unit) {
     MaterialTheme {
         GaloMenu(model, onExit = onExit)
 
-        if(model.openDialogName) {
-            DialogName(onCancel = { model.closeDialog() }) { model.start(it) }
+        if (model.openDialogName) {
+            DialogName(onCancel = { model.closeDialog() }) {
+                //TODO: improve sanitization
+                val sanitizedInput = it.trim()
+                model.start(sanitizedInput)
+            }
             model.message?.let {
                 DialogMessage(it) { model.messageAck() }
             }
@@ -75,7 +79,7 @@ fun FrameWindowScope.BattleshipApp(storage: Storage, onExit: () -> Unit) {
                                 model.makeShot(pos)
                             }
                         }
-                        BoardWithGuidesView(it, onClickEnemyCell)
+                        BoardWithGuidesView(it, true, onClickEnemyCell)
                     }
 
                 }

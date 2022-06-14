@@ -80,10 +80,16 @@ class ModelView(val storage: Storage, val scope: CoroutineScope) {
         game = game.removeAll()
     }
 
+    fun makeShot(pos : Position) {
+        if(game.isNotYourTurn()) return
+        val shotResult = game.makeShot(pos, storage);
+        //val typeHit = shotResult.third;
+        if(shotResult.second !== ShotConsequence.INVALID)
+            game = shotResult.first
+    }
+
     fun setShipType(type: ShipType?) {
         selectedType = type
-
-        //TODO: resolve new ship type if no more types are available
     }
 
     fun setDirection(direction: Direction) {
