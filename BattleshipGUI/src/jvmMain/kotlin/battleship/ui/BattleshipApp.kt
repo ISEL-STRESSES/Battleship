@@ -5,7 +5,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.FrameWindowScope
@@ -13,6 +12,9 @@ import battleship.model.GameState
 import battleship.model.board.Direction
 import battleship.model.board.Position
 import battleship.model.board.ShipCell
+import battleship.model.getPlayerBoard
+import battleship.model.hasNotStarted
+import battleship.model.hasStarted
 import battleship.model.ship.ShipType
 import battleship.storage.Storage
 import tds.galo.ui.DialogName
@@ -33,33 +35,45 @@ fun FrameWindowScope.BattleshipApp(storage: Storage, onExit: () -> Unit) {
             }
         }
 
-        Column() {
-            Row(modifier = Modifier.width((BOARD_WIDTH*2).dp).height(BOARD_HEIGHT.dp)) {
-                val onClickCell : (Position) -> Unit = { pos ->
-                    val cell = model.game.boardA.grid[pos]
-                    if(cell is ShipCell)
-                        model.removeShip(pos)
-                    else
-                        model.putShip(pos)
+        Column {
+            Row(modifier = Modifier.width(((BOARD_WIDTH * 2)+ BOARD_CELL_SIZE).dp).height(BOARD_HEIGHT.dp)) {
+                ///////////////
+                // Left Side //
+                ///////////////
+                val onClickCell: (Position) -> Unit = { pos ->
+                    if(model.game.hasNotStarted()) {
+                        val cell = model.game.boardA.grid[pos]
+                        if (cell is ShipCell)
+                            model.removeShip(pos)
+                        else
+                            model.putShip(pos)
+                    }
                 }
+                BoardWithGuidesView(model.game.boardA, false, onClickCell)
 
-                // Left Side aka first Board
-                BoardWithGuidesView(model.game.boardA, onClickCell)
-
-                // RightSide aka SideView/other Board
-                if(model.game.state === GameState.SETUP)
-                {
-                    val onClickShip : (ShipType?)->Unit = { type->
+                ////////////////
+                // Right Side //
+                ////////////////
+                if (model.game.state === GameState.SETUP) {
+                    val onClickShip: (ShipType?) -> Unit = { type ->
                         model.setShipType(type)
                     }
-                    val onClickDir : (Direction)->Unit = { dir->
+                    val onClickDir: (Direction) -> Unit = { dir ->
                         model.setDirection(dir)
                     }
-                    SideView(model.game.boardA.fleet, onClickShip, model.selectedType, onClickDir, model.selectedDirection)
+                    SideView(
+                        model.game.boardA.fleet,
+                        onClickShip,
+                        model.selectedType,
+                        onClickDir,
+                        model.selectedDirection
+                    )
                 } else {
-                    model.game.boardB?.let {
-                        val onClickEnemyCell : (Position) -> Unit = { pos ->
-                            println(pos.toString())
+                    model.game.getPlayerBoard(model.game.player.other())?.let {
+                        val onClickEnemyCell: (Position) -> Unit = { pos ->
+                            if(model.game.hasStarted()) {
+                                model.makeShot(pos)
+                            }
                         }
                         BoardWithGuidesView(it, onClickEnemyCell)
                     }

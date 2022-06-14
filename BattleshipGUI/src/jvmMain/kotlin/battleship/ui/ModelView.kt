@@ -100,7 +100,4 @@ class ModelView(val storage: Storage, val scope: CoroutineScope) {
 
 }
 
-fun GameState.hasNotStarted() = this == GameState.SETUP
-
-fun GameState.hasStarted() = this != GameState.SETUP
 
