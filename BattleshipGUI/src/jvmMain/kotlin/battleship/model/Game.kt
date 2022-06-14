@@ -24,17 +24,12 @@ enum class PlayError {
  * @property FIGHT fight stage where you can do all the commands except the ones in the [SETUP] phase;
  */
 enum class GameState {
-    SETUP, FIGHT, OVER
+    SETUP, FIGHT
 }
 
 /**
  * Central object that represents the battleship game
- * @property name name of the game
  * @property boardA [Board] of the first player
- * @property boardB [Board] of the second player
- * @property state current [GameState]
- * @property player game [Player]
- * @property turn current [Player] to make a turn.
  */
 sealed class Game(val playerBoard: Board)
 
@@ -54,7 +49,7 @@ class GameFight(
  * @param st storage to use
  * @return updated [Game]
  */
-fun Game.startGame(gameName: String, st: Storage): Game {
+fun GameSetup.startGame(gameName: String, st: Storage): Game {
     val gameFight = copy(name = gameName, state = FIGHT)
     val player = st.start(gameName, boardA)
     return if (player == Player.B) {
@@ -81,7 +76,7 @@ typealias GamePut = Pair<GameSetup, PutConsequence>
  * @param dir [Direction] of the ship
  * @return updated [GamePut]
  */
-fun Game.putShip(type: ShipType, pos: Position, dir: Direction): GamePut {
+fun GameSetup.putShip(type: ShipType, pos: Position, dir: Direction): GamePut {
 
     val result = playerBoard.putShip(type, pos, dir)
     return GamePut(GameSetup(result.first), result.second)
@@ -100,31 +95,30 @@ fun GameSetup.putRandomShip(type: ShipType): GamePut {
 
 
 /**
- * [Game] Function that will add all ships if it's a valid command
+ * [GameSetup] Function that will add all ships if it's a valid command
  * @return updated [Game]
  */
-fun Game.putAllShips(): GamePut {
-    val result = boardA.putAllShips()
-    return GamePut(this.copy(boardA = result.first), result.second)
+fun GameSetup.putAllShips(): GamePut {
+    val result = playerBoard.putAllShips()
+    return GamePut(GameSetup(result.first), result.second)
 }
 
 
 /**
- *[Game] Function that will remove a ship if it's a valid command and ship
+ * [GameSetup] Function that will remove a ship if it's a valid command and ship
  * @param pos [Position] to remove the ship from
  * @return updated [Game]
  */
-fun Game.removeShip(pos: Position): Game {
-    val newBoard = boardA.removeShip(pos)
-    return this.copy(boardA = newBoard)
+fun GameSetup.removeShip(pos: Position): GameSetup {
+    return GameSetup(playerBoard.removeShip(pos))
 }
 
 /**
- *[Game] Function that will remove all ships if it's a valid command
+ *[Game] Function that will empty the player board
  * @return updated [Game]
  */
-fun Game.removeAll(): Game {
-    return this.copy(boardA = Board())
+fun GameSetup.removeAll(): GameSetup {
+    return createEmptyGame()
 }
 
 
@@ -132,25 +126,14 @@ fun Game.removeAll(): Game {
  *[Game] Function that will create the initial game
  * @return created game
  */
-fun createGame() = Game("", Board(), Board())
-
-/**
- *[Game] Function that will get a player board associated with a player, should not be used when boardB is null
- * @param target [Player] to find the board
- * @return Player [Board]
- * @exception IllegalStateException Cannot get other board, if boardb is nullable
- */
-fun Game.getPlayerBoard(target: Player): Board? {
-    return if (target == Player.A) boardA else boardB
-}
-
+fun createEmptyGame() = GameSetup(Board())
 
 /**
  * [Game] Function that will make a shot if it's a valid state and a valid shot
  * @param pos [Position] from the shot
  * @return [GameShot] with the updated [Game] and [ShotConsequence] associated
  */
-fun Game.makeShot(pos: Position, st: Storage): GameShot {
+fun GameFight.makeShot(pos: Position, st: Storage): GameShot {
 
     check(isYourTurn())
 
@@ -177,9 +160,9 @@ fun Game.makeShot(pos: Position, st: Storage): GameShot {
     return GameShot(newGame, boardResult.second, boardResult.third)
 }
 
-fun Game.isYourTurn() = turn !== player
-fun Game.isNotYourTurn() = !isYourTurn()
+fun GameFight.isYourTurn() = turn !== player
+fun GameFight.isNotYourTurn() = !isYourTurn()
 
-fun Game.hasStarted() = state !== SETUP
+fun Game.hasStarted() = this !is GameSetup
 fun Game.hasNotStarted() = !hasStarted()
 

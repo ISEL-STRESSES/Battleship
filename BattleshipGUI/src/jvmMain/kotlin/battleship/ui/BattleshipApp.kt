@@ -53,7 +53,7 @@ fun FrameWindowScope.BattleshipApp(storage: Storage, onExit: () -> Unit) {
                             model.putShip(pos)
                     }
                 }
-                BoardWithGuidesView(model.game.boardA, false, onClickCell)
+                BoardWithGuidesView(model.game.playerBoard, false, onClickCell)
 
                 ////////////////
                 // Right Side //
@@ -73,12 +73,10 @@ fun FrameWindowScope.BattleshipApp(storage: Storage, onExit: () -> Unit) {
                         model.selectedDirection
                     )
                 } else {
-                    model.game.getPlayerBoard(model.game.player.other())?.let {
-                        val onClickEnemyCell: (Position) -> Unit = { pos ->
-                            if(model.game.hasStarted()) {
-                                model.makeShot(pos)
-                            }
-                        }
+                    val onClickEnemyCell: (Position) -> Unit = { pos ->
+                        model.makeShot(pos)
+                    }
+                    if(model.makeShot())
                         BoardWithGuidesView(it, true, onClickEnemyCell)
                     }
 
