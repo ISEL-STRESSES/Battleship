@@ -23,15 +23,11 @@ class ModelView(val storage: Storage, val scope: CoroutineScope) {
     var selectedDirection by mutableStateOf(Direction.HORIZONTAL)
         private set
 
-
-    private fun waitForOther() {
-        if (game.state === GameState.SETUP) return
-        if (game.player === game.turn) return
-
-        //TODO: Do rest later lol
-        return
-    }
-
+    private fun getGameSetup() : GameSetup =
+        with(game) {
+            check(this is GameSetup)
+            return this
+        }
 
     fun refresh() {
         game = storage.load(game);
@@ -48,26 +44,28 @@ class ModelView(val storage: Storage, val scope: CoroutineScope) {
     }
 
     fun putShip(pos: Position) {
+        val currGame = getGameSetup()
+
         val type = selectedType ?: return
         val dir = selectedDirection
 
-        val result = game.putShip(type, pos, dir);
+        val result = currGame.putShip(type, pos, dir);
 
         if (result.second === PutConsequence.NONE) {
             game = result.first;
         } else {
+            //TODO: no profanity, carlos
             println("oh shit lol we got a 404 \"${result.second.name}\" press F1")
         }
 
         selectedType = ShipType.values.firstOrNull { shipType ->
-            game.boardA.fleet.count { shipType === it.type } < shipType.fleetQuantity
+            game.playerBoard.fleet.count { shipType === it.type } < shipType.fleetQuantity
         }
     }
 
     fun removeShip(pos: Position) {
-        //TODO: make sure only able on setup, put on game this
-        game = game.removeShip(pos)
-
+        val currGame = getGameSetup()
+        game = currGame.removeShip(pos);
     }
 
     fun putAllRandom() {
