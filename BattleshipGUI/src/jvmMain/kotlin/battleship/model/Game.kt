@@ -36,21 +36,17 @@ enum class GameState {
  * @property player game [Player]
  * @property turn current [Player] to make a turn.
  */
-data class Game(
-    val name: String,
-    val boardA: Board,
-    val boardB: Board? = null,
-    val state: GameState = SETUP,
-    val player: Player = Player.A,
-    val turn: Player = Player.A
-)
+sealed class Game(val playerBoard: Board)
 
-//data class GameFight(
-//    val name : String,
-//    val boardA: Board,
-//    val boardB: Board,
-//)
+class GameSetup(playerBoard: Board) : Game(playerBoard)
 
+class GameFight(
+    playerBoard : Board,
+    val enemyBoard : Board,
+    val name : String,
+    val player : Player,
+    val turn : Player
+) : Game(playerBoard)
 
 /**
  * [Game] Function that will start the game if it meets the requirements
@@ -75,7 +71,7 @@ fun Game.startGame(gameName: String, st: Storage): Game {
  * @property [Game] battleship game;
  * @property [PutConsequence] after the put was done.
  */
-typealias GamePut = Pair<Game, PutConsequence>
+typealias GamePut = Pair<GameSetup, PutConsequence>
 
 
 /**
@@ -87,8 +83,8 @@ typealias GamePut = Pair<Game, PutConsequence>
  */
 fun Game.putShip(type: ShipType, pos: Position, dir: Direction): GamePut {
 
-    val result = boardA.putShip(type, pos, dir)
-    return GamePut(this.copy(boardA = result.first), result.second)
+    val result = playerBoard.putShip(type, pos, dir)
+    return GamePut(GameSetup(result.first), result.second)
 }
 
 /**
@@ -97,9 +93,9 @@ fun Game.putShip(type: ShipType, pos: Position, dir: Direction): GamePut {
  * @param type Type of ship.
  * @return Returns a game and it's consequence.
  */
-fun Game.putRandomShip(type: ShipType): GamePut {
-    val result = boardA.putRandomShip(type)
-    return GamePut(this.copy(boardA = result.first), result.second)
+fun GameSetup.putRandomShip(type: ShipType): GamePut {
+    val result = playerBoard.putRandomShip(type)
+    return GamePut(GameSetup(result.first), result.second)
 }
 
 

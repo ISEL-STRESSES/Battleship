@@ -46,7 +46,7 @@ fun FrameWindowScope.BattleshipApp(storage: Storage, onExit: () -> Unit) {
                 ///////////////
                 val onClickCell: (Position) -> Unit = { pos ->
                     if(model.game.hasNotStarted()) {
-                        val cell = model.game.boardA.grid[pos]
+                        val cell = model.game.playerBoard.grid[pos]
                         if (cell is ShipCell)
                             model.removeShip(pos)
                         else
@@ -58,7 +58,7 @@ fun FrameWindowScope.BattleshipApp(storage: Storage, onExit: () -> Unit) {
                 ////////////////
                 // Right Side //
                 ////////////////
-                if (model.game.state === GameState.SETUP) {
+                if (model.game.hasNotStarted()) {
                     val onClickShip: (ShipType?) -> Unit = { type ->
                         model.setShipType(type)
                     }
@@ -66,7 +66,7 @@ fun FrameWindowScope.BattleshipApp(storage: Storage, onExit: () -> Unit) {
                         model.setDirection(dir)
                     }
                     SideView(
-                        model.game.boardA.fleet,
+                        model.game.playerBoard.fleet,
                         onClickShip,
                         model.selectedType,
                         onClickDir,

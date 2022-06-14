@@ -12,7 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 
 
 class ModelView(val storage: Storage, val scope: CoroutineScope) {
-    var game by mutableStateOf(createGame())
+    var game by mutableStateOf<Game>(createEmptyGame())
         private set
     var openDialogName by mutableStateOf(false)
         private set

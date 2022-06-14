@@ -16,7 +16,7 @@ typealias PutResult = Pair<Board, PutConsequence>
  * @property [Game] battleship game;
  * @property [ShotConsequence] after the shot was taken.
  */
-typealias GameShot = Triple<Game, ShotConsequence, ShipType?>
+typealias GameShot = Triple<GameFight, ShotConsequence, ShipType?>
 
 /**
  * Keeps the game and the correspondent consequence of a shot.
