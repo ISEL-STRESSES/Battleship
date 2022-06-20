@@ -8,13 +8,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.FrameWindowScope
-import battleship.model.GameState
+import battleship.model.*
 import battleship.model.board.Direction
 import battleship.model.board.Position
 import battleship.model.board.ShipCell
-import battleship.model.getPlayerBoard
-import battleship.model.hasNotStarted
-import battleship.model.hasStarted
 import battleship.model.ship.ShipType
 import battleship.storage.Storage
 import tds.galo.ui.DialogName

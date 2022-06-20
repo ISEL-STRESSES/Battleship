@@ -23,18 +23,20 @@ class ModelView(val storage: Storage, val scope: CoroutineScope) {
     var selectedDirection by mutableStateOf(Direction.HORIZONTAL)
         private set
 
-    private fun getGameSetup() : GameSetup =
+    inline fun <reified T> getGame(): T =
         with(game) {
-            check(this is GameSetup)
+            check(this is T)
             return this
         }
 
     fun refresh() {
-        game = storage.load(game);
+        val currGame = getGame<GameFight>()
+        game = storage.load(currGame)
     }
 
     fun start(name: String? = null) {
         //TODO: start only in setup with fleet complete
+
         if (name == null) {
             openDialogName = true
         } else {
@@ -44,7 +46,7 @@ class ModelView(val storage: Storage, val scope: CoroutineScope) {
     }
 
     fun putShip(pos: Position) {
-        val currGame = getGameSetup()
+        val currGame = getGame<GameSetup>()
 
         val type = selectedType ?: return
         val dir = selectedDirection
@@ -64,8 +66,10 @@ class ModelView(val storage: Storage, val scope: CoroutineScope) {
     }
 
     fun removeShip(pos: Position) {
-        val currGame = getGameSetup()
-        game = currGame.removeShip(pos);
+        with(getGame<GameSetup>())
+        {
+            game = removeShip(pos);
+        }
     }
 
     fun putAllRandom() {
@@ -78,7 +82,10 @@ class ModelView(val storage: Storage, val scope: CoroutineScope) {
     }
 
     fun removeAll() {
-        game = game.removeAll()
+        with(getGame<GameSetup>())
+        {
+            game = removeAll()
+        }
     }
 
     fun makeShot(pos: Position) {

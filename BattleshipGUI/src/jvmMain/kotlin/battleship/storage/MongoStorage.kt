@@ -1,6 +1,7 @@
 package battleship.storage
 
 import battleship.model.Game
+import battleship.model.GameFight
 import battleship.model.Player
 import battleship.model.board.*
 import battleship.model.ship.Ship
@@ -18,7 +19,7 @@ class MongoStorage(driver: MongoDriver) : Storage {
     /**
      * Representation of the game state in a document.
      */
-    data class Doc(val _id: String, val contentA: List<String>, val contentB: List<String>, val turn: String)
+    private data class Doc(val _id: String, val contentA: List<String>, val contentB: List<String>, val turn: String)
 
     /**
      * The collection with all the games.
@@ -118,9 +119,9 @@ class MongoStorage(driver: MongoDriver) : Storage {
      * Function that will store a game in the DB making the needed changes.
      * @param game [Game] to store.
      */
-    override fun store(game: Game) {
-        val boardAEntry = game.boardA.serialize()
-        val boardBEntry = if (game.boardB != null) game.boardB.serialize() else emptyList()
+    override fun store(game: GameFight) {
+        val boardAEntry = (if(game.player === Player.A) game.playerBoard else game.enemyBoard).serialize()
+        val boardBEntry = (if(game.player === Player.B) game.playerBoard else game.enemyBoard).serialize()
         collection.replaceDocument(Doc(game.name, boardAEntry, boardBEntry, game.turn.name))
     }
 
@@ -129,7 +130,7 @@ class MongoStorage(driver: MongoDriver) : Storage {
      * @param game [Game] to load.
      *
      */
-    override fun load(game: Game): Game {
+    override fun load(game: GameFight): GameFight {
         val doc = collection.getDocument(game.name)
         checkNotNull(doc) { "No document in Load" }
         val boardA = doc.contentA.deserialize()

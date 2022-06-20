@@ -24,10 +24,10 @@ interface Storage {
      * Update game state in database.
      * @param game Game information to store
      */
-    fun store(game: Game)
+    fun store(game: GameFight)
 
     /**
      * Loads the new game state from the information stored in the storage.
      */
-    fun load(game: Game): Game
+    fun load(game: GameFight): GameFight
 }

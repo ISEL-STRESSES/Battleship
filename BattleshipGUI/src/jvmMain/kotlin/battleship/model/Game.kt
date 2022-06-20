@@ -39,8 +39,8 @@ class GameFight(
     playerBoard : Board,
     val enemyBoard : Board,
     val name : String,
-    val player : Player,
-    val turn : Player
+    val player : Player = Player.A,
+    val turn : Player = Player.A
 ) : Game(playerBoard)
 
 /**
@@ -49,9 +49,9 @@ class GameFight(
  * @param st storage to use
  * @return updated [Game]
  */
-fun GameSetup.startGame(gameName: String, st: Storage): Game {
-    val gameFight = copy(name = gameName, state = FIGHT)
-    val player = st.start(gameName, boardA)
+fun GameSetup.startGame(gameName: String, st: Storage): GameFight {
+    val player = st.start(gameName, playerBoard)
+    val gameFight = GameFight(playerBoard, Board(), gameName)
     return if (player == Player.B) {
         val gameFromDB = st.load(gameFight)
         // val newGame = gameFight.copy(boardA = gameFromDB.boardA, boardB = boardA, state = FIGHT, player = Player.B)
@@ -138,9 +138,6 @@ fun GameFight.makeShot(pos: Position, st: Storage): GameShot {
 
     check(isYourTurn())
 
-    val playerBoard = getPlayerBoard(player)
-    val enemyBoard = getPlayerBoard(player.other())
-    checkNotNull(enemyBoard)
     val boardResult = enemyBoard.makeShot(pos)
 
     val newBoardA = if (playerBoard == boardA) boardA else boardResult.first
