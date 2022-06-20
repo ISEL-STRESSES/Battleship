@@ -54,7 +54,8 @@ fun GameSetup.startGame(gameName: String, st: Storage): Game {
     val player = st.start(gameName, boardA)
     return if (player == Player.B) {
         val gameFromDB = st.load(gameFight)
-        val newGame = gameFight.copy(boardA = gameFromDB.boardA, boardB = boardA, state = FIGHT, player = Player.B)
+        // val newGame = gameFight.copy(boardA = gameFromDB.boardA, boardB = boardA, state = FIGHT, player = Player.B)
+        val newGame = GameFight(enemyBoard = gameFromDB.playerBoard, playerBoard = playerBoard, name = gameName, player = Player.B)
         newGame.also { st.store(it) }
     } else {
         gameFight

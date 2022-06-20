@@ -37,19 +37,22 @@ fun StatusView(model: ModelView) = Row(
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween
 ) {
-    when(model.game.state)
-    {
-        GameState.SETUP -> {
-            Text(STATUS_PROMPT_SETUP, fontWeight = FontWeight.Bold)
-        }
-        GameState.FIGHT -> {
-            // Bold Game
-            Text("Game:", fontWeight = FontWeight.Bold)
-            Text(model.game.name)
-            //val turnMsg = if(model)
-            Text("")
-            //Text("${state.game.name}")
+    with(model.game){
+        when(this)
+        {
+            is GameSetup -> {
+                Text(STATUS_PROMPT_SETUP, fontWeight = FontWeight.Bold)
+            }
+            is GameFight -> {
+                // Bold Game
+                Text("Game:", fontWeight = FontWeight.Bold)
+                Text(name)
+                //val turnMsg = if(model)
+                Text("")
+                //Text("${state.game.name}")
+            }
         }
     }
+
 }
 

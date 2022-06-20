@@ -76,10 +76,8 @@ fun FrameWindowScope.BattleshipApp(storage: Storage, onExit: () -> Unit) {
                     val onClickEnemyCell: (Position) -> Unit = { pos ->
                         model.makeShot(pos)
                     }
-                    if(model.makeShot())
-                        BoardWithGuidesView(it, true, onClickEnemyCell)
-                    }
-
+                    val enemyBoard = model.getGame<GameFight>().enemyBoard
+                    BoardWithGuidesView(enemyBoard, true, onClickEnemyCell)
                 }
             }
             Spacer(Modifier.size(SPACER.dp))

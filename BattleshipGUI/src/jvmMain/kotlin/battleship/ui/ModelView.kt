@@ -69,21 +69,25 @@ class ModelView(val storage: Storage, val scope: CoroutineScope) {
     }
 
     fun putAllRandom() {
-        val res = game.putAllShips()
-        if (res.second === PutConsequence.NONE)
-            game = res.first
+        with(getGame<GameSetup>())
+        {
+            val res = this.putAllShips()
+            if (res.second === PutConsequence.NONE)
+                game = res.first
+        }
     }
 
     fun removeAll() {
         game = game.removeAll()
     }
 
-    fun makeShot(pos : Position) {
-        if(game.isNotYourTurn()) return
-        val shotResult = game.makeShot(pos, storage);
-        //val typeHit = shotResult.third;
-        if(shotResult.second !== ShotConsequence.INVALID)
-            game = shotResult.first
+    fun makeShot(pos: Position) {
+        with(getGame<GameFight>()) {
+            if (isNotYourTurn()) return
+            val shotResult = makeShot(pos, storage);
+            if (shotResult.second !== ShotConsequence.INVALID)
+                game = shotResult.first
+        }
     }
 
     fun setShipType(type: ShipType?) {

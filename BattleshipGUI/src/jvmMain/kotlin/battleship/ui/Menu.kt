@@ -13,14 +13,14 @@ import battleship.model.hasStarted
 fun FrameWindowScope.GaloMenu(model: ModelView, onExit: () -> Unit) {
     MenuBar {
         Menu("Game") {
-            Item("Start", enabled = model.game.hasNotStarted() && model.game.boardA.fleet.isComplete(), onClick = { model.start() })
+            Item("Start", enabled = model.game.hasNotStarted() && model.game.playerBoard.fleet.isComplete(), onClick = { model.start() })
             Item("Refresh", enabled = model.game.hasStarted(), onClick = { model.refresh() })
             Item("Exit", onClick = onExit)
         }
         Menu("Fleet") {
-            Item("Put All (remaining)", enabled = model.game.hasNotStarted() && !model.game.boardA.fleet.isComplete() , onClick = { model.putAllRandom() })
+            Item("Put All (remaining)", enabled = model.game.hasNotStarted() && !model.game.playerBoard.fleet.isComplete() , onClick = { model.putAllRandom() })
 
-            Item("Remove All", enabled = model.game.hasNotStarted() && model.game.boardA.fleet.isNotEmpty(), onClick = { model.removeAll() })
+            Item("Remove All", enabled = model.game.hasNotStarted() && model.game.playerBoard.fleet.isNotEmpty(), onClick = { model.removeAll() })
         }
     }
 }
