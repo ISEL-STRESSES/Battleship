@@ -134,7 +134,10 @@ class MongoStorage(driver: MongoDriver) : Storage {
         val doc = collection.getDocument(game.name)
         checkNotNull(doc) { "No document in Load" }
         val boardA = doc.contentA.deserialize()
-        val boardB = if (doc.contentB.isNotEmpty()) doc.contentB.deserialize() else null
-        return game.copy(boardA = boardA, boardB = boardB, turn = Player.valueOf(doc.turn))
+        val boardB = if (doc.contentB.isNotEmpty()) doc.contentB.deserialize() else Board()
+        //game.copy(boardA = boardA, boardB = boardB, turn = Player.valueOf(doc.turn))
+        val playerBoard = if(game.player === Player.A) boardA else boardB
+        val enemyBoard = if(game.player === Player.B) boardA else boardB
+        return GameFight(playerBoard, enemyBoard, game.name, turn = Player.valueOf(doc.turn))
     }
 }

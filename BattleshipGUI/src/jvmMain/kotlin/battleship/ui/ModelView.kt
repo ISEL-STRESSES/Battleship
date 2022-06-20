@@ -40,7 +40,9 @@ class ModelView(val storage: Storage, val scope: CoroutineScope) {
         if (name == null) {
             openDialogName = true
         } else {
-            game = game.startGame(name, storage)
+            //see if bracks
+            val getSetUPGame = getGame<GameSetup>()
+            game = getSetUPGame.startGame(name, storage)
             openDialogName = false
         }
     }
@@ -56,7 +58,7 @@ class ModelView(val storage: Storage, val scope: CoroutineScope) {
         if (result.second === PutConsequence.NONE) {
             game = result.first;
         } else {
-            //TODO: no profanity, carlos
+            //TODO: no profanity, carlos    YES SIR
             println("oh shit lol we got a 404 \"${result.second.name}\" press F1")
         }
 

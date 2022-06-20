@@ -1,6 +1,6 @@
 package battleship.storage
 
-import battleship.model.Game
+import battleship.model.GameFight
 import battleship.model.Player
 import battleship.model.board.Board
 

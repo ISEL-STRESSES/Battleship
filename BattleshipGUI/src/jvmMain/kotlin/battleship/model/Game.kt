@@ -140,9 +140,6 @@ fun GameFight.makeShot(pos: Position, st: Storage): GameShot {
 
     val boardResult = enemyBoard.makeShot(pos)
 
-    val newBoardA = if (playerBoard == boardA) boardA else boardResult.first
-    val newBoardB = if (playerBoard == boardB) boardB else boardResult.first
-
     if (boardResult.second === ShotConsequence.INVALID)
         return GameShot(this, ShotConsequence.INVALID, null)
 
@@ -151,7 +148,8 @@ fun GameFight.makeShot(pos: Position, st: Storage): GameShot {
         else
             turn
 
-    val newGame = copy(boardA = newBoardA, boardB = newBoardB, turn = newTurn)
+
+    val newGame = GameFight(playerBoard, boardResult.first, name, player, newTurn);
 
     st.store(newGame)
 
