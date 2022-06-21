@@ -41,8 +41,11 @@ class ModelView(val storage: Storage, val scope: CoroutineScope) {
             openDialogName = true
         } else {
             //see if bracks
-            val getSetUPGame = getGame<GameSetup>()
-            game = getSetUPGame.startGame(name, storage)
+            val currGame = getGame<GameSetup>()
+            game = currGame.startGame(name, storage)
+            val testlol = getGame<GameFight>();
+            println(testlol.player);
+            println(testlol.turn);
             openDialogName = false
         }
     }
@@ -92,8 +95,15 @@ class ModelView(val storage: Storage, val scope: CoroutineScope) {
 
     fun makeShot(pos: Position) {
         with(getGame<GameFight>()) {
+            println("IF NOTHING PAST THIS, IS NOT YOUR TURN IS BREAKING")
             if (isNotYourTurn()) return
+            if(this.enemyBoard.fleet.isEmpty()) {
+                //TODO: checking if is empty might be a symptom that our GameFight is representing invalid uses
+                println("checked if is empty()")
+                return
+            }
             val shotResult = makeShot(pos, storage);
+            println(shotResult.second.name)
             if (shotResult.second !== ShotConsequence.INVALID)
                 game = shotResult.first
         }

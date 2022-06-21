@@ -10,3 +10,12 @@ enum class Player(val id: Char) {
 
     fun other() = if (this === A) B else A
 }
+
+/**
+ * Helper function to decide which item to choose depending on the player
+ * @property player
+ * @property playerAItem the item to be returned in case [player] is A
+ * @property playerBItem the item to be returned in case [player] is B
+ */
+fun <T> chooseUponPlayer(player : Player, playerAItem : T, playerBItem : T) =
+    if(player === Player.A) playerAItem else playerBItem

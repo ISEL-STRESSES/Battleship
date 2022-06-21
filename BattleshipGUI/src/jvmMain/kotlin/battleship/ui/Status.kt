@@ -15,6 +15,7 @@ import battleship.model.GameSetup
 
 import battleship.model.board.COLUMN_DIM
 import battleship.model.GameState
+import battleship.model.isYourTurn
 
 
 const val STATUS_BAR_HEIGHT = 48;
@@ -22,8 +23,9 @@ const val STATUS_BORDER_WIDTH = 2;
 val STATUS_BORDER_COLOR = Color.Black
 
 const val STATUS_PROMPT_SETUP = "Edit Fleet"
-const val STATUS_PROMPT_FIGHT_CAN_PLAY = "It's your turn"
-const val STATUS_PROMPT_FIGHT_CANT_PLAY = "Sit yo ass down, not your turn"
+const val STATUS_PROMPT_FIGHT_PLAY_WAIT= "Wait for the enemy to start"
+const val STATUS_PROMPT_FIGHT_PLAY_ALLOWED = "It's your turn"
+const val STATUS_PROMPT_FIGHT_PLAY_NOT_ALLOWED = "Sit yo ass down, not your turn"
 
 const val STATUS_WARN_VICTORY = "You WIN!"
 const val STATUS_WARN_DEFEAT = "You LOSE! ez clap"
@@ -49,8 +51,11 @@ fun StatusView(model: ModelView) = Row(
                 // Bold Game
                 Text("Game:", fontWeight = FontWeight.Bold)
                 Text(name)
-                //val turnMsg = if(model)
-                Text("")
+                val turnMsg = if(this.isYourTurn())
+                    STATUS_PROMPT_FIGHT_PLAY_ALLOWED
+                else
+                    STATUS_PROMPT_FIGHT_PLAY_NOT_ALLOWED
+                Text(turnMsg)
                 //Text("${state.game.name}")
             }
         }

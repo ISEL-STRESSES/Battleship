@@ -4,6 +4,7 @@ import battleship.model.Game
 import battleship.model.GameFight
 import battleship.model.Player
 import battleship.model.board.*
+import battleship.model.chooseUponPlayer
 import battleship.model.ship.Ship
 import battleship.model.ship.toShipType
 import mongoDB.*
@@ -120,8 +121,8 @@ class MongoStorage(driver: MongoDriver) : Storage {
      * @param game [Game] to store.
      */
     override fun store(game: GameFight) {
-        val boardAEntry = (if(game.player === Player.A) game.playerBoard else game.enemyBoard).serialize()
-        val boardBEntry = (if(game.player === Player.B) game.playerBoard else game.enemyBoard).serialize()
+        val boardAEntry = chooseUponPlayer(game.player, game.playerBoard, game.enemyBoard).serialize()
+        val boardBEntry = chooseUponPlayer(game.player.other(), game.playerBoard, game.enemyBoard).serialize()
         collection.replaceDocument(Doc(game.name, boardAEntry, boardBEntry, game.turn.name))
     }
 
@@ -135,9 +136,8 @@ class MongoStorage(driver: MongoDriver) : Storage {
         checkNotNull(doc) { "No document in Load" }
         val boardA = doc.contentA.deserialize()
         val boardB = if (doc.contentB.isNotEmpty()) doc.contentB.deserialize() else Board()
-        //game.copy(boardA = boardA, boardB = boardB, turn = Player.valueOf(doc.turn))
-        val playerBoard = if(game.player === Player.A) boardA else boardB
-        val enemyBoard = if(game.player === Player.B) boardA else boardB
-        return GameFight(playerBoard, enemyBoard, game.name, turn = Player.valueOf(doc.turn))
+        val playerBoard = chooseUponPlayer(game.player, boardA, boardB)
+        val enemyBoard = chooseUponPlayer(game.player.other(), boardA, boardB);
+        return GameFight(playerBoard, enemyBoard, game.name, player= game.player, turn = Player.valueOf(doc.turn))
     }
 }

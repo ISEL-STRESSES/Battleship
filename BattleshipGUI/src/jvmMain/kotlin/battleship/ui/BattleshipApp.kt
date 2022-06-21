@@ -71,6 +71,7 @@ fun FrameWindowScope.BattleshipApp(storage: Storage, onExit: () -> Unit) {
                     )
                 } else {
                     val onClickEnemyCell: (Position) -> Unit = { pos ->
+                        println("onClickEnemyCell() was called");
                         model.makeShot(pos)
                     }
                     val enemyBoard = model.getGame<GameFight>().enemyBoard

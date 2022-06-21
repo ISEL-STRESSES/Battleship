@@ -39,7 +39,7 @@ class GameFight(
     playerBoard : Board,
     val enemyBoard : Board,
     val name : String,
-    val player : Player = Player.A,
+    val player : Player,
     val turn : Player = Player.A
 ) : Game(playerBoard)
 
@@ -51,10 +51,9 @@ class GameFight(
  */
 fun GameSetup.startGame(gameName: String, st: Storage): GameFight {
     val player = st.start(gameName, playerBoard)
-    val gameFight = GameFight(playerBoard, Board(), gameName)
+    val gameFight = GameFight(playerBoard, Board(), name = gameName, player = Player.A)
     return if (player == Player.B) {
         val gameFromDB = st.load(gameFight)
-        // val newGame = gameFight.copy(boardA = gameFromDB.boardA, boardB = boardA, state = FIGHT, player = Player.B)
         val newGame = GameFight(enemyBoard = gameFromDB.playerBoard, playerBoard = playerBoard, name = gameName, player = Player.B)
         newGame.also { st.store(it) }
     } else {
@@ -137,6 +136,7 @@ fun createEmptyGame() = GameSetup(Board())
 fun GameFight.makeShot(pos: Position, st: Storage): GameShot {
 
     check(isYourTurn())
+    println("makeShot actually happened in model");
 
     val boardResult = enemyBoard.makeShot(pos)
 
@@ -148,7 +148,6 @@ fun GameFight.makeShot(pos: Position, st: Storage): GameShot {
         else
             turn
 
-
     val newGame = GameFight(playerBoard, boardResult.first, name, player, newTurn);
 
     st.store(newGame)
@@ -156,7 +155,7 @@ fun GameFight.makeShot(pos: Position, st: Storage): GameShot {
     return GameShot(newGame, boardResult.second, boardResult.third)
 }
 
-fun GameFight.isYourTurn() = turn !== player
+fun GameFight.isYourTurn() = turn === player
 fun GameFight.isNotYourTurn() = !isYourTurn()
 
 fun Game.hasStarted() = this !is GameSetup
