@@ -1,19 +1,15 @@
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import battleship.storage.MongoStorage
-import battleship.ui.BOARD_HEIGHT
 import battleship.ui.BOARD_WIDTH
 import battleship.ui.BattleshipApp
-import battleship.ui.STATUS_BAR_HEIGHT
 import com.mongodb.MongoException
 import mongoDB.MongoDriver
-
 
 
 fun main() {
@@ -30,7 +26,7 @@ fun main() {
                         height = Dp.Unspecified
                     )
                 ) {
-                    BattleshipApp(MongoStorage(drv), onExit = ::exitApplication);
+                    BattleshipApp(MongoStorage(drv), onExit = ::exitApplication)
                 }
             }
         }

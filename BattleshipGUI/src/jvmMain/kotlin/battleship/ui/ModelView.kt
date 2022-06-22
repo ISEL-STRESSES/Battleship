@@ -9,19 +9,47 @@ import battleship.model.board.Position
 import battleship.model.ship.ShipType
 import battleship.storage.Storage
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
+const val MESSAGE_TIMER = 4000L
+const val AUTO_REFRESH_TIMER = 3000L
+
+const val STATUS_WARN_VICTORY = "You WIN!"
+const val STATUS_WARN_DEFEAT = "You LOSE! ez clap"
+
+const val STATUS_WARN_INVALID_PUT_SHIP = "Ship type all used up"
+const val STATUS_WARN_INVALID_PUT_POSITION = "Invalid Position"
+const val STATUS_WARN_INVALID_SHOT = "Invalid Shot"
+const val STATUS_WARN_INVALID_SHOT_WAIT_FOR_OTHER = "Wait for the enemy to start"
+const val STATUS_WARN_INVALID_SHOT_TURN = "It's not your turn"
 
 
-class ModelView(val storage: Storage, val scope: CoroutineScope) {
+class ModelView(
+    private val storage: Storage,
+    private val scope: CoroutineScope
+) {
     var game by mutableStateOf<Game>(createEmptyGame())
         private set
     var openDialogName by mutableStateOf(false)
         private set
     var message by mutableStateOf<String?>(null)
         private set
+    private var messageJob by mutableStateOf<Job?>(null)
+    var jobAutoRefresh by mutableStateOf<Job?>(null)
+        private set
+
     var selectedType by mutableStateOf<ShipType?>(ShipType.values.first())
         private set
     var selectedDirection by mutableStateOf(Direction.HORIZONTAL)
         private set
+
+    private fun sendMessage(msg: String) {
+        messageJob?.cancel()
+        message = msg
+        messageJob = scope.launch { delay(MESSAGE_TIMER); message = null }
+    }
 
     inline fun <reified T> getGame(): T =
         with(game) {
@@ -30,24 +58,40 @@ class ModelView(val storage: Storage, val scope: CoroutineScope) {
         }
 
     fun refresh() {
-        val currGame = getGame<GameFight>()
-        game = storage.load(currGame)
+        scope.launch { game = storage.load(getGame()) }
     }
 
     fun start(name: String? = null) {
-        //TODO: start only in setup with fleet complete
-
         if (name == null) {
             openDialogName = true
         } else {
-            //see if bracks
+            //see if breaks
             val currGame = getGame<GameSetup>()
-            game = currGame.startGame(name, storage)
-            val testlol = getGame<GameFight>();
-            println(testlol.player);
-            println(testlol.turn);
-            openDialogName = false
+            scope.launch {
+                game = currGame.startGame(name, storage)
+                openDialogName = false
+                waitForOther()
+            }
         }
+    }
+
+    fun waitForOther() {
+        var g = getGame<GameFight>()
+        if(g.isYourTurn()) { //TODO: g.isOver()
+            jobAutoRefresh = scope.launch {
+                do {
+                    delay(AUTO_REFRESH_TIMER)
+                    g = storage.load(g)
+                } while (g.isNotYourTurn())
+                game = g
+                jobAutoRefresh = null
+            }
+        }
+    }
+
+    fun cancelAutoRefresh() {
+        jobAutoRefresh?.cancel()
+        jobAutoRefresh = null
     }
 
     fun putShip(pos: Position) {
@@ -56,13 +100,16 @@ class ModelView(val storage: Storage, val scope: CoroutineScope) {
         val type = selectedType ?: return
         val dir = selectedDirection
 
-        val result = currGame.putShip(type, pos, dir);
+        val result = currGame.putShip(type, pos, dir)
 
         if (result.second === PutConsequence.NONE) {
-            game = result.first;
+            game = result.first
         } else {
-            //TODO: no profanity, carlos    YES SIR
-            println("oh shit lol we got a 404 \"${result.second.name}\" press F1")
+            when (result.second) {
+                PutConsequence.INVALID_SHIP -> sendMessage(STATUS_WARN_INVALID_PUT_SHIP)
+                PutConsequence.INVALID_POSITION -> sendMessage(STATUS_WARN_INVALID_PUT_POSITION)
+                else -> {}
+            }
         }
 
         selectedType = ShipType.values.firstOrNull { shipType ->
@@ -73,7 +120,7 @@ class ModelView(val storage: Storage, val scope: CoroutineScope) {
     fun removeShip(pos: Position) {
         with(getGame<GameSetup>())
         {
-            game = removeShip(pos);
+            game = removeShip(pos)
         }
     }
 
@@ -95,17 +142,21 @@ class ModelView(val storage: Storage, val scope: CoroutineScope) {
 
     fun makeShot(pos: Position) {
         with(getGame<GameFight>()) {
-            println("IF NOTHING PAST THIS, IS NOT YOUR TURN IS BREAKING")
-            if (isNotYourTurn()) return
-            if(this.enemyBoard.fleet.isEmpty()) {
-                //TODO: checking if is empty might be a symptom that our GameFight is representing invalid uses
-                println("checked if is empty()")
+
+            if (this.enemyBoard.fleet.isEmpty()) {
+                sendMessage(STATUS_WARN_INVALID_SHOT_WAIT_FOR_OTHER)
                 return
             }
-            val shotResult = makeShot(pos, storage);
-            println(shotResult.second.name)
-            if (shotResult.second !== ShotConsequence.INVALID)
+            val shotResult = makeShot(pos, storage, scope)
+            if (shotResult.second !== ShotConsequence.INVALID && shotResult.second !== ShotConsequence.NOT_YOUR_TURN)
                 game = shotResult.first
+            else {
+                when (shotResult.second) {
+                    ShotConsequence.NOT_YOUR_TURN -> sendMessage(STATUS_WARN_INVALID_SHOT_TURN)
+                    ShotConsequence.INVALID -> sendMessage(STATUS_WARN_INVALID_SHOT)
+                    else -> {}
+                }
+            }
         }
     }
 
@@ -119,10 +170,6 @@ class ModelView(val storage: Storage, val scope: CoroutineScope) {
 
     fun closeDialog() {
         openDialogName = false
-    }
-
-    fun messageAck() {
-        message = null
     }
 
 }

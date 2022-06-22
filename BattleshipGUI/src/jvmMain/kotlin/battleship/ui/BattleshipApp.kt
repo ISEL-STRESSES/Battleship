@@ -8,10 +8,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.FrameWindowScope
-import battleship.model.*
+import battleship.model.GameFight
 import battleship.model.board.Direction
 import battleship.model.board.Position
 import battleship.model.board.ShipCell
+import battleship.model.hasNotStarted
 import battleship.model.ship.ShipType
 import battleship.storage.Storage
 import tds.galo.ui.DialogName
@@ -31,18 +32,15 @@ fun FrameWindowScope.BattleshipApp(storage: Storage, onExit: () -> Unit) {
                 val sanitizedInput = it.trim()
                 model.start(sanitizedInput)
             }
-            model.message?.let {
-                DialogMessage(it) { model.messageAck() }
-            }
         }
 
         Column {
-            Row(modifier = Modifier.width(((BOARD_WIDTH * 2)+ BOARD_CELL_SIZE).dp).height(BOARD_HEIGHT.dp)) {
+            Row(modifier = Modifier.width(((BOARD_WIDTH * 2) + BOARD_CELL_SIZE).dp).height(BOARD_HEIGHT.dp)) {
                 ///////////////
                 // Left Side //
                 ///////////////
                 val onClickCell: (Position) -> Unit = { pos ->
-                    if(model.game.hasNotStarted()) {
+                    if (model.game.hasNotStarted()) {
                         val cell = model.game.playerBoard.grid[pos]
                         if (cell is ShipCell)
                             model.removeShip(pos)
@@ -71,7 +69,6 @@ fun FrameWindowScope.BattleshipApp(storage: Storage, onExit: () -> Unit) {
                     )
                 } else {
                     val onClickEnemyCell: (Position) -> Unit = { pos ->
-                        println("onClickEnemyCell() was called");
                         model.makeShot(pos)
                     }
                     val enemyBoard = model.getGame<GameFight>().enemyBoard
@@ -79,7 +76,7 @@ fun FrameWindowScope.BattleshipApp(storage: Storage, onExit: () -> Unit) {
                 }
             }
             Spacer(Modifier.size(SPACER.dp))
-            StatusView(model)
+            StatusView(model, model.message)
         }
     }
 }

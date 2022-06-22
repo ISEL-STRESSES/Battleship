@@ -17,5 +17,5 @@ enum class Player(val id: Char) {
  * @property playerAItem the item to be returned in case [player] is A
  * @property playerBItem the item to be returned in case [player] is B
  */
-fun <T> chooseUponPlayer(player : Player, playerAItem : T, playerBItem : T) =
-    if(player === Player.A) playerAItem else playerBItem
+fun <T> chooseUponPlayer(player: Player, playerAItem: T, playerBItem: T) =
+    if (player === Player.A) playerAItem else playerBItem

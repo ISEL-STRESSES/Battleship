@@ -6,6 +6,8 @@ import battleship.model.PlayError.*
 import battleship.model.board.*
 import battleship.model.ship.ShipType
 import battleship.storage.Storage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 /**
  * available play errors
@@ -29,18 +31,18 @@ enum class GameState {
 
 /**
  * Central object that represents the battleship game
- * @property boardA [Board] of the first player
+ * @property playerBoard [Board] of the first player
  */
 sealed class Game(val playerBoard: Board)
 
 class GameSetup(playerBoard: Board) : Game(playerBoard)
 
 class GameFight(
-    playerBoard : Board,
-    val enemyBoard : Board,
-    val name : String,
-    val player : Player,
-    val turn : Player = Player.A
+    playerBoard: Board,
+    val enemyBoard: Board,
+    val name: String,
+    val player: Player,
+    val turn: Player = Player.A
 ) : Game(playerBoard)
 
 /**
@@ -49,12 +51,17 @@ class GameFight(
  * @param st storage to use
  * @return updated [Game]
  */
-fun GameSetup.startGame(gameName: String, st: Storage): GameFight {
+suspend fun GameSetup.startGame(gameName: String, st: Storage): GameFight {
     val player = st.start(gameName, playerBoard)
     val gameFight = GameFight(playerBoard, Board(), name = gameName, player = Player.A)
     return if (player == Player.B) {
         val gameFromDB = st.load(gameFight)
-        val newGame = GameFight(enemyBoard = gameFromDB.playerBoard, playerBoard = playerBoard, name = gameName, player = Player.B)
+        val newGame = GameFight(
+            enemyBoard = gameFromDB.playerBoard,
+            playerBoard = playerBoard,
+            name = gameName,
+            player = Player.B
+        )
         newGame.also { st.store(it) }
     } else {
         gameFight
@@ -133,10 +140,12 @@ fun createEmptyGame() = GameSetup(Board())
  * @param pos [Position] from the shot
  * @return [GameShot] with the updated [Game] and [ShotConsequence] associated
  */
-fun GameFight.makeShot(pos: Position, st: Storage): GameShot {
+fun GameFight.makeShot(pos: Position, st: Storage, scope: CoroutineScope): GameShot {
 
-    check(isYourTurn())
-    println("makeShot actually happened in model");
+    if (isNotYourTurn()) {
+        return GameShot(this, ShotConsequence.NOT_YOUR_TURN, null)
+    }
+    println("makeShot actually happened in model")
 
     val boardResult = enemyBoard.makeShot(pos)
 
@@ -144,13 +153,13 @@ fun GameFight.makeShot(pos: Position, st: Storage): GameShot {
         return GameShot(this, ShotConsequence.INVALID, null)
 
     val newTurn = if (boardResult.second === ShotConsequence.MISS)
-            turn.other()
-        else
-            turn
+        turn.other()
+    else
+        turn
 
-    val newGame = GameFight(playerBoard, boardResult.first, name, player, newTurn);
+    val newGame = GameFight(playerBoard, boardResult.first, name, player, newTurn)
 
-    st.store(newGame)
+    scope.launch { st.store(newGame) }
 
     return GameShot(newGame, boardResult.second, boardResult.third)
 }

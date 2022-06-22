@@ -2,7 +2,6 @@ package battleship.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.RadioButton
 import androidx.compose.material.RadioButtonDefaults
@@ -13,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import battleship.model.board.Direction
-import battleship.model.board.*
+import battleship.model.board.Fleet
 import battleship.model.ship.ShipType
 
 
@@ -21,12 +20,12 @@ const val BORDER_WIDTH = 2
 const val PADDING = 10
 
 @Composable
-fun ShipSelectorView(fleet: Fleet, onClick: (ShipType?)->Unit, currShip: ShipType?) {
+fun ShipSelectorView(fleet: Fleet, onClick: (ShipType?) -> Unit, currShip: ShipType?) {
     Column(Modifier.border(BORDER_WIDTH.dp, Color.Blue).padding(PADDING.dp), verticalArrangement = Arrangement.Center) {
         ShipType.values.forEach { type ->
             val fleetQuantity = fleet.count { it.type == type }
             //print Cells with blue boxes afterwards
-            Row(verticalAlignment = Alignment.CenterVertically)  {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 val func = {
                     onClick(type)
                 }
@@ -49,9 +48,9 @@ fun ShipSelectorView(fleet: Fleet, onClick: (ShipType?)->Unit, currShip: ShipTyp
 }
 
 @Composable
-fun DirectionSelectorView(onClick: (Direction)->Unit, currDir: Direction) {
+fun DirectionSelectorView(onClick: (Direction) -> Unit, currDir: Direction) {
     Column(Modifier.border(BORDER_WIDTH.dp, Color.Blue).padding(PADDING.dp)) {
-        Direction.values().forEach {dir ->
+        Direction.values().forEach { dir ->
             Row(verticalAlignment = Alignment.CenterVertically) {
                 val func = { onClick(dir) }
                 val isSelected = dir === currDir
@@ -64,8 +63,14 @@ fun DirectionSelectorView(onClick: (Direction)->Unit, currDir: Direction) {
 }
 
 @Composable
-fun SideView(fleet: Fleet, onClickType : (ShipType?)->Unit, currType: ShipType?, onClickDirection : (Direction)->Unit, currDir : Direction) {
-    Column(horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.SpaceBetween){
+fun SideView(
+    fleet: Fleet,
+    onClickType: (ShipType?) -> Unit,
+    currType: ShipType?,
+    onClickDirection: (Direction) -> Unit,
+    currDir: Direction
+) {
+    Column(horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.SpaceBetween) {
         Spacer(Modifier.size(BOARD_CELL_SIZE.dp))
         ShipSelectorView(fleet, onClickType, currType)
 
