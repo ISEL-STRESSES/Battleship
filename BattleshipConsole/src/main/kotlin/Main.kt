@@ -1,5 +1,5 @@
 import battleship.model.Game
-import battleship.model.createGame
+import battleship.model.createEmptyGame
 import battleship.storage.MongoStorage
 import battleship.ui.getCommandsOO
 import battleship.ui.readCommand
@@ -15,7 +15,7 @@ private const val DATABASE_NAME = "BattleShip"
 fun main() {
     try {
         MongoDriver(DATABASE_NAME).use { drv ->
-            var game: Game = createGame()
+            var game: Game = createEmptyGame()
             val cmds = getCommandsOO(MongoStorage(drv))
             while (true) {
                 val (name, args) = readCommand()

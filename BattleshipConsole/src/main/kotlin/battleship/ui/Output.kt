@@ -71,42 +71,38 @@ fun Board.printShipData(row: Int) {
 
 fun Game.printStatus() {
     //Player turn or win status
-    if (state != GameState.SETUP) {
-        if (boardA.lost()) {
-            if (player === Player.A)
+    when(this) {
+        is GameSetup -> { }
+        is GameFight -> {
+            if (playerBoard.lost()) {
                 println(MESSAGE_LOSE)
-            else
+            } else if (enemyBoard.fleet.isNotEmpty() && enemyBoard.lost()) {
                 println(MESSAGE_WIN)
-        } else if (boardB != null && boardB.lost()) {
-            if (player === Player.B)
-                println(MESSAGE_LOSE)
+            }
+            if (isYourTurn())
+                println("Is your turn")
             else
-                println(MESSAGE_WIN)
-        }
-        if (player === turn) {
-            println("Is your turn")
-        } else {
-            println("Wait for other (use refresh command)")
+                println("Wait for other (use refresh command)")
+
         }
     }
-
 }
 
-fun printHorizontalSeperators(state: GameState) {
+fun printHorizontalSeparators(twoSeparators : Boolean) {
     print(horizontalSeparators) // Print top separator
-    if (state != GameState.SETUP)
+    if (twoSeparators)
         print(horizontalSeparators)
     println()
 }
 
 fun Game.printTop() {
     printColumnsIDX() // Prints column indexes
-    if (state != GameState.SETUP) {
+    if (this.hasStarted()) {
         print(" ")
         printColumnsIDX()
     }
     println()
-    printHorizontalSeperators(state)
+    printHorizontalSeparators(this.hasStarted())
 }
 
 /**
@@ -117,24 +113,23 @@ fun Game.print() {
     printTop()
 
     repeat(ROW_DIM) {
-        val playerBoard = getPlayerBoard(player)
+        val playerBoard = playerBoard
 
         val rowNumber = Row.values[it].number.toString().padStart(2).padEnd(3)
         print(rowNumber)
 
         playerBoard.printRow(it, false)
 
-        if (state != GameState.SETUP) {
-            val enemyBoard = getPlayerBoard(player.other())
+        if (this is GameFight) {
             print(" ".repeat(BOARD_SEPARATION))
             enemyBoard.printRow(it, true)
         } else {
-            boardA.printShipData(it)
+            playerBoard.printShipData(it)
         }
         println()
     }
 
-    printHorizontalSeperators(state)
+    printHorizontalSeparators(this.hasStarted())
 
     printStatus()
 }

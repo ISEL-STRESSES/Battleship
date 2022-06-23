@@ -1,6 +1,6 @@
 package battleship.storage
 
-import battleship.model.Game
+import battleship.model.GameFight
 import battleship.model.Player
 import battleship.model.board.Board
 
@@ -18,16 +18,16 @@ interface Storage {
      *  @param board board of the player
      *  @return represents the Player the client will assume
      */
-    fun start(name: String, board: Board): Player
+    suspend fun start(name: String, board: Board): Player
 
     /**
      * Update game state in database.
      * @param game Game information to store
      */
-    fun store(game: Game)
+    suspend fun store(game: GameFight)
 
     /**
      * Loads the new game state from the information stored in the storage.
      */
-    fun load(game: Game): Game
+    suspend fun load(game: GameFight): GameFight
 }

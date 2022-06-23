@@ -1,11 +1,11 @@
 package battleship.model
 
-import battleship.model.GameState.FIGHT
-import battleship.model.GameState.SETUP
 import battleship.model.PlayError.*
 import battleship.model.board.*
 import battleship.model.ship.ShipType
 import battleship.storage.Storage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 /**
  * available play errors
@@ -18,32 +18,22 @@ enum class PlayError {
     NONE, INVALID_SHOT, INVALID_TURN, GAME_OVER
 }
 
-/**
- * Keep the current state of the game.
- * @property SETUP setup stage where only PUT commands will be allowed;
- * @property FIGHT fight stage where you can do all the commands except the ones in the [SETUP] phase;
- */
-enum class GameState {
-    SETUP, FIGHT
-}
 
 /**
  * Central object that represents the battleship game
- * @property name name of the game
- * @property boardA [Board] of the first player
- * @property boardB [Board] of the second player
- * @property state current [GameState]
- * @property player game [Player]
- * @property turn current [Player] to make a turn.
+ * @property playerBoard [Board] of the first player
  */
-data class Game(
+sealed class Game(val playerBoard: Board)
+
+class GameSetup(playerBoard: Board) : Game(playerBoard)
+
+class GameFight(
+    playerBoard: Board,
+    val enemyBoard: Board,
     val name: String,
-    val boardA: Board,
-    val boardB: Board? = null,
-    val state: GameState = SETUP,
-    val player: Player = Player.A,
+    val player: Player,
     val turn: Player = Player.A
-)
+) : Game(playerBoard)
 
 /**
  * [Game] Function that will start the game if it meets the requirements
@@ -51,12 +41,17 @@ data class Game(
  * @param st storage to use
  * @return updated [Game]
  */
-fun Game.startGame(gameName: String, st: Storage): Game {
-    val gameFight = copy(name = gameName, state = FIGHT)
-    val player = st.start(gameName, boardA)
+suspend fun GameSetup.startGame(gameName: String, st: Storage): GameFight {
+    val player = st.start(gameName, playerBoard)
+    val gameFight = GameFight(playerBoard, Board(), name = gameName, player = Player.A)
     return if (player == Player.B) {
         val gameFromDB = st.load(gameFight)
-        val newGame = gameFight.copy(boardA = gameFromDB.boardA, boardB = boardA, state = FIGHT, player = Player.B)
+        val newGame = GameFight(
+            enemyBoard = gameFromDB.playerBoard,
+            playerBoard = playerBoard,
+            name = gameName,
+            player = Player.B
+        )
         newGame.also { st.store(it) }
     } else {
         gameFight
@@ -68,7 +63,7 @@ fun Game.startGame(gameName: String, st: Storage): Game {
  * @property [Game] battleship game;
  * @property [PutConsequence] after the put was done.
  */
-typealias GamePut = Pair<Game, PutConsequence>
+typealias GamePut = Pair<GameSetup, PutConsequence>
 
 
 /**
@@ -78,10 +73,10 @@ typealias GamePut = Pair<Game, PutConsequence>
  * @param dir [Direction] of the ship
  * @return updated [GamePut]
  */
-fun Game.putShip(type: ShipType, pos: Position, dir: Direction): GamePut {
+fun GameSetup.putShip(type: ShipType, pos: Position, dir: Direction): GamePut {
 
-    val result = boardA.putShip(type, pos, dir)
-    return GamePut(this.copy(boardA = result.first), result.second)
+    val result = playerBoard.putShip(type, pos, dir)
+    return GamePut(GameSetup(result.first), result.second)
 }
 
 /**
@@ -90,38 +85,37 @@ fun Game.putShip(type: ShipType, pos: Position, dir: Direction): GamePut {
  * @param type Type of ship.
  * @return Returns a game and it's consequence.
  */
-fun Game.putRandomShip(type: ShipType): GamePut {
-    val result = boardA.putRandomShip(type)
-    return GamePut(this.copy(boardA = result.first), result.second)
+fun GameSetup.putRandomShip(type: ShipType): GamePut {
+    val result = playerBoard.putRandomShip(type)
+    return GamePut(GameSetup(result.first), result.second)
 }
 
 
 /**
- * [Game] Function that will add all ships if it's a valid command
+ * [GameSetup] Function that will add all ships if it's a valid command
  * @return updated [Game]
  */
-fun Game.putAllShips(): GamePut {
-    val result = boardA.putAllShips()
-    return GamePut(this.copy(boardA = result.first), result.second)
+fun GameSetup.putAllShips(): GamePut {
+    val result = playerBoard.putAllShips()
+    return GamePut(GameSetup(result.first), result.second)
 }
 
 
 /**
- *[Game] Function that will remove a ship if it's a valid command and ship
+ * [GameSetup] Function that will remove a ship if it's a valid command and ship
  * @param pos [Position] to remove the ship from
  * @return updated [Game]
  */
-fun Game.removeShip(pos: Position): Game {
-    val newBoard = boardA.removeShip(pos)
-    return this.copy(boardA = newBoard)
+fun GameSetup.removeShip(pos: Position): GameSetup {
+    return GameSetup(playerBoard.removeShip(pos))
 }
 
 /**
- *[Game] Function that will remove all ships if it's a valid command
+ *[Game] Function that will empty the player board
  * @return updated [Game]
  */
-fun Game.removeAll(): Game {
-    return this.copy(boardA = Board())
+fun GameSetup.removeAll(): GameSetup {
+    return createEmptyGame()
 }
 
 
@@ -129,33 +123,21 @@ fun Game.removeAll(): Game {
  *[Game] Function that will create the initial game
  * @return created game
  */
-fun createGame() = Game("", Board(), Board())
-
-/**
- *[Game] Function that will get a player board associated with a player, should not be used when boardB is null
- * @param target [Player] to find the board
- * @return Player [Board]
- * @exception IllegalStateException Cannot get other board, if boardb is nullable
- */
-fun Game.getPlayerBoard(target: Player): Board? {
-    return if (target == Player.A) boardA else boardB
-}
-
+fun createEmptyGame() = GameSetup(Board())
 
 /**
  * [Game] Function that will make a shot if it's a valid state and a valid shot
  * @param pos [Position] from the shot
  * @return [GameShot] with the updated [Game] and [ShotConsequence] associated
  */
-fun Game.makeShot(pos: Position, st: Storage): GameShot {
+fun GameFight.makeShot(pos: Position, st: Storage, scope: CoroutineScope): GameShot {
 
-    val playerBoard = getPlayerBoard(player)
-    val enemyBoard = getPlayerBoard(player.other())
-    checkNotNull(enemyBoard)
+    if (isNotYourTurn()) {
+        return GameShot(this, ShotConsequence.NOT_YOUR_TURN, null)
+    }
+    println("makeShot actually happened in model")
+
     val boardResult = enemyBoard.makeShot(pos)
-
-    val newBoardA = if (playerBoard == boardA) boardA else boardResult.first
-    val newBoardB = if (playerBoard == boardB) boardB else boardResult.first
 
     if (boardResult.second === ShotConsequence.INVALID)
         return GameShot(this, ShotConsequence.INVALID, null)
@@ -165,9 +147,16 @@ fun Game.makeShot(pos: Position, st: Storage): GameShot {
     else
         turn
 
-    val newGame = copy(boardA = newBoardA, boardB = newBoardB, turn = newTurn)
+    val newGame = GameFight(playerBoard, boardResult.first, name, player, newTurn)
 
-    st.store(newGame)
+    scope.launch { st.store(newGame) }
 
     return GameShot(newGame, boardResult.second, boardResult.third)
 }
+
+fun GameFight.isYourTurn() = turn === player
+fun GameFight.isNotYourTurn() = !isYourTurn()
+
+fun Game.hasStarted() = this !is GameSetup
+fun Game.hasNotStarted() = !hasStarted()
+

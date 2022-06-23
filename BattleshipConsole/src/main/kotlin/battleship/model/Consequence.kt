@@ -16,7 +16,7 @@ typealias PutResult = Pair<Board, PutConsequence>
  * @property [Game] battleship game;
  * @property [ShotConsequence] after the shot was taken.
  */
-typealias GameShot = Triple<Game, ShotConsequence, ShipType?>
+typealias GameShot = Triple<GameFight, ShotConsequence, ShipType?>
 
 /**
  * Keeps the game and the correspondent consequence of a shot.
@@ -34,12 +34,14 @@ typealias ShotResult = Triple<Board, ShotConsequence, ShipType?>
  * @property INVALID shot was invalid
  */
 enum class ShotConsequence {
-    MISS, HIT, SUNK, INVALID
+    MISS, HIT, SUNK, INVALID, NOT_YOUR_TURN
 }
 
 /**
  * Class that as all the possible outcomes of the put Command.
  */
 enum class PutConsequence { NONE, INVALID_SHIP, INVALID_POSITION, INVALID_RANDOM }
+
+
 
 

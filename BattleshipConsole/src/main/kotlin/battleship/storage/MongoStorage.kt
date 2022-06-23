@@ -1,10 +1,14 @@
 package battleship.storage
 
 import battleship.model.Game
+import battleship.model.GameFight
 import battleship.model.Player
 import battleship.model.board.*
+import battleship.model.chooseUponPlayer
 import battleship.model.ship.Ship
 import battleship.model.ship.toShipType
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import mongoDB.*
 
 private const val SHIP_INDICATOR = "S"
@@ -18,7 +22,7 @@ class MongoStorage(driver: MongoDriver) : Storage {
     /**
      * Representation of the game state in a document.
      */
-    data class Doc(val _id: String, val contentA: List<String>, val contentB: List<String>, val turn: String)
+    private data class Doc(val _id: String, val contentA: List<String>, val contentB: List<String>, val turn: String)
 
     /**
      * The collection with all the games.
@@ -99,29 +103,33 @@ class MongoStorage(driver: MongoDriver) : Storage {
      * @param board board of the player to start the game with
      * @return [Player] that started the game
      */
-    override fun start(name: String, board: Board): Player {
-        val doc = collection.getDocument(name)
-        if (doc != null) {
-            if (doc.contentA.isNotEmpty() && doc.contentB.isEmpty()) {
-                collection.replaceDocument(Doc(name, doc.contentA, board.serialize(), doc.turn))
-                return Player.B
-            } else {
-                collection.deleteDocument(name)
+    override suspend fun start(name: String, board: Board): Player =
+        withContext(Dispatchers.IO) {
+            val doc = collection.getDocument(name)
+            if (doc != null) {
+                if (doc.contentA.isNotEmpty() && doc.contentB.isEmpty()) {
+                    collection.replaceDocument(Doc(name, doc.contentA, board.serialize(), doc.turn))
+                    return@withContext Player.B
+                } else {
+                    collection.deleteDocument(name)
+                }
             }
+            val boardAEntry = board.serialize()
+            collection.insertDocument(Doc(name, boardAEntry, emptyList(), Player.A.name))
+            return@withContext Player.A
+            //TODO: este return with context parece que vai dar barraca
         }
-        val boardAEntry = board.serialize()
-        collection.insertDocument(Doc(name, boardAEntry, emptyList(), Player.A.name))
-        return Player.A
-    }
 
     /**
      * Function that will store a game in the DB making the needed changes.
      * @param game [Game] to store.
      */
-    override fun store(game: Game) {
-        val boardAEntry = game.boardA.serialize()
-        val boardBEntry = if (game.boardB != null) game.boardB.serialize() else emptyList()
-        collection.replaceDocument(Doc(game.name, boardAEntry, boardBEntry, game.turn.name))
+    override suspend fun store(game: GameFight) {
+        withContext(Dispatchers.IO) {
+            val boardAEntry = chooseUponPlayer(game.player, game.playerBoard, game.enemyBoard).serialize()
+            val boardBEntry = chooseUponPlayer(game.player.other(), game.playerBoard, game.enemyBoard).serialize()
+            collection.replaceDocument(Doc(game.name, boardAEntry, boardBEntry, game.turn.name))
+        }
     }
 
     /**
@@ -129,11 +137,20 @@ class MongoStorage(driver: MongoDriver) : Storage {
      * @param game [Game] to load.
      *
      */
-    override fun load(game: Game): Game {
-        val doc = collection.getDocument(game.name)
-        checkNotNull(doc) { "No document in Load" }
-        val boardA = doc.contentA.deserialize()
-        val boardB = if (doc.contentB.isNotEmpty()) doc.contentB.deserialize() else null
-        return game.copy(boardA = boardA, boardB = boardB, turn = Player.valueOf(doc.turn))
-    }
+    override suspend fun load(game: GameFight): GameFight =
+        withContext(Dispatchers.IO) {
+            val doc = collection.getDocument(game.name)
+            checkNotNull(doc) { "No document in Load" }
+            val boardA = doc.contentA.deserialize()
+            val boardB = if (doc.contentB.isNotEmpty()) doc.contentB.deserialize() else Board()
+            val playerBoard = chooseUponPlayer(game.player, boardA, boardB)
+            val enemyBoard = chooseUponPlayer(game.player.other(), boardA, boardB)
+            return@withContext GameFight(
+                playerBoard,
+                enemyBoard,
+                game.name,
+                player = game.player,
+                turn = Player.valueOf(doc.turn)
+            )
+        }
 }
