@@ -183,7 +183,6 @@ fun Board.putRandomShip(type: ShipType): PutResult {
  *
  */
 fun Board.putAllShips(): PutResult {
-
     if (fleet.isComplete()) return PutResult(this, PutConsequence.NONE)
 
     val shipTypes = ShipType.values.filter { shipType -> fleet.count { shipType === it.type } < shipType.fleetQuantity }

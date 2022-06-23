@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="battleship.model.ShipTypeTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2022-06-23T22:12:01" hostname="navi" time="0.037">
+  <properties/>
+  <testcase name="get ShipType by name prefix()" classname="battleship.model.ShipTypeTest" time="0.025"/>
+  <testcase name="get ShipType fails()" classname="battleship.model.ShipTypeTest" time="0.008"/>
+  <testcase name="get ShipType by number of squares()" classname="battleship.model.ShipTypeTest" time="0.0"/>
+  <testcase name="Each ship type has a different name and number of squares()" classname="battleship.model.ShipTypeTest" time="0.0"/>
+  <testcase name="Make sure all ships are valid()" classname="battleship.model.ShipTypeTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

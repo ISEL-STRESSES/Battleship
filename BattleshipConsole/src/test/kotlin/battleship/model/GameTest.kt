@@ -12,44 +12,12 @@ import kotlin.test.assertTrue
 
 class GameTest {
     @Test
-    fun `check create game and checkPutState`() {
-
+    fun `check create game`() {
+        val sut = createEmptyGame()
+        assertTrue {
+            sut.playerBoard.fleet.isEmpty() &&
+            sut.playerBoard.grid.isEmpty()
+        }
     }
-
-    @Test
-    fun `Test put command`() {
-
-    }
-
-    @Test
-    fun `Test invalid put command`() {
-
-    }
-
-    @Test
-    fun `Test remove one ship`() {
-
-    }
-
-    @Test
-    fun `Test Remove All`() {
-
-    }
-
-    @Test
-    fun `Test Shot`() {
-
-    }
-
-    @Test
-    fun `Test Sunk Shot`() {
-
-    }
-
-    @Test
-    fun `Test Failed Shot`() {
-
-    }
-
 }
 
