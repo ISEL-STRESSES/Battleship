@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="battleship.model.board.RowTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2022-06-23T21:06:46" hostname="navi" time="0.005">
+  <properties/>
+  <testcase name="ordinal of rows()" classname="battleship.model.board.RowTest" time="0.001"/>
+  <testcase name="row from number()" classname="battleship.model.board.RowTest" time="0.001"/>
+  <testcase name="number of each row()" classname="battleship.model.board.RowTest" time="0.001"/>
+  <testcase name="row from index()" classname="battleship.model.board.RowTest" time="0.001"/>
+  <testcase name="number of rows()" classname="battleship.model.board.RowTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

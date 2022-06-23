@@ -1,13 +1,12 @@
 package battleship.ui
 
 import battleship.model.*
-import battleship.model.board.isComplete
-import battleship.model.board.toDirection
-import battleship.model.board.toPosition
+import battleship.model.board.*
 import battleship.model.ship.toShipType
 import battleship.model.ship.toShipTypeOrNull
 import battleship.storage.Storage
 import kotlinx.coroutines.runBlocking
+import org.litote.kmongo.MongoOperator
 
 private const val ERROR_INVALID_ARGUMENTS = "Invalid Arguments"
 
@@ -49,7 +48,7 @@ fun getCommandsOO(st: Storage) = mapOf(
     "PUT" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game {
             require(args.size == 1 || args.size == 3) { ERROR_INVALID_ARGUMENTS }
-            check(game.hasNotStarted()) { "Can't change fleet after game started" }
+            check(game.hasNotStarted) { "Can't change fleet after game started" }
 
             game as GameSetup
 
@@ -90,7 +89,7 @@ fun getCommandsOO(st: Storage) = mapOf(
     "REMOVE" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game {
             require(args.size == 1) { ERROR_INVALID_ARGUMENTS }
-            check(game.hasNotStarted()) { "Can't change fleet after game started" }
+            check(game.hasNotStarted) { "Can't change fleet after game started" }
 
             game as GameSetup
 
@@ -123,7 +122,7 @@ fun getCommandsOO(st: Storage) = mapOf(
     "START" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game {
             require(args.size == 1 && args[0].isNotBlank()) { ERROR_INVALID_ARGUMENTS }
-            check(game.hasNotStarted()) { "Game Already Started" }
+            check(game.hasNotStarted) { "Game Already Started" }
             check(game.playerBoard.fleet.isComplete()) { "Complete fleet before start" }
             val gameName = args[0]
             return runBlocking {
@@ -133,7 +132,7 @@ fun getCommandsOO(st: Storage) = mapOf(
 
         override fun show(game: Game) {
             game as GameFight
-            println("You are the Player ${game.player.id}")
+            println("You are the player ${game.player.name}")
         }
 
         override val argsSyntax: String
@@ -143,7 +142,7 @@ fun getCommandsOO(st: Storage) = mapOf(
     "SHOT" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game {
             require(args.size == 1) { ERROR_INVALID_ARGUMENTS }
-            check(game.hasStarted()) { "Can't make a shot before start" }
+            check(game.hasStarted) { "Can't make a shot before start" }
             return with(game as GameFight) {
                 check(game.enemyBoard.fleet.isNotEmpty()) { "Wait for other player" }
                 runBlocking {
@@ -165,7 +164,7 @@ fun getCommandsOO(st: Storage) = mapOf(
     },
     "REFRESH" to object : CommandsOO() {
         override fun action(game: Game, args: List<String>): Game {
-            check(game.hasStarted()) { "Can't refresh an open game" }
+            check(game.hasStarted) { "Can't refresh an open game" }
             return runBlocking {
                 st.load(game as GameFight)
             }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="battleship.model.board.ColumnTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2022-06-23T21:06:45" hostname="navi" time="0.033">
+  <properties/>
+  <testcase name="letter of each column()" classname="battleship.model.board.ColumnTest" time="0.02"/>
+  <testcase name="column from index()" classname="battleship.model.board.ColumnTest" time="0.008"/>
+  <testcase name="number of columns()" classname="battleship.model.board.ColumnTest" time="0.001"/>
+  <testcase name="column from letter()" classname="battleship.model.board.ColumnTest" time="0.001"/>
+  <testcase name="ordinal of column()" classname="battleship.model.board.ColumnTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
