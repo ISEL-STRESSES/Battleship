@@ -75,16 +75,27 @@ class ModelView(
         }
     }
 
-    fun waitForOther() {
+    private fun startAutoRefresh() {
+        setAutoRefresh(true)
+    }
+
+    fun setAutoRefresh(auto : Boolean) {
+        if (auto) {
+            val g = getGame<GameFight>()
+            if (g.isNotYourTurn())
+                waitForOther()
+        }
+        else
+            cancelAutoRefresh()
+    }
+
+    private fun waitForOther() {
         var g = getGame<GameFight>()
-        if(g.isYourTurn()) { //TODO: g.isOver()
-            jobAutoRefresh = scope.launch {
-                do {
-                    delay(AUTO_REFRESH_TIMER)
-                    g = storage.load(g)
-                } while (g.isNotYourTurn())
-                game = g
-                jobAutoRefresh = null
+        jobAutoRefresh = scope.launch {
+            while(g.winner != null) {
+                g = getGame()
+                delay(AUTO_REFRESH_TIMER)
+                game = storage.load(g)
             }
         }
     }
@@ -128,8 +139,10 @@ class ModelView(
         with(getGame<GameSetup>())
         {
             val res = this.putAllShips()
-            if (res.second === PutConsequence.NONE)
+            if (res.second === PutConsequence.NONE) {
                 game = res.first
+                selectAvailableType()
+            }
         }
     }
 
@@ -137,6 +150,7 @@ class ModelView(
         with(getGame<GameSetup>())
         {
             game = removeAll()
+            selectedType = ShipType.values.first()
         }
     }
 
@@ -160,8 +174,10 @@ class ModelView(
         }
     }
 
-    fun setShipType(type: ShipType?) {
-        selectedType = type
+    fun setShipType(type: ShipType) {
+        selectedType = type.takeIf {
+            shipType -> game.playerBoard.fleet.count { shipType === it.type } < type.fleetQuantity
+        }
     }
 
     fun setDirection(direction: Direction) {
@@ -173,5 +189,3 @@ class ModelView(
     }
 
 }
-
-
