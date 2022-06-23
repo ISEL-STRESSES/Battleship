@@ -30,7 +30,6 @@ class ShipType private constructor(val name: String, val squares: Int, val fleet
  *      else return null
  */
 fun String.toShipTypeOrNull(): ShipType? {
-    // TODO: averiguar se podemos reduzir linhas no toShipTypeOrNull()
     val num = this.toIntOrNull()
     return if (num == null) {
         val head = ShipType.values.firstOrNull { it.name.startsWith(this, true) }

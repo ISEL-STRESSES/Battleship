@@ -79,7 +79,7 @@ fun Game.printStatus() {
             } else if (enemyBoard.fleet.isNotEmpty() && enemyBoard.lost()) {
                 println(MESSAGE_WIN)
             }
-            if (isYourTurn())
+            if (isYourTurn)
                 println("Is your turn")
             else
                 println("Wait for other (use refresh command)")
@@ -97,12 +97,12 @@ fun printHorizontalSeparators(twoSeparators : Boolean) {
 
 fun Game.printTop() {
     printColumnsIDX() // Prints column indexes
-    if (this.hasStarted()) {
+    if (this.hasStarted) {
         print(" ")
         printColumnsIDX()
     }
     println()
-    printHorizontalSeparators(this.hasStarted())
+    printHorizontalSeparators(this.hasStarted)
 }
 
 /**
@@ -129,7 +129,7 @@ fun Game.print() {
         println()
     }
 
-    printHorizontalSeparators(this.hasStarted())
+    printHorizontalSeparators(this.hasStarted)
 
     printStatus()
 }

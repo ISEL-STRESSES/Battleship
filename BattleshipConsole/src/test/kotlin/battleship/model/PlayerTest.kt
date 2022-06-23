@@ -15,16 +15,4 @@ class PlayerTest {
         assertSame(playerA.other().other(), playerA)
         assertSame(playerB.other().other(), playerB)
     }
-
-    @Test
-    fun `Test get Player by id`() {
-
-        val playerA = Player.A
-        val playerB = Player.B
-
-        assertEquals(playerA.id, 'A')
-        assertEquals(playerB.id, 'B')
-        assertSame(playerA.id + 1, playerB.id)
-        assertSame(playerB.id - 1, playerA.id)
-    }
 }
