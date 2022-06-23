@@ -42,8 +42,11 @@ fun calculateColor(cell: Cell?, hidden: Boolean) =
     }
 
 @Composable
-fun CellView(cell: Cell?, hidden: Boolean, onClick: () -> Unit) {
-    val modifier = Modifier.size(BOARD_CELL_SIZE.dp).background(Color.White).clickable(onClick = onClick)
+fun CellView(cell: Cell?, hidden: Boolean, canClick : Boolean, onClick: () -> Unit) {
+    val modifier = Modifier
+        .size(BOARD_CELL_SIZE.dp)
+        .background(Color.White)
+        .clickable(enabled = canClick, onClick = onClick)
     val m = modifier.background(calculateColor(cell, hidden))
     Box(m) {
         when (cell) {

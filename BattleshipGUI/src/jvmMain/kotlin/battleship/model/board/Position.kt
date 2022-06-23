@@ -86,7 +86,7 @@ fun Position.movePosition(dir: Direction, amount: Int): Position {
  */
 fun getPositionsFromLine(pos: Position, dir: Direction, length: Int) = List(length) { pos.movePosition(dir, it) }
 
-/** Returns a list of all positions in a rectangle to the destination positon
+/** Returns a list of all positions in a rectangle to the destination position
  * @param topLeft Top left position of the hit box.
  * @param bottomRight Bottom right position of the hit box.
  * @return Returns a Set with the Box positions.

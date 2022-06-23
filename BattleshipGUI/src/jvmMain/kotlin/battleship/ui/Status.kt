@@ -13,14 +13,19 @@ import androidx.compose.ui.unit.dp
 import battleship.model.GameFight
 import battleship.model.GameSetup
 import battleship.model.isYourTurn
+import battleship.model.winner
 
 const val STATUS_BAR_HEIGHT = 48
 const val STATUS_BORDER_WIDTH = 2
+const val STATUS_DISTANCE_BETWEEN_TEXTS = 10
 val STATUS_BORDER_COLOR = Color.Black
 
 const val STATUS_PROMPT_SETUP = "Edit Fleet"
 const val STATUS_PROMPT_FIGHT_PLAY_ALLOWED = "It's your turn"
 const val STATUS_PROMPT_FIGHT_PLAY_NOT_ALLOWED = "Sit yo a** down, not your turn"
+
+const val STATUS_WARN_VICTORY = "You WIN!"
+const val STATUS_WARN_DEFEAT = "You LOSE! ez clap"
 
 @Composable
 fun StatusView(model: ModelView, message: String? = null) = Row(
@@ -35,15 +40,29 @@ fun StatusView(model: ModelView, message: String? = null) = Row(
             }
             is GameFight -> {
                 // Bold Game
-                Box {
-                    Text("Game: ", fontWeight = FontWeight.Bold)
+                Row {
+                    Text("Game:", fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.size(STATUS_DISTANCE_BETWEEN_TEXTS.dp))
                     Text(name)
+                    winner?.let {
+                        val msg = when (it) {
+                            player -> {
+                                STATUS_WARN_VICTORY
+                            }
+                            player.other() -> {
+                                STATUS_WARN_DEFEAT
+                            }
+                            else -> ""
+                        }
+                        Spacer(Modifier.size(STATUS_DISTANCE_BETWEEN_TEXTS.dp))
+                        Text(text = msg, fontWeight = FontWeight.ExtraBold)
+                    }
                 }
-                val turnMsg = if (this.isYourTurn())
-                        STATUS_PROMPT_FIGHT_PLAY_ALLOWED
-                    else
-                        STATUS_PROMPT_FIGHT_PLAY_NOT_ALLOWED
-                Text(turnMsg)
+                val turnMsg = if (this.isYourTurn)
+                    STATUS_PROMPT_FIGHT_PLAY_ALLOWED
+                else
+                    STATUS_PROMPT_FIGHT_PLAY_NOT_ALLOWED
+                Text(turnMsg, fontWeight = FontWeight.Bold)
             }
         }
         if (message != null) {
@@ -53,4 +72,3 @@ fun StatusView(model: ModelView, message: String? = null) = Row(
     }
 
 }
-

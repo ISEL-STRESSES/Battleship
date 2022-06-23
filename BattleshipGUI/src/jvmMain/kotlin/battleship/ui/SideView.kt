@@ -13,7 +13,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import battleship.model.board.Direction
 import battleship.model.board.Fleet
-import battleship.model.board.isComplete
 import battleship.model.ship.ShipType
 
 
@@ -33,15 +32,11 @@ fun ShipSelectorView(fleet: Fleet, onClick: (ShipType) -> Unit, currShip: ShipTy
                 val isSelected = type === currShip
                 RadioButton(selected = isSelected, onClick = func, enabled = fleetQuantity < type.fleetQuantity, colors = RadioButtonDefaults.colors(Color.Cyan))
                 Text("$fleetQuantity of ${type.fleetQuantity}")
-                // cell representations
                 repeat(type.squares) {
-                    // TODO: get rid of this reeated code, reuse CellView
                     Spacer(Modifier.size(1.dp))
                     val modifier = Modifier.size(24.dp)
                     val m = modifier.background(CELL_COLOR_SHIP)
-                    Box(m) {
-                        // TODO: add sprite in case cell is on fire kachow
-                    }
+                    Box(m)
                 }
             }
         }

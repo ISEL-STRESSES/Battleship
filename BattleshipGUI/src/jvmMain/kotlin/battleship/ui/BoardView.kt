@@ -13,14 +13,13 @@ import battleship.model.board.*
 
 const val BOARD_LINE_SIZE = 1
 
-//TODO: deixar esta equacao para depois, ja que o rodrigo nao para de chatear
-//TODO: Carlos Job
+
 const val BOARD_WIDTH = (BOARD_CELL_SIZE + BOARD_LINE_SIZE) * (COLUMN_DIM + 2)
 const val BOARD_HEIGHT = (BOARD_CELL_SIZE + BOARD_LINE_SIZE) * (ROW_DIM + 1)
 
 
 @Composable
-fun BoardView(board: Board, hidden: Boolean, onClickCell: (Position) -> Unit) {
+fun BoardView(board: Board, hidden: Boolean, canClick : Boolean, onClickCell: (Position) -> Unit) {
     Column {
         repeat(ROW_DIM) { line ->
             if (line != 0) Spacer(Modifier.height(BOARD_LINE_SIZE.dp))
@@ -30,19 +29,16 @@ fun BoardView(board: Board, hidden: Boolean, onClickCell: (Position) -> Unit) {
                     if (col != 0) Spacer(Modifier.width(BOARD_LINE_SIZE.dp))
                     val pos = Position[col, line]
                     val cell = board.grid[pos]
-                    CellView(cell, hidden, onClick = { onClickCell(pos) })
+                    CellView(cell, hidden, canClick) { onClickCell.invoke(pos) }
                 }
             }
         }
     }
 }
 
-// TODO: should padding of boardline be in coordinate modifier?
-val coordinateModifier = Modifier.size(BOARD_CELL_SIZE.dp)
-
 @Composable
 fun IdentifierView(str: String) {
-    Box(contentAlignment = Alignment.Center, modifier = coordinateModifier) {
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(BOARD_CELL_SIZE.dp)) {
         Text(textAlign = TextAlign.Center, text = str)
     }
 }
@@ -70,7 +66,7 @@ fun NumberAxisView() {
 }
 
 @Composable
-fun BoardWithGuidesView(board: Board, hidden: Boolean, onClickCell: (Position) -> Unit) {
+fun BoardWithGuidesView(board: Board, hidden: Boolean, canClick : Boolean, onClickCell: (Position) -> Unit) {
     Column(Modifier.background(Color.White).width(BOARD_WIDTH.dp).height(BOARD_HEIGHT.dp)) {
         //ROW with column identifiers
         Row {
@@ -85,7 +81,7 @@ fun BoardWithGuidesView(board: Board, hidden: Boolean, onClickCell: (Position) -
             // Left side numbers
             NumberAxisView()
             // Board 
-            BoardView(board, hidden, onClickCell)
+            BoardView(board, hidden, canClick, onClickCell)
         }
     }
 }

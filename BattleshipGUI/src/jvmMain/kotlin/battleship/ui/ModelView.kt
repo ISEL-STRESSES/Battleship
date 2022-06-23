@@ -14,10 +14,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 const val MESSAGE_TIMER = 4000L
-const val AUTO_REFRESH_TIMER = 3000L
+const val AUTO_REFRESH_TIMER = 1000L
 
-const val STATUS_WARN_VICTORY = "You WIN!"
-const val STATUS_WARN_DEFEAT = "You LOSE! ez clap"
 
 const val STATUS_WARN_INVALID_PUT_SHIP = "Ship type all used up"
 const val STATUS_WARN_INVALID_PUT_POSITION = "Invalid Position"
@@ -34,12 +32,15 @@ class ModelView(
         private set
     var openDialogName by mutableStateOf(false)
         private set
+
+    var warning by mutableStateOf<String?>(null)
     var message by mutableStateOf<String?>(null)
         private set
     private var messageJob by mutableStateOf<Job?>(null)
     var jobAutoRefresh by mutableStateOf<Job?>(null)
         private set
-
+    var autoRefreshEnabled by mutableStateOf(true)
+       private set
     var selectedType by mutableStateOf<ShipType?>(ShipType.values.first())
         private set
     var selectedDirection by mutableStateOf(Direction.HORIZONTAL)
@@ -49,6 +50,10 @@ class ModelView(
         messageJob?.cancel()
         message = msg
         messageJob = scope.launch { delay(MESSAGE_TIMER); message = null }
+    }
+
+    fun warningAck() {
+        warning = null
     }
 
     inline fun <reified T> getGame(): T =
@@ -65,45 +70,54 @@ class ModelView(
         if (name == null) {
             openDialogName = true
         } else {
-            //see if breaks
+
+            if(!name.all { it.isWhitespace() || it.isLetterOrDigit()}) {
+                warning = "Game name should only have alphanumeric characters and whitespaces"
+                return
+            }
             val currGame = getGame<GameSetup>()
             scope.launch {
                 game = currGame.startGame(name, storage)
                 openDialogName = false
-                startAutoRefresh()
+                waitForOther()
             }
         }
     }
-
-    private fun startAutoRefresh() {
-        setAutoRefresh(true)
-    }
-
     fun setAutoRefresh(auto : Boolean) {
-        if (auto) {
-            val g = getGame<GameFight>()
-            if (g.isNotYourTurn())
-                waitForOther()
+        autoRefreshEnabled = auto
+        if (autoRefreshEnabled) {
+            waitForOther()
         }
-        else
+        else {
             cancelAutoRefresh()
+        }
     }
 
+    private fun shouldAutoRefresh(g : GameFight) =
+        (g.isNotYourTurn || (g.isYourTurn && g.enemyBoard.fleet.isEmpty())) && g.winner == null
+
+    /**
+     * If necessary, launch a coroutine to do periodic readings until it's the turn to play.
+     * To call at the start of the game and after each move.
+     */
     private fun waitForOther() {
         var g = getGame<GameFight>()
+        if (autoRefreshEnabled && !shouldAutoRefresh(g)) return
         jobAutoRefresh = scope.launch {
-            while(g.winner != null) {
-                g = getGame()
+            do {
                 delay(AUTO_REFRESH_TIMER)
-                game = storage.load(g)
-            }
+                g = storage.load(g)
+                game = g
+            } while (shouldAutoRefresh(g))
+            jobAutoRefresh = null
         }
     }
 
 
-    fun cancelAutoRefresh() {
+    private fun cancelAutoRefresh() {
         jobAutoRefresh?.cancel()
         jobAutoRefresh = null
+        autoRefreshEnabled = false
     }
 
     fun putShip(pos: Position) {
@@ -156,13 +170,17 @@ class ModelView(
 
     fun makeShot(pos: Position) {
         with(getGame<GameFight>()) {
+            if(winner != null) return
+
             if (this.enemyBoard.fleet.isEmpty()) {
                 sendMessage(STATUS_WARN_INVALID_SHOT_WAIT_FOR_OTHER)
                 return
             }
             val shotResult = makeShot(pos, storage, scope)
-            if (shotResult.second !== ShotConsequence.INVALID && shotResult.second !== ShotConsequence.NOT_YOUR_TURN)
+            if (shotResult.second !== ShotConsequence.INVALID && shotResult.second !== ShotConsequence.NOT_YOUR_TURN) {
                 game = shotResult.first
+                waitForOther()
+            }
             else {
                 when (shotResult.second) {
                     ShotConsequence.NOT_YOUR_TURN -> sendMessage(STATUS_WARN_INVALID_SHOT_TURN)

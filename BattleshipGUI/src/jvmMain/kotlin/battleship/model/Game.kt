@@ -132,10 +132,9 @@ fun createEmptyGame() = GameSetup(Board())
  */
 fun GameFight.makeShot(pos: Position, st: Storage, scope: CoroutineScope): GameShot {
 
-    if (isNotYourTurn()) {
+    if (isNotYourTurn) {
         return GameShot(this, ShotConsequence.NOT_YOUR_TURN, null)
     }
-    println("makeShot actually happened in model")
 
     val boardResult = enemyBoard.makeShot(pos)
 
@@ -154,20 +153,18 @@ fun GameFight.makeShot(pos: Position, st: Storage, scope: CoroutineScope): GameS
     return GameShot(newGame, boardResult.second, boardResult.third)
 }
 
-fun GameFight.isYourTurn() = turn === player
-fun GameFight.isNotYourTurn() = !isYourTurn()
+val GameFight.isYourTurn get() = turn === player
+val GameFight.isNotYourTurn get() = !isYourTurn
 
-fun Game.hasStarted() = this !is GameSetup
-fun Game.hasNotStarted() = !hasStarted()
+val Game.hasStarted get() = this !is GameSetup
+val Game.hasNotStarted get() = !hasStarted
 
 val GameFight.winner : Player?
     get() {
         return if(playerBoard.lost())
-            player
-        else if(enemyBoard.lost())
             player.other()
+        else if(enemyBoard.fleet.isNotEmpty() && enemyBoard.lost())
+            player
         else
             null
     }
-
-

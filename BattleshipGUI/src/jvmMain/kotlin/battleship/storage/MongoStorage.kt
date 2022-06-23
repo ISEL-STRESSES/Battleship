@@ -117,7 +117,6 @@ class MongoStorage(driver: MongoDriver) : Storage {
             val boardAEntry = board.serialize()
             collection.insertDocument(Doc(name, boardAEntry, emptyList(), Player.A.name))
             return@withContext Player.A
-            //TODO: este return with context parece que vai dar barraca
         }
 
     /**

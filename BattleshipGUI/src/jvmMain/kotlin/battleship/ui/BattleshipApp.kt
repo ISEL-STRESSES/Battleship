@@ -14,8 +14,8 @@ import battleship.model.board.Position
 import battleship.model.board.ShipCell
 import battleship.model.hasNotStarted
 import battleship.model.ship.ShipType
+import battleship.model.winner
 import battleship.storage.Storage
-import tds.galo.ui.DialogName
 
 private const val SPACER = 5
 
@@ -24,36 +24,39 @@ fun FrameWindowScope.BattleshipApp(storage: Storage, onExit: () -> Unit) {
     val scope = rememberCoroutineScope()
     val model = remember { ModelView(storage, scope) }
     MaterialTheme {
-        GaloMenu(model, onExit = onExit)
+        GameMenu(model, onExit = onExit)
 
         if (model.openDialogName) {
             DialogName(onCancel = { model.closeDialog() }) {
-                //TODO: improve sanitization
-                val sanitizedInput = it.trim()
-                model.start(sanitizedInput)
+                val trimmed = it.trim()
+                model.start(trimmed)
+            }
+            model.warning?.let {
+                DialogWarning(it) { model.warningAck() }
             }
         }
 
         Column {
-            Row(modifier = Modifier.width(((BOARD_WIDTH * 2) + BOARD_CELL_SIZE).dp).height(BOARD_HEIGHT.dp)) {
+            Row(modifier = Modifier.width(((BOARD_WIDTH * 2)).dp).height(BOARD_HEIGHT.dp)) {
                 ///////////////
                 // Left Side //
                 ///////////////
-                val onClickCell: (Position) -> Unit = { pos ->
-                    if (model.game.hasNotStarted()) {
-                        val cell = model.game.playerBoard.grid[pos]
-                        if (cell is ShipCell)
-                            model.removeShip(pos)
-                        else
-                            model.putShip(pos)
-                    }
-                }
-                BoardWithGuidesView(model.game.playerBoard, false, onClickCell)
+                val onClickCell: ((Position) -> Unit) =
+                        { pos ->
+                            if (model.game.hasNotStarted) {
+                                val cell = model.game.playerBoard.grid[pos]
+                                if (cell is ShipCell)
+                                    model.removeShip(pos)
+                                else
+                                    model.putShip(pos)
+                            }
+                        }
+                BoardWithGuidesView(model.game.playerBoard, false, model.game.hasNotStarted, onClickCell)
 
                 ////////////////
                 // Right Side //
                 ////////////////
-                if (model.game.hasNotStarted()) {
+                if (model.game.hasNotStarted) {
                     val onClickShip: (ShipType) -> Unit = { type ->
                         model.setShipType(type)
                     }
@@ -72,7 +75,7 @@ fun FrameWindowScope.BattleshipApp(storage: Storage, onExit: () -> Unit) {
                         model.makeShot(pos)
                     }
                     val enemyBoard = model.getGame<GameFight>().enemyBoard
-                    BoardWithGuidesView(enemyBoard, true, onClickEnemyCell)
+                    BoardWithGuidesView(enemyBoard, true, model.getGame<GameFight>().winner == null, onClickEnemyCell)
                 }
             }
             Spacer(Modifier.size(SPACER.dp))
