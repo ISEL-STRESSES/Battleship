@@ -70,7 +70,7 @@ class ModelView(
             scope.launch {
                 game = currGame.startGame(name, storage)
                 openDialogName = false
-                waitForOther()
+                startAutoRefresh()
             }
         }
     }
@@ -100,6 +100,7 @@ class ModelView(
         }
     }
 
+
     fun cancelAutoRefresh() {
         jobAutoRefresh?.cancel()
         jobAutoRefresh = null
@@ -123,15 +124,14 @@ class ModelView(
             }
         }
 
-        selectedType = ShipType.values.firstOrNull { shipType ->
-            game.playerBoard.fleet.count { shipType === it.type } < shipType.fleetQuantity
-        }
+        selectAvailableType()
     }
 
     fun removeShip(pos: Position) {
         with(getGame<GameSetup>())
         {
             game = removeShip(pos)
+            selectAvailableType()
         }
     }
 
@@ -156,7 +156,6 @@ class ModelView(
 
     fun makeShot(pos: Position) {
         with(getGame<GameFight>()) {
-
             if (this.enemyBoard.fleet.isEmpty()) {
                 sendMessage(STATUS_WARN_INVALID_SHOT_WAIT_FOR_OTHER)
                 return
@@ -180,6 +179,12 @@ class ModelView(
         }
     }
 
+    private fun selectAvailableType() {
+        selectedType = ShipType.values.firstOrNull { shipType ->
+            game.playerBoard.fleet.count { shipType === it.type } < shipType.fleetQuantity
+        }
+    }
+
     fun setDirection(direction: Direction) {
         selectedDirection = direction
     }
@@ -187,5 +192,4 @@ class ModelView(
     fun closeDialog() {
         openDialogName = false
     }
-
 }

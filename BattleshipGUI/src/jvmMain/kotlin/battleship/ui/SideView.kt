@@ -21,7 +21,7 @@ const val BORDER_WIDTH = 2
 const val PADDING = 10
 
 @Composable
-fun ShipSelectorView(fleet: Fleet, onClick: (ShipType?) -> Unit, currShip: ShipType?) {
+fun ShipSelectorView(fleet: Fleet, onClick: (ShipType) -> Unit, currShip: ShipType?) {
     Column(Modifier.border(BORDER_WIDTH.dp, Color.Blue).padding(PADDING.dp), verticalArrangement = Arrangement.Center) {
         ShipType.values.forEach { type ->
             val fleetQuantity = fleet.count { it.type == type }
@@ -66,7 +66,7 @@ fun DirectionSelectorView(onClick: (Direction) -> Unit, currDir: Direction) {
 @Composable
 fun SideView(
     fleet: Fleet,
-    onClickType: (ShipType?) -> Unit,
+    onClickType: (ShipType) -> Unit,
     currType: ShipType?,
     onClickDirection: (Direction) -> Unit,
     currDir: Direction
