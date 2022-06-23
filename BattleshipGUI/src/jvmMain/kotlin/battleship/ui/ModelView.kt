@@ -70,24 +70,36 @@ class ModelView(
             scope.launch {
                 game = currGame.startGame(name, storage)
                 openDialogName = false
-                waitForOther()
+                startAutoRefresh()
             }
         }
     }
 
-    fun waitForOther() {
+    private fun startAutoRefresh() {
+        setAutoRefresh(true)
+    }
+
+    fun setAutoRefresh(auto : Boolean) {
+        if (auto) {
+            val g = getGame<GameFight>()
+            if (g.isNotYourTurn())
+                waitForOther()
+        }
+        else
+            cancelAutoRefresh()
+    }
+
+    private fun waitForOther() {
         var g = getGame<GameFight>()
-        if(g.isYourTurn()) { //TODO: g.isOver()
-            jobAutoRefresh = scope.launch {
-                do {
-                    delay(AUTO_REFRESH_TIMER)
-                    g = storage.load(g)
-                } while (g.isNotYourTurn())
-                game = g
-                jobAutoRefresh = null
+        jobAutoRefresh = scope.launch {
+            while(g.winner != null) {
+                g = getGame()
+                delay(AUTO_REFRESH_TIMER)
+                game = storage.load(g)
             }
         }
     }
+
 
     fun cancelAutoRefresh() {
         jobAutoRefresh?.cancel()
@@ -112,15 +124,14 @@ class ModelView(
             }
         }
 
-        selectedType = ShipType.values.firstOrNull { shipType ->
-            game.playerBoard.fleet.count { shipType === it.type } < shipType.fleetQuantity
-        }
+        selectAvailableType()
     }
 
     fun removeShip(pos: Position) {
         with(getGame<GameSetup>())
         {
             game = removeShip(pos)
+            selectAvailableType()
         }
     }
 
@@ -128,8 +139,10 @@ class ModelView(
         with(getGame<GameSetup>())
         {
             val res = this.putAllShips()
-            if (res.second === PutConsequence.NONE)
+            if (res.second === PutConsequence.NONE) {
                 game = res.first
+                selectAvailableType()
+            }
         }
     }
 
@@ -137,12 +150,12 @@ class ModelView(
         with(getGame<GameSetup>())
         {
             game = removeAll()
+            selectedType = ShipType.values.first()
         }
     }
 
     fun makeShot(pos: Position) {
         with(getGame<GameFight>()) {
-
             if (this.enemyBoard.fleet.isEmpty()) {
                 sendMessage(STATUS_WARN_INVALID_SHOT_WAIT_FOR_OTHER)
                 return
@@ -160,8 +173,16 @@ class ModelView(
         }
     }
 
-    fun setShipType(type: ShipType?) {
-        selectedType = type
+    fun setShipType(type: ShipType) {
+        selectedType = type.takeIf {
+            shipType -> game.playerBoard.fleet.count { shipType === it.type } < type.fleetQuantity
+        }
+    }
+
+    private fun selectAvailableType() {
+        selectedType = ShipType.values.firstOrNull { shipType ->
+            game.playerBoard.fleet.count { shipType === it.type } < shipType.fleetQuantity
+        }
     }
 
     fun setDirection(direction: Direction) {
@@ -171,7 +192,4 @@ class ModelView(
     fun closeDialog() {
         openDialogName = false
     }
-
 }
-
-

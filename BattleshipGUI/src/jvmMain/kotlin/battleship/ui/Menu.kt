@@ -16,7 +16,8 @@ fun FrameWindowScope.GaloMenu(model: ModelView, onExit: () -> Unit) {
                 "Start",
                 enabled = model.game.hasNotStarted() && model.game.playerBoard.fleet.isComplete(),
                 onClick = { model.start() })
-            Item("Refresh", enabled = model.game.hasStarted(), onClick = { model.refresh() })
+            Item("Refresh", enabled = model.game.hasStarted() && model.jobAutoRefresh == null, onClick = { model.refresh() })
+            CheckboxItem("Automatic refresh", checked = model.jobAutoRefresh != null, enabled = model.game.hasStarted(), onCheckedChange = { on -> model.setAutoRefresh(on) })
             Item("Exit", onClick = onExit)
         }
         Menu("Fleet") {

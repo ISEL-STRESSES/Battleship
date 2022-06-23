@@ -1,7 +1,5 @@
 package battleship.model
 
-import battleship.model.GameState.FIGHT
-import battleship.model.GameState.SETUP
 import battleship.model.PlayError.*
 import battleship.model.board.*
 import battleship.model.ship.ShipType
@@ -20,14 +18,6 @@ enum class PlayError {
     NONE, INVALID_SHOT, INVALID_TURN, GAME_OVER
 }
 
-/**
- * Keep the current state of the game.
- * @property SETUP setup stage where only PUT commands will be allowed;
- * @property FIGHT fight stage where you can do all the commands except the ones in the [SETUP] phase;
- */
-enum class GameState {
-    SETUP, FIGHT
-}
 
 /**
  * Central object that represents the battleship game
@@ -169,4 +159,15 @@ fun GameFight.isNotYourTurn() = !isYourTurn()
 
 fun Game.hasStarted() = this !is GameSetup
 fun Game.hasNotStarted() = !hasStarted()
+
+val GameFight.winner : Player?
+    get() {
+        return if(playerBoard.lost())
+            player
+        else if(enemyBoard.lost())
+            player.other()
+        else
+            null
+    }
+
 

@@ -54,7 +54,7 @@ fun FrameWindowScope.BattleshipApp(storage: Storage, onExit: () -> Unit) {
                 // Right Side //
                 ////////////////
                 if (model.game.hasNotStarted()) {
-                    val onClickShip: (ShipType?) -> Unit = { type ->
+                    val onClickShip: (ShipType) -> Unit = { type ->
                         model.setShipType(type)
                     }
                     val onClickDir: (Direction) -> Unit = { dir ->
