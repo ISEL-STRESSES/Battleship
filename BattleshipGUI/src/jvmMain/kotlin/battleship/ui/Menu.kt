@@ -8,6 +8,12 @@ import battleship.model.hasNotStarted
 import battleship.model.hasStarted
 
 
+/**
+ * Function that displays all the menu UI
+ *
+ * @param model class that has all the information in the UI.
+ * @param onExit function that knows what to do when exiting
+ */
 @Composable
 fun FrameWindowScope.GameMenu(model: ModelView, onExit: () -> Unit) {
     MenuBar {

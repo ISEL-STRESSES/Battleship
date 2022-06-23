@@ -20,6 +20,12 @@ import androidx.compose.ui.window.DialogState
 const val DIALOG_DEFAULT_ENTRY = "Game Name"
 const val DIALOG_WIDTH = 350
 
+/**
+ * Function that contains all the UI needed to display the input dialog with the game name
+ *
+ * @param onCancel function that knows what to do when the dialog is canceled
+ * @param onStart function that knows what to do when the dialog is canceled
+ */
 @Composable
 fun DialogName(onCancel: () -> Unit, onStart: (String) -> Unit) = Dialog(
     onCloseRequest = onCancel,

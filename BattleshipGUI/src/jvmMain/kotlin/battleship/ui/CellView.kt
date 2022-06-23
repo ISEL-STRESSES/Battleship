@@ -18,15 +18,20 @@ import battleship.model.board.*
 
 const val BOARD_CELL_SIZE = 32
 const val BOARD_CELL_MISS_SIZE = 15
+const val BOARD_MISS_ALPHA = 0.25f
+const val CELL_HIT_IMAGE = "flame.svg"
+const val CELL_HIT_DESCRIPTION = "Hit ship!"
 val CELL_COLOR_HIDDEN = Color.Gray
 val CELL_COLOR_SUNK = Color.Black
 val CELL_COLOR_SHIP = Color.Blue
 val CELL_COLOR_WATER = Color.Cyan
-const val BOARD_MISS_ALPHA = 0.25f
 
-const val CELL_HIT_IMAGE = "flame.svg"
-const val CELL_HIT_DESCRIPTION = "Hit ship!"
-
+/**
+ * Function that calculates the color/sprite to display inside a [Cell]
+ *
+ * @param cell [Cell] of the [Board] to calculate
+ * @param hidden if the [Cell] is hidden for the player
+ */
 fun calculateColor(cell: Cell?, hidden: Boolean) =
     if (hidden) {
         when (cell) {
@@ -41,6 +46,14 @@ fun calculateColor(cell: Cell?, hidden: Boolean) =
         }
     }
 
+/**
+ * Function that contains all the UI needed to display a [Cell] in the [Board]
+ *
+ * @param cell Cell to be displayed
+ * @param hidden if the [Cell] is hidden for the player
+ * @param canClick if the [Cell] can be clicked
+ * @param onClick what do when the [Cell] is clicked
+ */
 @Composable
 fun CellView(cell: Cell?, hidden: Boolean, canClick : Boolean, onClick: () -> Unit) {
     val modifier = Modifier

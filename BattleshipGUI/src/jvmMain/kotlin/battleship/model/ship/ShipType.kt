@@ -30,16 +30,9 @@ class ShipType private constructor(val name: String, val squares: Int, val fleet
  *      else return null
  */
 fun String.toShipTypeOrNull(): ShipType? {
-    val num = this.toIntOrNull()
-    return if (num == null) {
-        val head = ShipType.values.firstOrNull { it.name.startsWith(this, true) }
-        val tail = ShipType.values.lastOrNull { it.name.startsWith(this, true) }
-        if (tail === head) tail else null
-    } else {
-        val head = ShipType.values.firstOrNull { it.squares == num || it.name.startsWith(this, true) }
-        val tail = ShipType.values.lastOrNull { it.squares == num || it.name.startsWith(this, true) }
-        if (tail === head) tail else null
-    }
+    val first = ShipType.values.firstOrNull { this in it.name || this.toIntOrNull() == it.squares }
+    val last = ShipType.values.lastOrNull { this in it.name || this.toIntOrNull() == it.squares }
+    return if (last != first) null else first
 }
 
 /**

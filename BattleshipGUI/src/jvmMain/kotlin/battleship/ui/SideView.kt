@@ -19,6 +19,13 @@ import battleship.model.ship.ShipType
 const val BORDER_WIDTH = 2
 const val PADDING = 10
 
+/**
+ * Render a ship selector, with radio buttons to switch between selected [ShipType].
+ *
+ * @param fleet game fleet to be used for quantities.
+ * @param onClick callback when a new [ShipType] is selected.
+ * @param currShip the [ShipType] to show as selected in the side view.
+ */
 @Composable
 fun ShipSelectorView(fleet: Fleet, onClick: (ShipType) -> Unit, currShip: ShipType?) {
     Column(Modifier.border(BORDER_WIDTH.dp, Color.Blue).padding(PADDING.dp), verticalArrangement = Arrangement.Center) {
@@ -43,6 +50,12 @@ fun ShipSelectorView(fleet: Fleet, onClick: (ShipType) -> Unit, currShip: ShipTy
     }
 }
 
+/**
+ * Function that displays the directions to place a ship.
+ *
+ * @param onClick callback when a new direction is selected.
+ * @param currDir the Dir to show as selected in side view.
+ */
 @Composable
 fun DirectionSelectorView(onClick: (Direction) -> Unit, currDir: Direction) {
     Column(Modifier.border(BORDER_WIDTH.dp, Color.Blue).padding(PADDING.dp)) {
@@ -58,14 +71,17 @@ fun DirectionSelectorView(onClick: (Direction) -> Unit, currDir: Direction) {
 
 }
 
+/**
+ * Function that displays the ship selection as well as the directions.
+ *
+ * @param fleet game fleet to be used for quantities.
+ * @param onClickType callback when a new [ShipType] is selected.
+ * @param currType the [ShipType] to show as selected in the side view.
+ * @param onClickDirection callback when a new direction is selected.
+ * @param currDir the Dir to show as selected in side view.
+ */
 @Composable
-fun SideView(
-    fleet: Fleet,
-    onClickType: (ShipType) -> Unit,
-    currType: ShipType?,
-    onClickDirection: (Direction) -> Unit,
-    currDir: Direction
-) {
+fun SideView(fleet: Fleet, onClickType: (ShipType) -> Unit, currType: ShipType?, onClickDirection: (Direction) -> Unit, currDir: Direction) {
     Column(horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.SpaceBetween) {
         Spacer(Modifier.size(BOARD_CELL_SIZE.dp))
         ShipSelectorView(fleet, onClickType, currType)

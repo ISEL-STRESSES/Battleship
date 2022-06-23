@@ -15,11 +15,13 @@ import battleship.model.GameSetup
 import battleship.model.isYourTurn
 import battleship.model.winner
 
+//status bar constants
 const val STATUS_BAR_HEIGHT = 48
 const val STATUS_BORDER_WIDTH = 2
 const val STATUS_DISTANCE_BETWEEN_TEXTS = 10
 val STATUS_BORDER_COLOR = Color.Black
 
+//status bar messages
 const val STATUS_PROMPT_SETUP = "Edit Fleet"
 const val STATUS_PROMPT_FIGHT_PLAY_ALLOWED = "It's your turn"
 const val STATUS_PROMPT_FIGHT_PLAY_NOT_ALLOWED = "Sit yo a** down, not your turn"
@@ -27,6 +29,12 @@ const val STATUS_PROMPT_FIGHT_PLAY_NOT_ALLOWED = "Sit yo a** down, not your turn
 const val STATUS_WARN_VICTORY = "You WIN!"
 const val STATUS_WARN_DEFEAT = "You LOSE! ez clap"
 
+/**
+ * Function that displays the status bar.
+ *
+ * @param model class that has all the information in the UI.
+ * @param message warning message to display on status bar.
+ */
 @Composable
 fun StatusView(model: ModelView, message: String? = null) = Row(
     Modifier.height(STATUS_BAR_HEIGHT.dp).fillMaxWidth().border(STATUS_BORDER_WIDTH.dp, STATUS_BORDER_COLOR),
@@ -39,7 +47,6 @@ fun StatusView(model: ModelView, message: String? = null) = Row(
                 Text(STATUS_PROMPT_SETUP, fontWeight = FontWeight.Bold)
             }
             is GameFight -> {
-                // Bold Game
                 Row {
                     Text("Game:", fontWeight = FontWeight.Bold)
                     Spacer(Modifier.size(STATUS_DISTANCE_BETWEEN_TEXTS.dp))
@@ -70,5 +77,4 @@ fun StatusView(model: ModelView, message: String? = null) = Row(
         }
         if (model.jobAutoRefresh != null) CircularProgressIndicator()
     }
-
 }

@@ -16,6 +16,12 @@ import androidx.compose.ui.window.DialogState
 
 val DIALOG_COLOR = Color.Red
 
+/**
+ * Function that contains all the UI needed to display the input dialog with the warning
+ *
+ * @param message string to display in the warning
+ * @param onOk function that knows what to do when the dialog is canceled
+ */
 @Composable
 fun DialogWarning(message: String, onOk: () -> Unit) = Dialog(
     onCloseRequest = onOk,
@@ -25,6 +31,12 @@ fun DialogWarning(message: String, onOk: () -> Unit) = Dialog(
     ContentMessage(message, onOk)
 }
 
+/**
+ * Function that displays the message to the warning
+ *
+ * @param message message to display
+ * @param onOk function to execute when pressing the Ok button
+ */
 @Composable
 private fun ContentMessage(message: String, onOk: () -> Unit) = Column(
     Modifier.fillMaxWidth(),

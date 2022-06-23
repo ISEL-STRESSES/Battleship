@@ -19,13 +19,18 @@ import battleship.storage.Storage
 
 private const val SPACER = 5
 
+/**
+ * Function that contains all the UI of the Battleship Game
+ *
+ * @param storage current storage in use for the application (file or MongoDB)
+ * @param onExit onExit function that knows what to do when the app is closed
+ */
 @Composable
 fun FrameWindowScope.BattleshipApp(storage: Storage, onExit: () -> Unit) {
     val scope = rememberCoroutineScope()
     val model = remember { ModelView(storage, scope) }
     MaterialTheme {
         GameMenu(model, onExit = onExit)
-
         if (model.openDialogName) {
             DialogName(onCancel = { model.closeDialog() }) {
                 val trimmed = it.trim()
@@ -78,6 +83,7 @@ fun FrameWindowScope.BattleshipApp(storage: Storage, onExit: () -> Unit) {
                     BoardWithGuidesView(enemyBoard, true, model.getGame<GameFight>().winner == null, onClickEnemyCell)
                 }
             }
+            //Bottom Part with a row for the status view
             Spacer(Modifier.size(SPACER.dp))
             StatusView(model, model.message)
         }
